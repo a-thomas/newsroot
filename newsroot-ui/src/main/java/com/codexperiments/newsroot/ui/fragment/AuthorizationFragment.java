@@ -104,11 +104,11 @@ public class AuthorizationFragment extends Fragment
         mUIWebView.getSettings().setUserAgentString(mUIWebView.getSettings().getUserAgentString() + " agent");
         mUIDialog = new ProgressDialog(getActivity());
 
-        onRestoreInstanceState((pBundle != null) ? pBundle : getArguments());
+        onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
         return lUIFragment;
     }
 
-    public void onRestoreInstanceState(Bundle pBundle)
+    public void onInitializeInstanceState(Bundle pBundle)
     {
         mRedirection = pBundle.getParcelable(BUNDLE_REDIRECTION);
     }
@@ -163,7 +163,7 @@ public class AuthorizationFragment extends Fragment
     private void requestAuthorizationTwitter()
     {
         mTaskManager.execute(new TaskAdapter<TwitterAuthorizationCallback>() {
-            TwitterManager lTweetManager = mTwitterManager;
+            TwitterManager lTwitterManager = mTwitterManager;
 
             @Override
             public void onStart(boolean pIsRestored)
@@ -174,7 +174,7 @@ public class AuthorizationFragment extends Fragment
             @Override
             public TwitterAuthorizationCallback onProcess(TaskManager pTaskManager) throws Exception
             {
-                return lTweetManager.requestAuthorization();
+                return lTwitterManager.requestAuthorization();
             }
 
             @Override

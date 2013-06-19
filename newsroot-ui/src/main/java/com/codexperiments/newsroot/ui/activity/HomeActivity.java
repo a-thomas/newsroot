@@ -13,6 +13,7 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.TwitterManager;
 import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
+import com.codexperiments.newsroot.ui.fragment.NewsFragment;
 import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 
 public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener
@@ -57,12 +58,17 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
             }
         });
 
+        onInitializeInstanceState(pBundle);
+    }
+
+    protected void onInitializeInstanceState(Bundle pBundle)
+    {
         if (pBundle != null) {
         } else {
             if (!mTweetManager.isAuthorized()) {
-                getSupportFragmentManager().beginTransaction()
-                                           .replace(R.id.activity_content, AuthorizationFragment.authenticate())
-                                           .commit();
+                authorize();
+            } else {
+                showHome();
             }
         }
     }
@@ -87,10 +93,18 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mEventBus.unregisterListener(this);
     }
 
+    private void authorize()
+    {
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.activity_content, AuthorizationFragment.authenticate())
+                                   .commit();
+    }
+
     @Override
     public void onAuthorized()
     {
         Toast.makeText(this, "Authorized!!!", Toast.LENGTH_LONG).show();
+        showHome();
     }
 
     @Override
@@ -103,5 +117,10 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
     public void onAuthorizationDenied()
     {
         Toast.makeText(this, "Authorization denied!?", Toast.LENGTH_LONG).show();
+    }
+
+    private void showHome()
+    {
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_content, NewsFragment.home()).commit();
     }
 }

@@ -3,7 +3,9 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import twitter4j.Paging;
 import twitter4j.Status;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
@@ -32,13 +34,9 @@ public class NewsFragment extends Fragment
     private List<Status> mTweets;
     private boolean mHasMore;
 
+    private NewsAdapter mUIListAdapter;
     private ListView mUIList;
-
-
-    private static class TweetViewHolder
-    {
-        TextView mUIitle;
-    }
+    private ProgressDialog mUIDialog;
 
     public static final NewsFragment home()
     {
@@ -49,9 +47,9 @@ public class NewsFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer, Bundle pBundle)
+    public View onCreateView(LayoutInflater pLayoutInflater, ViewGroup pContainer, Bundle pBundle)
     {
-        super.onCreateView(pInflater, pContainer, pBundle);
+        super.onCreateView(pLayoutInflater, pContainer, pBundle);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
@@ -59,40 +57,23 @@ public class NewsFragment extends Fragment
         mTweets = new ArrayList<Status>(DEFAULT_PAGE_SIZE);
         mHasMore = true;
 
-        View lUIFragment = pInflater.inflate(R.layout.fragment_news_list, pContainer, false);
-        mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
-
-        mUIList.setAdapter(new BaseAdapter() {
+        View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
+        mUIListAdapter = new NewsAdapter(pLayoutInflater, mTweets, mHasMore, new NewsAdapter.Callback() {
             @Override
-            public View getView(int pPosition, View pConvertView, ViewGroup pParent)
+            public void onLoadMore()
             {
-                return onDisplayTweet(pPosition, pConvertView, pParent);
-            }
-
-            @Override
-            public long getItemId(int pPosition)
-            {
-                return mTweets.get(pPosition).getId();
-            }
-
-            @Override
-            public Object getItem(int pPosition)
-            {
-                return mTweets.get(pPosition);
-            }
-
-            @Override
-            public int getCount()
-            {
-                return mTweets.size();
+                loadMoreTweets();
             }
         });
+        mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
+        mUIList.setAdapter(mUIListAdapter);
+        mUIDialog = new ProgressDialog(getActivity());
 
-        onRestoreInstanceState((pBundle != null) ? pBundle : getArguments());
+        onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
         return lUIFragment;
     }
 
-    public void onRestoreInstanceState(Bundle pBundle)
+    public void onInitializeInstanceState(Bundle pBundle)
     {
     }
 
@@ -104,25 +85,25 @@ public class NewsFragment extends Fragment
     @Override
     public void onStart()
     {
-        mTaskManager.manage(this);
         super.onStart();
+        mTaskManager.manage(this);
+        loadMoreTweets();
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
+        mUIDialog.dismiss();
         mTaskManager.unmanage(this);
-    }
-
-    private View onDisplayTweet(int pPosition, View pConvertView, ViewGroup pParent)
-    {
-        return null;
     }
 
     private void loadMoreTweets()
     {
         mTaskManager.execute(new TaskAdapter<List<Status>>() {
+            TwitterManager lTwitterManager = mTwitterManager;
+            Paging lPaging = new Paging((mTweets.size() / DEFAULT_PAGE_SIZE) + 1, DEFAULT_PAGE_SIZE);
+
             @Override
             public TaskId getId()
             {
@@ -132,25 +113,29 @@ public class NewsFragment extends Fragment
             @Override
             public void onStart(boolean pIsRestored)
             {
-                super.onStart(pIsRestored);
+                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
             }
 
             @Override
             public List<Status> onProcess(TaskManager pTaskManager) throws Exception
             {
-                return super.onProcess(pTaskManager);
+                return lTwitterManager.getTweets(lPaging);
             }
 
             @Override
             public void onFinish(TaskManager pTaskManager, List<Status> pResult)
             {
-                super.onFinish(pTaskManager, pResult);
+                mUIDialog.dismiss();
+                mTweets.addAll(pResult);
+                ((BaseAdapter) mUIList.getAdapter()).notifyDataSetChanged();
             }
 
             @Override
             public void onFail(TaskManager pTaskManager, Throwable pException)
             {
-                super.onFail(pTaskManager, pException);
+                mUIDialog.dismiss();
+                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+                pException.printStackTrace();
             }
         });
     }

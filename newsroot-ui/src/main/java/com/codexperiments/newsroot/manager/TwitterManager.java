@@ -2,6 +2,7 @@ package com.codexperiments.newsroot.manager;
 
 import java.util.List;
 
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -16,7 +17,7 @@ public class TwitterManager
 {
     private static final String PREF_NAME = "com_codexperiments_newsroot_twittermanager";
     private static final String PREF_USER_ID = "user_id";
-    private static final String PREF_USER_PSEUDO = "user_pseudo";
+    private static final String PREF_USER_SCREEN_NAME = "user_screen_name";
     private static final String PREF_USER_TOKEN = "user_token";
     private static final String PREF_USER_SECRET = "user_secret";
     private static final String PREF_USER_AUTHORIZED = "user_authorized";
@@ -26,7 +27,7 @@ public class TwitterManager
     private Twitter mTwitter;
 
     private String mId;
-    private String mPseudo;
+    private String mScreenName;
     private RequestToken mRequestToken;
     private boolean mAuthorized;
 
@@ -37,7 +38,7 @@ public class TwitterManager
         mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);
 
         mId = mPreferences.getString(PREF_USER_ID, null);
-        mPseudo = mPreferences.getString(PREF_USER_PSEUDO, null);
+        mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
 
         mTwitter = TwitterFactory.getSingleton();
         mTwitter.setOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
@@ -73,7 +74,7 @@ public class TwitterManager
             AccessToken lAccessToken = mTwitter.getOAuthAccessToken(mRequestToken, lVerifier);
             mPreferences.edit()
                         .putString(PREF_USER_ID, Long.toString(lAccessToken.getUserId()))
-                        .putString(PREF_USER_PSEUDO, lAccessToken.getScreenName())
+                        .putString(PREF_USER_SCREEN_NAME, lAccessToken.getScreenName())
                         .putString(PREF_USER_TOKEN, lAccessToken.getToken())
                         .putString(PREF_USER_SECRET, lAccessToken.getTokenSecret())
                         .putBoolean(PREF_USER_AUTHORIZED, true)
@@ -88,7 +89,7 @@ public class TwitterManager
     {
         mPreferences.edit()
                     .putString(PREF_USER_ID, null)
-                    .putString(PREF_USER_PSEUDO, null)
+                    .putString(PREF_USER_SCREEN_NAME, null)
                     .putString(PREF_USER_TOKEN, null)
                     .putString(PREF_USER_SECRET, null)
                     .putBoolean(PREF_USER_AUTHORIZED, false)
@@ -104,9 +105,9 @@ public class TwitterManager
         return mAuthorized;
     }
 
-    public List<Status> getTweets() throws TwitterException
+    public List<Status> getTweets(Paging pPaging) throws TwitterException
     {
-        return mTwitter.getHomeTimeline();
+        return mTwitter.getHomeTimeline(pPaging);
     }
 
 

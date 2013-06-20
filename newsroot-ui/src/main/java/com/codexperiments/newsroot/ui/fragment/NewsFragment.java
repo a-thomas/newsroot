@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import twitter4j.Paging;
-import twitter4j.Status;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,7 +17,8 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.manager.TwitterManager;
+import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.id.TaskId;
 import com.codexperiments.robolabor.task.util.TaskAdapter;
@@ -31,7 +31,7 @@ public class NewsFragment extends Fragment
     private TaskManager mTaskManager;
     private TwitterManager mTwitterManager;
 
-    private List<Status> mTweets;
+    private List<Tweet> mTweets;
     private boolean mHasMore;
 
     private NewsAdapter mUIListAdapter;
@@ -54,7 +54,7 @@ public class NewsFragment extends Fragment
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
 
-        mTweets = new ArrayList<Status>(DEFAULT_PAGE_SIZE);
+        mTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
@@ -100,7 +100,7 @@ public class NewsFragment extends Fragment
 
     private void loadMoreTweets()
     {
-        mTaskManager.execute(new TaskAdapter<List<Status>>() {
+        mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
             TwitterManager lTwitterManager = mTwitterManager;
             Paging lPaging = new Paging((mTweets.size() / DEFAULT_PAGE_SIZE) + 1, DEFAULT_PAGE_SIZE);
 
@@ -117,13 +117,13 @@ public class NewsFragment extends Fragment
             }
 
             @Override
-            public List<Status> onProcess(TaskManager pTaskManager) throws Exception
+            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception
             {
                 return lTwitterManager.getTweets(lPaging);
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, List<Status> pResult)
+            public void onFinish(TaskManager pTaskManager, List<Tweet> pResult)
             {
                 mUIDialog.dismiss();
                 mTweets.addAll(pResult);

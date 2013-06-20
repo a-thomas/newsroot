@@ -1,12 +1,12 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import twitter4j.Status;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.domain.Tweet;
 
 public class NewsItem extends RelativeLayout
 {
@@ -41,10 +41,10 @@ public class NewsItem extends RelativeLayout
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    public void setContent(Status pNews)
+    public void setContent(Tweet pNews)
     {
-        mUINewsName.setText(pNews.getUser().getName());
-        mUINewsScreenName.setText(pNews.getUser().getScreenName());
+        mUINewsName.setText(pNews.getName());
+        mUINewsScreenName.setText(pNews.getScreenName());
         mUINewsText.setText(pNews.getText());
         mUINewsCreatedAt.setText(pNews.getCreatedAt().toString());
     }

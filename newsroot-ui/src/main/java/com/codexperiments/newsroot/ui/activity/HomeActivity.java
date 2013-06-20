@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.manager.TwitterManager;
+import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
 import com.codexperiments.newsroot.ui.fragment.NewsFragment;

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager;
+package com.codexperiments.newsroot.manager.twitter;
 
 public class TwitterAuthorizationDeniedException extends TwitterAuthorizationFailedException
 {

@@ -11,7 +11,7 @@ import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
-import com.codexperiments.newsroot.manager.TwitterManager;
+import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
 import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;

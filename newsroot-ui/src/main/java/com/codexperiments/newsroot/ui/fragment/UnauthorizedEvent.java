@@ -2,7 +2,7 @@ package com.codexperiments.newsroot.ui.fragment;
 
 import com.codexperiments.newsroot.common.event.BaseEvent;
 import com.codexperiments.newsroot.common.event.EventListener;
-import com.codexperiments.newsroot.manager.TwitterAuthorizationDeniedException;
+import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationDeniedException;
 
 public class UnauthorizedEvent extends BaseEvent<UnauthorizedEvent.Listener>
 {

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager;
+package com.codexperiments.newsroot.manager.twitter;
 
 import android.net.Uri;
 
@@ -21,7 +21,7 @@ public class TwitterAuthorizationFailedException extends Exception
         return new IllegalArgumentException(String.format("Invalid twitter callback Url %1$s", pUri));
     }
 
-    public static TwitterAuthorizationFailedException authorizationFailed(Throwable pThrowable)
+    public static TwitterAuthorizationFailedException from(Throwable pThrowable)
     {
         return new TwitterAuthorizationFailedException(pThrowable);
     }

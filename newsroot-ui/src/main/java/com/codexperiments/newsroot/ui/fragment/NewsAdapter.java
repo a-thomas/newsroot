@@ -2,24 +2,24 @@ package com.codexperiments.newsroot.ui.fragment;
 
 import java.util.List;
 
-import twitter4j.Status;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.domain.Tweet;
 
 public class NewsAdapter extends BaseAdapter
 {
     private Callback mCallback;
     private LayoutInflater mLayoutInflater;
 
-    private List<Status> mTweets;
+    private List<Tweet> mTweets;
     private boolean mHasMore;
     private int mLastPosition = 0;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, List<Status> pTweets, boolean pHasMore, Callback pCallback)
+    public NewsAdapter(LayoutInflater pLayoutInflater, List<Tweet> pTweets, boolean pHasMore, Callback pCallback)
     {
         super();
         mCallback = pCallback;
@@ -50,7 +50,7 @@ public class NewsAdapter extends BaseAdapter
     @Override
     public long getItemId(int pPosition)
     {
-        return mTweets.get(pPosition).getId();
+        return pPosition;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class NewsAdapter extends BaseAdapter
         return mTweets.size();
     }
 
-    public void notifyDataSetChanged(List<Status> pTweets)
+    public void notifyDataSetChanged(List<Tweet> pTweets)
     {
         mTweets = pTweets;
         super.notifyDataSetChanged();

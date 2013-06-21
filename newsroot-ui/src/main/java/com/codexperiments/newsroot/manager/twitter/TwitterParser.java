@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -61,7 +61,9 @@ public class TwitterParser
             case END_ARRAY:
                 break;
             default:
-                if ("created_at".equals(lField)) {
+                if ("id".equals(lField)) {
+                    lStatus.setId(pParser.getLongValue());
+                } else if ("created_at".equals(lField)) {
                     lStatus.setCreatedAt(pParser.getText());
                 } else if ("text".equals(lField)) {
                     lStatus.setText(pParser.getText());
@@ -94,9 +96,7 @@ public class TwitterParser
             case END_ARRAY:
                 break;
             default:
-                if ("id_str".equals(lField)) {
-                    pStatus.setId(pParser.getText());
-                } else if ("name".equals(lField)) {
+                if ("name".equals(lField)) {
                     pStatus.setName(pParser.getText());
                 } else if ("screen_name".equals(lField)) {
                     pStatus.setScreenName(pParser.getText());

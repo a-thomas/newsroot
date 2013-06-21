@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 
 public class NewsAdapter extends BaseAdapter
 {

@@ -9,13 +9,18 @@ public class TwitterAccessException extends Exception
         super("Twitter authorization failed.", pThrowable);
     }
 
-    protected TwitterAccessException(String pMessage)
+    protected TwitterAccessException(String pMessage, Throwable pThrowable)
     {
-        super(pMessage);
+        super(pMessage, pThrowable);
     }
 
     public static TwitterAccessException from(Throwable pThrowable)
     {
         return new TwitterAccessException(pThrowable);
+    }
+
+    public static TwitterAccessException internalError(Throwable pThrowable)
+    {
+        return new TwitterAccessException("Internal error", pThrowable);
     }
 }

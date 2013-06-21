@@ -1,19 +1,19 @@
-package com.codexperiments.newsroot.domain;
+package com.codexperiments.newsroot.domain.twitter;
 
 public class Tweet
 {
-    private String mId;
+    private long mId;
     private String mName;
     private String mScreenName;
     private String mText;
     private String mCreatedAt;
 
-    public String getId()
+    public long getId()
     {
         return mId;
     }
 
-    public void setId(String pId)
+    public void setId(long pId)
     {
         mId = pId;
     }

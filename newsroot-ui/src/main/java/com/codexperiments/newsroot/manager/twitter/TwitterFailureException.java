@@ -9,6 +9,11 @@ public class TwitterFailureException extends Exception
         super("Twitter authorization failed.", pThrowable);
     }
 
+    protected TwitterFailureException(String pMessage, Throwable pThrowable)
+    {
+        super(pMessage, pThrowable);
+    }
+
     public static TwitterFailureException authorizationFailed(Throwable pThrowable)
     {
         return new TwitterFailureException(pThrowable);

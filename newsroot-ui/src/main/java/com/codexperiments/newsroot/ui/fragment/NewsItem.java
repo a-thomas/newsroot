@@ -6,7 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 
 public class NewsItem extends RelativeLayout
 {

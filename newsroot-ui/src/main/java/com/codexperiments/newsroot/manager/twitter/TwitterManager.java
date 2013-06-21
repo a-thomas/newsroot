@@ -15,15 +15,13 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import twitter4j.Paging;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
-import twitter4j.auth.AccessToken;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 
-import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Page;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -32,7 +30,7 @@ public class TwitterManager
     private static final String REQUEST_URL = "https://api.twitter.com/oauth/request_token";
     private static final String ACCESS_URL = "https://api.twitter.com/oauth/access_token";
     private static final String AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize";
-    private static final URL API_HOME_TIMELINE;
+    private static final String API_HOME_TIMELINE = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
     private static final String PREF_NAME = "com_codexperiments_newsroot_twittermanager";
     private static final String PREF_USER_ID = "user_id";
@@ -41,17 +39,8 @@ public class TwitterManager
     private static final String PREF_USER_SECRET = "user_secret";
     private static final String PREF_USER_AUTHORIZED = "user_authorized";
 
-    static {
-        try {
-            API_HOME_TIMELINE = new URL("https://api.twitter.com/1.1/statuses/home_timeline.json");
-        } catch (MalformedURLException eMalformedURLException) {
-            throw new IllegalStateException();
-        }
-    }
-
     private Config mConfig;
     private SharedPreferences mPreferences;
-    private Twitter mTwitter;
     private OAuthConsumer mConsumer;
     private OAuthProvider mProvider;
 
@@ -70,8 +59,6 @@ public class TwitterManager
         mId = mPreferences.getString(PREF_USER_ID, null);
         mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
 
-        mTwitter = TwitterFactory.getSingleton();
-        mTwitter.setOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         mJSONFactory = new JsonFactory();
 
@@ -80,7 +67,6 @@ public class TwitterManager
         if (mAuthorized) {
             String lToken = mPreferences.getString(PREF_USER_TOKEN, null);
             String lSecret = mPreferences.getString(PREF_USER_SECRET, null);
-            mTwitter.setOAuthAccessToken(new AccessToken(lToken, lSecret));
             mConsumer.setTokenWithSecret(lToken, lSecret);
         }
     }
@@ -89,14 +75,9 @@ public class TwitterManager
     {
         deauthorize();
         try {
-            // mRequestToken = null; // mTwitter.getOAuthRequestToken(mConfig.getCallbackURL());
-            final String lAuthorizationUrl = mProvider.retrieveRequestToken(mConsumer, mConfig.getCallbackURL());
-            // Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-            // | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_FROM_BACKGROUND);
-            // mContext.startActivity(intent);
-            return new TwitterAuthorizationCallback(/* mRequestToken.getAuthorizationURL() */lAuthorizationUrl,
-                                                    mConfig.getCallbackURL());
-        } catch (/* Twitter */Exception eTwitterException) {
+            String lAuthorizationUrl = mProvider.retrieveRequestToken(mConsumer, mConfig.getCallbackURL());
+            return new TwitterAuthorizationCallback(lAuthorizationUrl, mConfig.getCallbackURL());
+        } catch (Exception eTwitterException) {
             throw TwitterAuthorizationFailedException.from(eTwitterException);
         }
     }
@@ -111,14 +92,6 @@ public class TwitterManager
 
         try {
             String lVerifier = pUri.getQueryParameter("oauth_verifier");
-            // AccessToken lAccessToken = mTwitter.getOAuthAccessToken(mRequestToken, lVerifier);
-            // mPreferences.edit()
-            // .putString(PREF_USER_ID, Long.toString(lAccessToken.getUserId()))
-            // .putString(PREF_USER_SCREEN_NAME, lAccessToken.getScreenName())
-            // .putString(PREF_USER_TOKEN, lAccessToken.getToken())
-            // .putString(PREF_USER_SECRET, lAccessToken.getTokenSecret())
-            // .putBoolean(PREF_USER_AUTHORIZED, true)
-            // .commit();
             mProvider.retrieveAccessToken(mConsumer, lVerifier);
 
             mPreferences.edit()
@@ -129,7 +102,6 @@ public class TwitterManager
                         .putBoolean(PREF_USER_AUTHORIZED, true)
                         .commit();
             mAuthorized = true;
-            // } catch (TwitterException eTwitterException) {
         } catch (Exception eTwitterException) {
             throw TwitterAuthorizationFailedException.from(eTwitterException);
         }
@@ -145,9 +117,8 @@ public class TwitterManager
                     .putBoolean(PREF_USER_AUTHORIZED, false)
                     .commit();
 
-        mTwitter.setOAuthAccessToken(null);
-        mTwitter.shutdown();
-        mTwitter = TwitterFactory.getSingleton();
+        mConsumer = new DefaultOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
+        mProvider = new DefaultOAuthProvider(REQUEST_URL, ACCESS_URL, AUTHORIZE_URL);
     }
 
     public boolean isAuthorized()
@@ -155,24 +126,37 @@ public class TwitterManager
         return mAuthorized;
     }
 
-    public List<Tweet> getTweets(Paging pPaging) throws TwitterAccessException
+    public List<Tweet> getOlderTweets(final Page pPage) throws TwitterAccessException
     {
-        return parseJSON(new ParseHandler<List<Tweet>>() {
-            @Override
+        // TODO Use URLEncodedUtils, trim_user, exclude_replies
+        StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(pPage.getSliceCount());
+        if (pPage.hasTweets()) {
+            lUrl.append("&max_id=").append(pPage.getOldestId() - 1);
+        }
+        // TODO if (pPage.hasSinceId()) {
+        // lUrl.append("&since_id=").append(pPage.getSinceId());
+        // }
+
+        return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
             public List<Tweet> parse(JsonParser pParser) throws Exception
             {
-                return TwitterParser.parseTweetList(pParser);
+                List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
+                pPage.refreshFrom(lTweets);
+                return lTweets;
             }
         });
     }
 
-    private <TResult> TResult parseJSON(ParseHandler<TResult> pParseHandler) throws TwitterAccessException
+    private <TResult> TResult parseJSON(StringBuilder pUrlBuilder, ParseHandler<TResult> pParseHandler)
+                    throws TwitterAccessException
     {
         JsonParser lParser = null;
         HttpURLConnection lRequest = null;
         InputStream lInputStream = null;
         try {
-            lRequest = (HttpURLConnection) API_HOME_TIMELINE.openConnection();
+            URL lUrl = new URL(pUrlBuilder.toString());
+            Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
+            lRequest = (HttpURLConnection) lUrl.openConnection();
             lRequest.setDoInput(true);
             lRequest.setDoOutput(false);
 
@@ -180,6 +164,7 @@ public class TwitterManager
             lRequest.connect();
             int lStatusCode = lRequest.getResponseCode();
             if (lStatusCode != 200) throw new IOException();
+            // TODO 429
 
             lInputStream = new BufferedInputStream(lRequest.getInputStream());
             lParser = mJSONFactory.createParser(lInputStream);

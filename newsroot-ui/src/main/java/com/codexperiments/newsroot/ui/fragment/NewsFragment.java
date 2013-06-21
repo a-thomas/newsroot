@@ -3,7 +3,6 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import twitter4j.Paging;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,8 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Page;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.id.TaskId;
@@ -25,13 +25,12 @@ import com.codexperiments.robolabor.task.util.TaskAdapter;
 
 public class NewsFragment extends Fragment
 {
-    private static final int DEFAULT_PAGE_SIZE = 20;
-
     private EventBus mEventBus;
     private TaskManager mTaskManager;
     private TwitterManager mTwitterManager;
 
     private List<Tweet> mTweets;
+    private Page mPage;
     private boolean mHasMore;
 
     private NewsAdapter mUIListAdapter;
@@ -54,7 +53,8 @@ public class NewsFragment extends Fragment
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
 
-        mTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
+        mTweets = new ArrayList<Tweet>(Page.DEFAULT_PAGE_SIZE); // TODO Get from prefs.
+        mPage = new Page();
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
@@ -102,7 +102,7 @@ public class NewsFragment extends Fragment
     {
         mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
             TwitterManager lTwitterManager = mTwitterManager;
-            Paging lPaging = new Paging((mTweets.size() / DEFAULT_PAGE_SIZE) + 1, DEFAULT_PAGE_SIZE);
+            Page lPage = mPage;
 
             @Override
             public TaskId getId()
@@ -113,13 +113,13 @@ public class NewsFragment extends Fragment
             @Override
             public void onStart(boolean pIsRestored)
             {
-                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
+                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
             }
 
             @Override
             public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception
             {
-                return lTwitterManager.getTweets(lPaging);
+                return lTwitterManager.getOlderTweets(lPage);
             }
 
             @Override

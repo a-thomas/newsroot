@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -27,15 +28,16 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 
 public class TwitterManager
 {
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     private static final String REQUEST_URL = "oauth/request_token";
-    private static final String ACCESS_URL = "/oauth/access_token";
-    private static final String AUTHORIZE_URL = "/oauth/authorize";
-    private static final String API_HOME_TIMELINE = "/1.1/statuses/home_timeline.json";
+    private static final String ACCESS_URL = "oauth/access_token";
+    private static final String AUTHORIZE_URL = "oauth/authorize";
+    private static final String API_HOME_TIMELINE = "1.1/statuses/home_timeline.json";
 
     private static final String PREF_NAME = "com_codexperiments_newsroot_twittermanager";
     private static final String PREF_USER_ID = "user_id";
@@ -69,6 +71,7 @@ public class TwitterManager
         mJSONFactory = new JsonFactory();
         mTweetDao = pDatabase.getTweetDao();
         mTimelineDao = pDatabase.getTimelineDao();
+        mTimeGapDao = pDatabase.getTimeGapDao();
 
         mId = mPreferences.getString(PREF_USER_ID, null);
         mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
@@ -146,33 +149,16 @@ public class TwitterManager
 
     public List<Tweet> findNewTweets() throws TwitterAccessException
     {
-        // StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(DEFAULT_PAGE_SIZE);
-        // if (mTimeline.hasTweets()) {
-        // lUrl.append("&since_id=").append(mTimeline.getEarliestId() - 1);
-        // }
-        //
-        // return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
-        // public List<Tweet> parse(JsonParser pParser) throws Exception
-        // {
-        // final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
-        // TimeGap lTimeGap = mTimeline.refresh(lTweets); // TODO Concurrent access problem here!
-        // // Maybe we have more tweets to load. May happen if application was disconnected for a long time.
-        //
-        // mTweetDao.callBatchTasks(new Callable<Void>() {
-        // public Void call() throws Exception
-        // {
-        // for (Tweet lTweet : lTweets) {
-        // mTweetDao.createIfNotExists(lTweet);
-        // }
-        // mTimelineDao.createOrUpdate(mTimeline);
-        // return null;
-        // }
-        // });
-        //
-        // return lTweets;
-        // }
-        // });
-        return null;
+        try {
+            PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_EARLIEST_ID", -1).prepare();
+            TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
+            if (lTimeGap == null) {
+                lTimeGap = TimeGap.initialTimeGap();
+            }
+            return findTweets(lTimeGap);
+        } catch (SQLException eSQLException) {
+            throw TwitterAccessException.from(eSQLException);
+        }
     }
 
     public List<Tweet> findOldTweets() throws TwitterAccessException
@@ -212,36 +198,48 @@ public class TwitterManager
         StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)
                                                                  .append("?count=")
                                                                  .append(DEFAULT_PAGE_SIZE);
-        if (pTimeGap.hasEarliestBound()) {
-            lUrl.append("&max_id=").append(pTimeGap.getEarliestId() - 1);
+        if (!pTimeGap.isFutureGap()) {
+            lUrl.append("&max_id=").append(pTimeGap.getEarliestBound() - 1);
         }
-        if (pTimeGap.hasOldestBound()) {
-            lUrl.append("&since_id=").append(pTimeGap.getOldestId());
+        if (!pTimeGap.isPastGap()) {
+            lUrl.append("&since_id=").append(pTimeGap.getOldestBound());
         }
 
-        return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
+        final List<Tweet> lTweets = parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
             public List<Tweet> parse(JsonParser pParser) throws Exception
             {
-                final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
-                final TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
-
-                mTweetDao.callBatchTasks(new Callable<Void>() {
-                    public Void call() throws Exception
-                    {
-                        for (Tweet lTweet : lTweets) {
-                            mTweetDao.createIfNotExists(lTweet);
-                        }
-
-                        mTimeGapDao.delete(pTimeGap);
-                        if (lRemainingTimeGap == null) {
-                            mTimeGapDao.create(lRemainingTimeGap);
-                        }
-                        return null;
-                    }
-                });
-                return lTweets;
+                return TwitterParser.parseTweetList(pParser);
             }
         });
+
+        try {
+            mTweetDao.callBatchTasks(new Callable<Void>() {
+                public Void call() throws Exception
+                {
+                    if (lTweets.size() > 0) {
+                        for (Tweet lTweet : lTweets) {
+                            mTweetDao.create(lTweet);
+                        }
+
+                        if (pTimeGap.isInitialGap()) {
+                            mTimeGapDao.create(TimeGap.futureTimeGap(lTweets));
+                            mTimeGapDao.create(TimeGap.pastTimeGap(lTweets));
+                        } else {
+                            TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+                            mTimeGapDao.update(lRemainingTimeGap);
+                        }
+                    } else {
+                        if (!pTimeGap.isFutureGap()) {
+                            mTimeGapDao.delete(pTimeGap);
+                        }
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception eException) {
+            throw TwitterAccessException.from(eException);
+        }
+        return lTweets;
     }
 
     private <TResult> TResult parseJSON(StringBuilder pUrlBuilder, ParseHandler<TResult> pParseHandler)

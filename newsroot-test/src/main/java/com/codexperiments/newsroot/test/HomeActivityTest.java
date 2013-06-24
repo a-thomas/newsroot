@@ -1,15 +1,29 @@
 package com.codexperiments.newsroot.test;
 
+import static org.hamcrest.CoreMatchers.any;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+
+import org.simpleframework.http.Query;
+
+import android.app.Application;
+import android.test.ActivityInstrumentationTestCase2;
+
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.test.common.TestCase;
+import com.codexperiments.newsroot.test.server.MockBackend;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-public class HomeActivityTest extends TestCase<HomeActivity>
+public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity>
 {
     private TwitterDatabase mDatabase;
+    private MockBackend.Config mServerConfig;
+    private MockBackend.Server mServer;
 
     public HomeActivityTest()
     {
@@ -20,14 +34,29 @@ public class HomeActivityTest extends TestCase<HomeActivity>
     protected void setUp() throws Exception
     {
         super.setUp();
-        mDatabase = OpenHelperManager.getHelper(getApplication(), TwitterDatabase.class);
-        mDatabase.delete();
-        mDatabase = OpenHelperManager.getHelper(getApplication(), TwitterDatabase.class);
+        mDatabase = OpenHelperManager.getHelper(getInstrumentation().getContext(), TwitterDatabase.class);
+        mDatabase.recreate();
+        // mDatabase = OpenHelperManager.getHelper(lApplication, TwitterDatabase.class);
+        // mDatabase.close();
+        // mDatabase.getWritableDatabase();
+
+        mServerConfig = mock(MockBackend.Config.class);
+    }
+
+    @Override
+    protected void tearDown() throws Exception
+    {
+        if (mServer != null) {
+            mServer.stop();
+            mServer = null;
+        }
+        super.tearDown();
     }
 
     private TwitterManager setupTwitterManagerAuthenticated()
     {
-        TwitterManager lTwitterManager = new TwitterManager(getApplication(), mDatabase, new TwitterManager.Config() {
+        Application lApplication = (Application) getInstrumentation().getTargetContext().getApplicationContext();
+        TwitterManager lTwitterManager = new TwitterManager(lApplication, mDatabase, new TwitterManager.Config() {
             public String getHost()
             {
                 return "http://localhost:8378/";
@@ -53,8 +82,11 @@ public class HomeActivityTest extends TestCase<HomeActivity>
 
     public void testFindNewTweets_emptyTimeline() throws TwitterAccessException
     {
+        mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
+        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/tweets_empty.json");
+
         TwitterManager lTwitterManager = setupTwitterManagerAuthenticated();
-        lTwitterManager.findNewTweets();
+        List<Tweet> lTweets = lTwitterManager.findNewTweets();
     }
 
     public void testFindNewTweets_nonEmptyTimeline_noResult() throws TwitterAccessException
@@ -63,6 +95,13 @@ public class HomeActivityTest extends TestCase<HomeActivity>
 
     public void testFindNewTweets_nonEmptyTimeline_withResults() throws TwitterAccessException
     {
+        mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
+        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/tweets_02.json")
+                                                                                    .thenReturn("twitter/tweets_03.json");
+
+        TwitterManager lTwitterManager = setupTwitterManagerAuthenticated();
+        List<Tweet> lTweets = lTwitterManager.findNewTweets();
+        lTweets = lTwitterManager.findNewTweets();
     }
 
     public void testFindOldTweets_emptyTimeline() throws TwitterAccessException

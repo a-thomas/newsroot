@@ -6,61 +6,99 @@ import com.j256.ormlite.field.DatabaseField;
 
 public class TimeGap
 {
-    // @DatabaseField(columnName = "TMG_ID", canBeNull = false)
-    // private long mId;
-    @DatabaseField(columnName = "TMG_TWT_START_ID")
-    private long mEarliestId;
-    @DatabaseField(columnName = "TMG_TWT_END_ID")
-    private long mOldestId;
-    private transient List<Tweet> mTweets;
+    @DatabaseField(columnName = "TMG_ID", canBeNull = false)
+    private long mId;
+    @DatabaseField(columnName = "TMG_TWT_EARLIEST_ID")
+    private long mEarliestBound;
+    @DatabaseField(columnName = "TMG_TWT_OLDEST_ID")
+    private long mOldestBound;
+
+    // private transient List<Tweet> mTweets;
+
+    public static TimeGap initialTimeGap()
+    {
+        return new TimeGap(-1, -1);
+    }
+
+    public static TimeGap futureTimeGap(List<Tweet> pTweets)
+    {
+        return new TimeGap(-1, pTweets.get(0).getId());
+    }
+
+    public static TimeGap pastTimeGap(List<Tweet> pTweets)
+    {
+        return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), -1);
+    }
 
     public TimeGap()
     {
         super();
         // mId = 0;
-        mEarliestId = -1;
-        mOldestId = -1;
-        mTweets = null;
+        mEarliestBound = -1;
+        mOldestBound = -1;
+        // mTweets = null;
     }
 
-    public TimeGap(long pEarliestId, long pOldestId)
+    public TimeGap(long pEarliestBound, long pOldestBound)
     {
         super();
         // mId = 0;
-        mEarliestId = pEarliestId;
-        mOldestId = pOldestId;
-        mTweets = null;
+        mEarliestBound = pEarliestBound;
+        mOldestBound = pOldestBound;
+        // mTweets = null;
+    }
+
+    protected TimeGap(long pId, long pEarliestBound, long pOldestBound)
+    {
+        super();
+        mId = pId;
+        mEarliestBound = pEarliestBound;
+        mOldestBound = pOldestBound;
+        // mTweets = null;
     }
 
     public TimeGap substract(List<Tweet> pTweets, int pPageSize)
     {
         if (pTweets.size() == pPageSize) {
-            // long lEarliestTweetId = pTweets.get(0).getId();
-            long lEarliestTweetId = pTweets.get(pTweets.size() - 1).getId();
-            mOldestId = lEarliestTweetId;
-            return new TimeGap(lEarliestTweetId, mOldestId);
+            if (isFutureGap()) {
+                long lEarliestTweetId = pTweets.get(0).getId();
+                return new TimeGap(mEarliestBound, lEarliestTweetId);
+            } else {
+                long lOldestTweetId = pTweets.get(pTweets.size() - 1).getId();
+                return new TimeGap(lOldestTweetId, mOldestBound);
+            }
         } else {
             return null;
         }
     }
 
-    public boolean hasEarliestBound()
+    public long getId()
     {
-        return mEarliestId > -1;
+        return mId;
     }
 
-    public long getEarliestId()
+    public boolean isInitialGap()
     {
-        return mEarliestId;
+        return isFutureGap() && isPastGap();
     }
 
-    public boolean hasOldestBound()
+    public boolean isFutureGap()
     {
-        return mOldestId > -1;
+        return mEarliestBound == -1;
     }
 
-    public long getOldestId()
+    public boolean isPastGap()
     {
-        return mOldestId;
+        return mOldestBound == -1;
+    }
+
+    public long getEarliestBound()
+    {
+        return mEarliestBound;
+    }
+
+    public long getOldestBound()
+    {
+        return mOldestBound;
     }
 }

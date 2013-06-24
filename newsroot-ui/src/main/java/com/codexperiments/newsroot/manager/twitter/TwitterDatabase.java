@@ -1,11 +1,9 @@
 package com.codexperiments.newsroot.manager.twitter;
 
-import java.io.File;
 import java.sql.SQLException;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
@@ -20,24 +18,14 @@ public class TwitterDatabase extends OrmLiteSqliteOpenHelper
     private static final String DATABASE_NAME = "twitter_database";
     private static final int DATABASE_VERSION = 1;
 
-    private File mDatabasePath;
     private Dao<Tweet, Integer> mTweetDao;
     private Dao<Timeline, Integer> mTimelineDao;
     private Dao<TimeGap, Integer> mTimeGapDao;
 
-    public static File getDatabasePath(Context pContext)
-    {
-        // Cf. http://developer.android.com/guide/topics/data/data-storage.html#filesExternalits for the reason we use this dir.
-        String applicationPackage = pContext.getPackageName();
-        String separator = File.pathSeparator;
-        String applicationDirectory = "Android" + separator + "data/" + separator + applicationPackage + separator + "files";
-        return new File(new File(Environment.getExternalStorageDirectory(), applicationDirectory), DATABASE_NAME);
-    }
-
     public TwitterDatabase(Context pContext) throws SQLException
     {
-        super(pContext, getDatabasePath(pContext).toString(), null, DATABASE_VERSION);
-        mDatabasePath = getDatabasePath(pContext);
+        super(pContext, pContext.getDatabasePath(DATABASE_NAME).toString(), null, DATABASE_VERSION);
+        getWritableDatabase();
         mTweetDao = getDao(Tweet.class);
         mTimelineDao = getDao(Timeline.class);
         mTimeGapDao = getDao(TimeGap.class);
@@ -49,6 +37,7 @@ public class TwitterDatabase extends OrmLiteSqliteOpenHelper
         try {
             TableUtils.createTable(pConnectionSource, Tweet.class);
             TableUtils.createTable(pConnectionSource, Timeline.class);
+            TableUtils.createTable(pConnectionSource, TimeGap.class);
         } catch (SQLException eSQLException) {
             throw new RuntimeException(eSQLException);
         }
@@ -60,6 +49,7 @@ public class TwitterDatabase extends OrmLiteSqliteOpenHelper
         try {
             TableUtils.dropTable(connectionSource, Tweet.class, true);
             TableUtils.dropTable(connectionSource, Timeline.class, true);
+            TableUtils.dropTable(connectionSource, TimeGap.class, true);
             // after we drop the old database, we create the new one
             onCreate(db, connectionSource);
         } catch (SQLException eSQLException) {
@@ -76,10 +66,14 @@ public class TwitterDatabase extends OrmLiteSqliteOpenHelper
         mTimeGapDao = null;
     }
 
-    public void delete()
+    public void recreate() throws SQLException
     {
-        close();
-        mDatabasePath.delete();
+        TableUtils.dropTable(connectionSource, Tweet.class, true);
+        TableUtils.dropTable(connectionSource, Timeline.class, true);
+        TableUtils.dropTable(connectionSource, TimeGap.class, true);
+        TableUtils.createTable(connectionSource, Tweet.class);
+        TableUtils.createTable(connectionSource, Timeline.class);
+        TableUtils.createTable(connectionSource, TimeGap.class);
     }
 
     public Dao<Tweet, Integer> getTweetDao()

@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -20,17 +21,21 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
-import com.codexperiments.newsroot.domain.twitter.Page;
+import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.j256.ormlite.dao.Dao;
 
 public class TwitterManager
 {
-    private static final String REQUEST_URL = "https://api.twitter.com/oauth/request_token";
-    private static final String ACCESS_URL = "https://api.twitter.com/oauth/access_token";
-    private static final String AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize";
-    private static final String API_HOME_TIMELINE = "https://api.twitter.com/1.1/statuses/user_timeline.json";
+    private static final int DEFAULT_PAGE_SIZE = 20;
+
+    private static final String REQUEST_URL = "oauth/request_token";
+    private static final String ACCESS_URL = "/oauth/access_token";
+    private static final String AUTHORIZE_URL = "/oauth/authorize";
+    private static final String API_HOME_TIMELINE = "/1.1/statuses/home_timeline.json";
 
     private static final String PREF_NAME = "com_codexperiments_newsroot_twittermanager";
     private static final String PREF_USER_ID = "user_id";
@@ -45,30 +50,57 @@ public class TwitterManager
     private OAuthProvider mProvider;
 
     private JsonFactory mJSONFactory;
+    private Dao<Tweet, Integer> mTweetDao;
+    private Dao<Timeline, Integer> mTimelineDao;
+    private Dao<TimeGap, Integer> mTimeGapDao;
 
     private String mId;
     private String mScreenName;
     private boolean mAuthorized;
 
-    public TwitterManager(Application pApplication, Config pConfig)
+    private Timeline mTimeline;
+
+    public TwitterManager(Application pApplication, TwitterDatabase pDatabase, Config pConfig)
     {
         super();
         mConfig = pConfig;
         mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);
 
+        mJSONFactory = new JsonFactory();
+        mTweetDao = pDatabase.getTweetDao();
+        mTimelineDao = pDatabase.getTimelineDao();
+
         mId = mPreferences.getString(PREF_USER_ID, null);
         mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
+        checkAuthorization();
 
-        mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
-        mJSONFactory = new JsonFactory();
+        mTimeline = new Timeline();
+    }
 
+    public void checkAuthorization()
+    {
         mConsumer = new DefaultOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
-        mProvider = new DefaultOAuthProvider(REQUEST_URL, ACCESS_URL, AUTHORIZE_URL);
+        mProvider = new DefaultOAuthProvider(mConfig.getHost() + REQUEST_URL, //
+                                             mConfig.getHost() + ACCESS_URL, //
+                                             mConfig.getHost() + AUTHORIZE_URL);
+        mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (mAuthorized) {
             String lToken = mPreferences.getString(PREF_USER_TOKEN, null);
             String lSecret = mPreferences.getString(PREF_USER_SECRET, null);
             mConsumer.setTokenWithSecret(lToken, lSecret);
         }
+    }
+
+    public void deauthorize()
+    {
+        mPreferences.edit()
+                    .putString(PREF_USER_ID, null)
+                    .putString(PREF_USER_SCREEN_NAME, null)
+                    .putString(PREF_USER_TOKEN, null)
+                    .putString(PREF_USER_SECRET, null)
+                    .putBoolean(PREF_USER_AUTHORIZED, false)
+                    .commit();
+        checkAuthorization();
     }
 
     public TwitterAuthorizationCallback requestAuthorization() throws TwitterAuthorizationFailedException
@@ -101,24 +133,10 @@ public class TwitterManager
                         .putString(PREF_USER_SECRET, mConsumer.getTokenSecret())
                         .putBoolean(PREF_USER_AUTHORIZED, true)
                         .commit();
-            mAuthorized = true;
+            checkAuthorization();
         } catch (Exception eTwitterException) {
             throw TwitterAuthorizationFailedException.from(eTwitterException);
         }
-    }
-
-    public void deauthorize()
-    {
-        mPreferences.edit()
-                    .putString(PREF_USER_ID, null)
-                    .putString(PREF_USER_SCREEN_NAME, null)
-                    .putString(PREF_USER_TOKEN, null)
-                    .putString(PREF_USER_SECRET, null)
-                    .putBoolean(PREF_USER_AUTHORIZED, false)
-                    .commit();
-
-        mConsumer = new DefaultOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
-        mProvider = new DefaultOAuthProvider(REQUEST_URL, ACCESS_URL, AUTHORIZE_URL);
     }
 
     public boolean isAuthorized()
@@ -126,22 +144,101 @@ public class TwitterManager
         return mAuthorized;
     }
 
-    public List<Tweet> getOlderTweets(final Page pPage) throws TwitterAccessException
+    public List<Tweet> findNewTweets() throws TwitterAccessException
+    {
+        // StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(DEFAULT_PAGE_SIZE);
+        // if (mTimeline.hasTweets()) {
+        // lUrl.append("&since_id=").append(mTimeline.getEarliestId() - 1);
+        // }
+        //
+        // return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
+        // public List<Tweet> parse(JsonParser pParser) throws Exception
+        // {
+        // final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
+        // TimeGap lTimeGap = mTimeline.refresh(lTweets); // TODO Concurrent access problem here!
+        // // Maybe we have more tweets to load. May happen if application was disconnected for a long time.
+        //
+        // mTweetDao.callBatchTasks(new Callable<Void>() {
+        // public Void call() throws Exception
+        // {
+        // for (Tweet lTweet : lTweets) {
+        // mTweetDao.createIfNotExists(lTweet);
+        // }
+        // mTimelineDao.createOrUpdate(mTimeline);
+        // return null;
+        // }
+        // });
+        //
+        // return lTweets;
+        // }
+        // });
+        return null;
+    }
+
+    public List<Tweet> findOldTweets() throws TwitterAccessException
+    {
+        // // TODO Use URLEncodedUtils, trim_user, exclude_replies
+        // StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(DEFAULT_PAGE_SIZE);
+        // if (mTimeline.hasTweets()) {
+        // lUrl.append("&max_id=").append(mTimeline.getOldestId() - 1);
+        // }
+        //
+        // return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
+        // public List<Tweet> parse(JsonParser pParser) throws Exception
+        // {
+        // final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
+        // mTimeline.refresh(lTweets); // TODO Concurrent access problem here!
+        //
+        // mTweetDao.callBatchTasks(new Callable<Void>() {
+        // public Void call() throws Exception
+        // {
+        // for (Tweet lTweet : lTweets) {
+        // mTweetDao.createIfNotExists(lTweet);
+        // }
+        // mTimelineDao.createOrUpdate(mTimeline);
+        // return null;
+        // }
+        // });
+        //
+        // return lTweets;
+        // }
+        // });
+        return null;
+    }
+
+    public List<Tweet> findTweets(final TimeGap pTimeGap) throws TwitterAccessException
     {
         // TODO Use URLEncodedUtils, trim_user, exclude_replies
-        StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(pPage.getSliceCount());
-        if (pPage.hasTweets()) {
-            lUrl.append("&max_id=").append(pPage.getOldestId() - 1);
+        StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)
+                                                                 .append("?count=")
+                                                                 .append(DEFAULT_PAGE_SIZE);
+        if (pTimeGap.hasEarliestBound()) {
+            lUrl.append("&max_id=").append(pTimeGap.getEarliestId() - 1);
         }
-        // TODO if (pPage.hasSinceId()) {
-        // lUrl.append("&since_id=").append(pPage.getSinceId());
-        // }
+        if (pTimeGap.hasOldestBound()) {
+            lUrl.append("&since_id=").append(pTimeGap.getOldestId());
+        }
 
         return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
             public List<Tweet> parse(JsonParser pParser) throws Exception
             {
-                List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
-                pPage.refreshFrom(lTweets);
+                final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
+                final TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+
+                mTweetDao.callBatchTasks(new Callable<Void>() {
+                    public Void call() throws Exception
+                    {
+                        for (Tweet lTweet : lTweets) {
+                            mTweetDao.createIfNotExists(lTweet);
+                        }
+
+                        mTimeGapDao.delete(pTimeGap);
+                        if (lRemainingTimeGap == null) {
+                            mTimeGapDao.create(lRemainingTimeGap);
+                        }
+                        return null;
+                    }
+                });
                 return lTweets;
             }
         });
@@ -205,6 +302,8 @@ public class TwitterManager
 
     public interface Config
     {
+        String getHost();
+
         String getConsumerKey();
 
         String getConsumerSecret();

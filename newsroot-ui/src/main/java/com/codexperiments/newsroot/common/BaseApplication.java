@@ -11,11 +11,13 @@ import android.os.StrictMode.ThreadPolicy;
 import android.os.StrictMode.VmPolicy;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
+import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
 import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;
 import com.codexperiments.robolabor.task.handler.Task;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public abstract class BaseApplication extends Application
 {
@@ -55,6 +57,8 @@ public abstract class BaseApplication extends Application
             StrictMode.setVmPolicy(new VmPolicy.Builder().detectAll().build());
         }
 
+        TwitterDatabase lDatabase = OpenHelperManager.getHelper(this, TwitterDatabase.class);
+
         registerService(Platform.Factory.findCurrentPlatform(this));
         registerService(new AndroidEventBus());
         registerService(new TaskManagerAndroid(this, new TaskManagerConfigAndroid(this) {
@@ -67,7 +71,12 @@ public abstract class BaseApplication extends Application
                 // return super.keepResultOnHold(pTask);
             }
         }));
-        registerService(new TwitterManager(this, new TwitterManager.Config() {
+        registerService(new TwitterManager(this, lDatabase, new TwitterManager.Config() {
+            public String getHost()
+            {
+                return "https://api.twitter.com/";
+            }
+
             public String getConsumerKey()
             {
                 return "3Ng9QGTB7EpZCHDOIT2jg";

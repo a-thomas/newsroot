@@ -163,33 +163,16 @@ public class TwitterManager
 
     public List<Tweet> findOldTweets() throws TwitterAccessException
     {
-        // // TODO Use URLEncodedUtils, trim_user, exclude_replies
-        // StringBuilder lUrl = new StringBuilder(API_HOME_TIMELINE).append("?count=").append(DEFAULT_PAGE_SIZE);
-        // if (mTimeline.hasTweets()) {
-        // lUrl.append("&max_id=").append(mTimeline.getOldestId() - 1);
-        // }
-        //
-        // return parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
-        // public List<Tweet> parse(JsonParser pParser) throws Exception
-        // {
-        // final List<Tweet> lTweets = TwitterParser.parseTweetList(pParser);
-        // mTimeline.refresh(lTweets); // TODO Concurrent access problem here!
-        //
-        // mTweetDao.callBatchTasks(new Callable<Void>() {
-        // public Void call() throws Exception
-        // {
-        // for (Tweet lTweet : lTweets) {
-        // mTweetDao.createIfNotExists(lTweet);
-        // }
-        // mTimelineDao.createOrUpdate(mTimeline);
-        // return null;
-        // }
-        // });
-        //
-        // return lTweets;
-        // }
-        // });
-        return null;
+        try {
+            PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_OLDEST_ID", -1).prepare();
+            TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
+            if (lTimeGap == null) {
+                lTimeGap = TimeGap.initialTimeGap();
+            }
+            return findTweets(lTimeGap);
+        } catch (SQLException eSQLException) {
+            throw TwitterAccessException.from(eSQLException);
+        }
     }
 
     public List<Tweet> findTweets(final TimeGap pTimeGap) throws TwitterAccessException

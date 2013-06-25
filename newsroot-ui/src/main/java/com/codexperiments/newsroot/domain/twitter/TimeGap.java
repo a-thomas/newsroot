@@ -6,7 +6,7 @@ import com.j256.ormlite.field.DatabaseField;
 
 public class TimeGap
 {
-    @DatabaseField(columnName = "TMG_ID", canBeNull = false)
+    @DatabaseField(generatedId = true, columnName = "TMG_ID", canBeNull = false)
     private long mId;
     @DatabaseField(columnName = "TMG_TWT_EARLIEST_ID")
     private long mEarliestBound;
@@ -62,10 +62,14 @@ public class TimeGap
         if (pTweets.size() == pPageSize) {
             if (isFutureGap()) {
                 long lEarliestTweetId = pTweets.get(0).getId();
-                return new TimeGap(mEarliestBound, lEarliestTweetId);
+                return new TimeGap(mEarliestBound, (lEarliestTweetId > mOldestBound) ? lEarliestTweetId : mOldestBound);
             } else {
                 long lOldestTweetId = pTweets.get(pTweets.size() - 1).getId();
-                return new TimeGap(lOldestTweetId, mOldestBound);
+                if ((lOldestTweetId < mEarliestBound) && (lOldestTweetId > mOldestBound)) {
+                    return new TimeGap((lOldestTweetId < mEarliestBound) ? lOldestTweetId : mEarliestBound, mOldestBound);
+                } else {
+                    return this;
+                }
             }
         } else {
             return null;

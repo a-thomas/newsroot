@@ -155,7 +155,7 @@ public class TwitterManager
             if (lTimeGap == null) {
                 lTimeGap = TimeGap.initialTimeGap();
             }
-            return findTweets(lTimeGap);
+            return findTweetsInGap(lTimeGap);
         } catch (SQLException eSQLException) {
             throw TwitterAccessException.from(eSQLException);
         }
@@ -169,13 +169,13 @@ public class TwitterManager
             if (lTimeGap == null) {
                 lTimeGap = TimeGap.initialTimeGap();
             }
-            return findTweets(lTimeGap);
+            return findTweetsInGap(lTimeGap);
         } catch (SQLException eSQLException) {
             throw TwitterAccessException.from(eSQLException);
         }
     }
 
-    public List<Tweet> findTweets(final TimeGap pTimeGap) throws TwitterAccessException
+    public List<Tweet> findTweetsInGap(final TimeGap pTimeGap) throws TwitterAccessException
     {
         // TODO Use URLEncodedUtils, trim_user, exclude_replies
         StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)

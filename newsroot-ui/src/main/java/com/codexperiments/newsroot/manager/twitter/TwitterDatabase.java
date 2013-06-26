@@ -25,7 +25,6 @@ public class TwitterDatabase extends OrmLiteSqliteOpenHelper
     public TwitterDatabase(Context pContext) throws SQLException
     {
         super(pContext, pContext.getDatabasePath(DATABASE_NAME).toString(), null, DATABASE_VERSION);
-        getWritableDatabase();
         mTweetDao = getDao(Tweet.class);
         mTimelineDao = getDao(Timeline.class);
         mTimeGapDao = getDao(TimeGap.class);

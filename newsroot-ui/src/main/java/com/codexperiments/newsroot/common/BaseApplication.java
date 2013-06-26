@@ -5,10 +5,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.pm.ApplicationInfo;
-import android.os.StrictMode;
-import android.os.StrictMode.ThreadPolicy;
-import android.os.StrictMode.VmPolicy;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
@@ -52,10 +48,10 @@ public abstract class BaseApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-            StrictMode.setThreadPolicy(new ThreadPolicy.Builder().detectAll().build());
-            StrictMode.setVmPolicy(new VmPolicy.Builder().detectAll().build());
-        }
+        // if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+        // StrictMode.setThreadPolicy(new ThreadPolicy.Builder().detectAll().build());
+        // StrictMode.setVmPolicy(new VmPolicy.Builder().detectAll().build());
+        // }
 
         TwitterDatabase lDatabase = OpenHelperManager.getHelper(this, TwitterDatabase.class);
 

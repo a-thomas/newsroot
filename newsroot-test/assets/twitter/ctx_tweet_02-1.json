@@ -1,0 +1,2137 @@
+[
+  {
+    "created_at": "Tue Jun 25 12:00:11 +0000 2013",
+    "id": 349497246842241000,
+    "id_str": "349497246842241026",
+    "text": "Potluck, a social network with Twitter DNA, launches for friends to share links http://t.co/EKK6AvGKnm",
+    "source": "<a href=\"http://www.sbnation.com\" rel=\"nofollow\">SB Nation</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 22,
+    "favorite_count": 37,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/EKK6AvGKnm",
+          "expanded_url": "http://vrge.co/17as8Dr",
+          "display_url": "vrge.co/17as8Dr",
+          "indices": [
+            80,
+            102
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 12:00:07 +0000 2013",
+    "id": 349497231071658000,
+    "id_str": "349497231071657984",
+    "text": "Des jeux Microsoft bientôt sur plateformes mobiles : Age of Empire ouvre le bal : http://t.co/QTvuwpXmUx",
+    "source": "<a href=\"http://www.frandroid.com\" rel=\"nofollow\">Publication FrAndroid</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 25260412,
+      "id_str": "25260412",
+      "name": "FrAndroid",
+      "screen_name": "twandroid",
+      "location": "Android World",
+      "description": "Première communauté Android francophone et seconde mondiale  Toute l'actu #Android : #applis, #jeux, #smartphones, #tests",
+      "url": "http://t.co/M4dhAG94kU",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/M4dhAG94kU",
+              "expanded_url": "http://www.frandroid.com/",
+              "display_url": "frandroid.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 29075,
+      "friends_count": 3776,
+      "listed_count": 1295,
+      "created_at": "Thu Mar 19 08:45:51 +0000 2009",
+      "favourites_count": 24,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 21414,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_link_color": "009999",
+      "profile_sidebar_border_color": "EEEEEE",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 5,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/QTvuwpXmUx",
+          "expanded_url": "http://bit.ly/11XMMRZ",
+          "display_url": "bit.ly/11XMMRZ",
+          "indices": [
+            82,
+            104
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 11:55:40 +0000 2013",
+    "id": 349496108122255360,
+    "id_str": "349496108122255360",
+    "text": "RT @SmartPlanet: The top 10 U.S. cities with the happiest workers http://t.co/seh0UKVUrR",
+    "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Jun 25 10:15:02 +0000 2013",
+      "id": 349470782612705300,
+      "id_str": "349470782612705280",
+      "text": "The top 10 U.S. cities with the happiest workers http://t.co/seh0UKVUrR",
+      "source": "<a href=\"http://www.smartplanet.com\" rel=\"nofollow\">smartplanet API</a>",
+      "truncated": false,
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 34731203,
+        "id_str": "34731203",
+        "name": "SmartPlanet",
+        "screen_name": "SmartPlanet",
+        "location": "New York, NY",
+        "description": "Innovation that impacts your world. From CBS Interactive.",
+        "url": "http://t.co/fz1Wj2tsKS",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "http://t.co/fz1Wj2tsKS",
+                "expanded_url": "http://www.smartplanet.com/",
+                "display_url": "smartplanet.com",
+                "indices": [
+                  0,
+                  22
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 28572,
+        "friends_count": 8609,
+        "listed_count": 1893,
+        "created_at": "Thu Apr 23 21:13:32 +0000 2009",
+        "favourites_count": 138,
+        "utc_offset": -28800,
+        "time_zone": "Pacific Time (US & Canada)",
+        "geo_enabled": false,
+        "verified": false,
+        "statuses_count": 16205,
+        "lang": "en",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "profile_background_color": "01233E",
+        "profile_background_image_url": "http://a0.twimg.com/profile_background_images/18905248/bkg_twitter.jpg",
+        "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/18905248/bkg_twitter.jpg",
+        "profile_background_tile": false,
+        "profile_image_url": "http://a0.twimg.com/profile_images/3378750866/e39024c9f64f1f0aa5ffdfc2d9005f92_normal.jpeg",
+        "profile_image_url_https": "https://si0.twimg.com/profile_images/3378750866/e39024c9f64f1f0aa5ffdfc2d9005f92_normal.jpeg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/34731203/1347979836",
+        "profile_link_color": "0084B4",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "F4F4F4",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": null,
+        "follow_request_sent": null,
+        "notifications": null
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "retweet_count": 9,
+      "favorite_count": 2,
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [
+          {
+            "url": "http://t.co/seh0UKVUrR",
+            "expanded_url": "http://smrt.io/1aa7kQc",
+            "display_url": "smrt.io/1aa7kQc",
+            "indices": [
+              49,
+              71
+            ]
+          }
+        ],
+        "user_mentions": []
+      },
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "en"
+    },
+    "retweet_count": 9,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/seh0UKVUrR",
+          "expanded_url": "http://smrt.io/1aa7kQc",
+          "display_url": "smrt.io/1aa7kQc",
+          "indices": [
+            66,
+            88
+          ]
+        }
+      ],
+      "user_mentions": [
+        {
+          "screen_name": "SmartPlanet",
+          "name": "SmartPlanet",
+          "id": 34731203,
+          "id_str": "34731203",
+          "indices": [
+            3,
+            15
+          ]
+        }
+      ]
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 11:44:06 +0000 2013",
+    "id": 349493199875747840,
+    "id_str": "349493199875747841",
+    "text": "Daniel Cohn-Bendit rejoint Europe 1 http://t.co/dshHBfb7Q9",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 38,
+    "favorite_count": 8,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/dshHBfb7Q9",
+          "expanded_url": "http://lemde.fr/1chFiil",
+          "display_url": "lemde.fr/1chFiil",
+          "indices": [
+            36,
+            58
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 11:33:02 +0000 2013",
+    "id": 349490414178414600,
+    "id_str": "349490414178414593",
+    "text": "Rainstor announces enterprise security, search capabilities in new update http://t.co/iczouLubEG",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/iczouLubEG",
+          "expanded_url": "http://zd.net/12mPVuu",
+          "display_url": "zd.net/12mPVuu",
+          "indices": [
+            74,
+            96
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 11:29:40 +0000 2013",
+    "id": 349489564760551400,
+    "id_str": "349489564760551424",
+    "text": "Windows Azure : un DevCamp 100 % en ligne le 1er juillet de 15h à 19h, des goodies à gagner et toujours 3 mois... http://t.co/NDzfBVtIsY",
+    "source": "<a href=\"http://twitterfeed.com\" rel=\"nofollow\">twitterfeed</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 55410398,
+      "id_str": "55410398",
+      "name": "Developpez.com",
+      "screen_name": "Developpez",
+      "location": "Francophonie internationale",
+      "description": "Club des professionnels en informatique",
+      "url": "http://t.co/Opg73fK1tZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/Opg73fK1tZ",
+              "expanded_url": "http://www.developpez.com/",
+              "display_url": "developpez.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 12998,
+      "friends_count": 63,
+      "listed_count": 643,
+      "created_at": "Fri Jul 10 00:15:04 +0000 2009",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 10665,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DFE2E2",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "87BC44",
+      "profile_sidebar_fill_color": "E0FF92",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 0,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/NDzfBVtIsY",
+          "expanded_url": "http://bit.ly/19ojeGB",
+          "display_url": "bit.ly/19ojeGB",
+          "indices": [
+            114,
+            136
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 11:22:06 +0000 2013",
+    "id": 349487660617834500,
+    "id_str": "349487660617834497",
+    "text": "Quatre satellites en orbite pour fournir Internet à la moitié de la population mondiale http://t.co/PkRwke5GNj",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 99,
+    "favorite_count": 11,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/PkRwke5GNj",
+          "expanded_url": "http://lemde.fr/1chBy0v",
+          "display_url": "lemde.fr/1chBy0v",
+          "indices": [
+            88,
+            110
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 11:21:03 +0000 2013",
+    "id": 349487395969830900,
+    "id_str": "349487395969830912",
+    "text": "Google doesn't have to delete links to damaging personal details, says Europe's top court http://t.co/hza1o9nULL",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 12,
+    "favorite_count": 2,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/hza1o9nULL",
+          "expanded_url": "http://zd.net/12mOX1g",
+          "display_url": "zd.net/12mOX1g",
+          "indices": [
+            90,
+            112
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 11:12:02 +0000 2013",
+    "id": 349485128956903400,
+    "id_str": "349485128956903424",
+    "text": "Is that smartphone protection program worth it? http://t.co/QQ4qZ1hqnS",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 3,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/QQ4qZ1hqnS",
+          "expanded_url": "http://zd.net/136iqE6",
+          "display_url": "zd.net/136iqE6",
+          "indices": [
+            48,
+            70
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 11:06:12 +0000 2013",
+    "id": 349483659130179600,
+    "id_str": "349483659130179585",
+    "text": "Laurent Blanc devient l'entraîneur du PSG, Ancelotti du Real Madrid http://t.co/GcpfteXLAv",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 118,
+    "favorite_count": 12,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/GcpfteXLAv",
+          "expanded_url": "http://lemde.fr/10Qwn7U",
+          "display_url": "lemde.fr/10Qwn7U",
+          "indices": [
+            68,
+            90
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 11:00:35 +0000 2013",
+    "id": 349482246224363500,
+    "id_str": "349482246224363521",
+    "text": "RT @vladsavov: The Xperia Z Ultra isn't a phone, it's a tablet you can sidetalk with http://t.co/VBGRofFoty",
+    "source": "<a href=\"http://itunes.apple.com/us/app/twitter/id409789998?mt=12\" rel=\"nofollow\">Twitter for Mac</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Jun 25 09:32:04 +0000 2013",
+      "id": 349459969608917000,
+      "id_str": "349459969608916993",
+      "text": "The Xperia Z Ultra isn't a phone, it's a tablet you can sidetalk with http://t.co/VBGRofFoty",
+      "source": "web",
+      "truncated": false,
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 75246510,
+        "id_str": "75246510",
+        "name": "Vlad Savov",
+        "screen_name": "vladsavov",
+        "location": "London",
+        "description": "Senior Absurdist at The Verge",
+        "url": null,
+        "entities": {
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 11547,
+        "friends_count": 60,
+        "listed_count": 679,
+        "created_at": "Fri Sep 18 10:09:41 +0000 2009",
+        "favourites_count": 5,
+        "utc_offset": 0,
+        "time_zone": "London",
+        "geo_enabled": true,
+        "verified": true,
+        "statuses_count": 3854,
+        "lang": "en",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "profile_background_color": "2B333D",
+        "profile_background_image_url": "http://a0.twimg.com/profile_background_images/311988827/tt.jpg",
+        "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/311988827/tt.jpg",
+        "profile_background_tile": false,
+        "profile_image_url": "http://a0.twimg.com/profile_images/3103678473/1a34fc7790c20e7d79af3e6b9d895fdb_normal.jpeg",
+        "profile_image_url_https": "https://si0.twimg.com/profile_images/3103678473/1a34fc7790c20e7d79af3e6b9d895fdb_normal.jpeg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/75246510/1359977079",
+        "profile_link_color": "E62929",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "000000",
+        "profile_text_color": "434D5C",
+        "profile_use_background_image": false,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": null,
+        "follow_request_sent": null,
+        "notifications": null
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "retweet_count": 24,
+      "favorite_count": 10,
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [
+          {
+            "url": "http://t.co/VBGRofFoty",
+            "expanded_url": "http://www.theverge.com/2013/6/25/4461994/sony-xperia-z-ultra-hands-on-preview",
+            "display_url": "theverge.com/2013/6/25/4461…",
+            "indices": [
+              70,
+              92
+            ]
+          }
+        ],
+        "user_mentions": []
+      },
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "en"
+    },
+    "retweet_count": 24,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/VBGRofFoty",
+          "expanded_url": "http://www.theverge.com/2013/6/25/4461994/sony-xperia-z-ultra-hands-on-preview",
+          "display_url": "theverge.com/2013/6/25/4461…",
+          "indices": [
+            85,
+            107
+          ]
+        }
+      ],
+      "user_mentions": [
+        {
+          "screen_name": "vladsavov",
+          "name": "Vlad Savov",
+          "id": 75246510,
+          "id_str": "75246510",
+          "indices": [
+            3,
+            13
+          ]
+        }
+      ]
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 10:58:02 +0000 2013",
+    "id": 349481607406682100,
+    "id_str": "349481607406682112",
+    "text": "10 tips for better battery life for Android phones http://t.co/ecgiKdZjzC",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 10,
+    "favorite_count": 11,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/ecgiKdZjzC",
+          "expanded_url": "http://zd.net/136hvDO",
+          "display_url": "zd.net/136hvDO",
+          "indices": [
+            51,
+            73
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 10:48:26 +0000 2013",
+    "id": 349479190137016300,
+    "id_str": "349479190137016321",
+    "text": "Windows Azure : Microsoft et Oracle enterrent la hache de guerre avec un accord sur Java, le SGBD, le Linux et... http://t.co/i4cHXoJo5Q",
+    "source": "<a href=\"http://twitterfeed.com\" rel=\"nofollow\">twitterfeed</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 55410398,
+      "id_str": "55410398",
+      "name": "Developpez.com",
+      "screen_name": "Developpez",
+      "location": "Francophonie internationale",
+      "description": "Club des professionnels en informatique",
+      "url": "http://t.co/Opg73fK1tZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/Opg73fK1tZ",
+              "expanded_url": "http://www.developpez.com/",
+              "display_url": "developpez.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 12998,
+      "friends_count": 63,
+      "listed_count": 643,
+      "created_at": "Fri Jul 10 00:15:04 +0000 2009",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 10665,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DFE2E2",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "87BC44",
+      "profile_sidebar_fill_color": "E0FF92",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 0,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/i4cHXoJo5Q",
+          "expanded_url": "http://bit.ly/1aacwU5",
+          "display_url": "bit.ly/1aacwU5",
+          "indices": [
+            114,
+            136
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:48:26 +0000 2013",
+    "id": 349479188840976400,
+    "id_str": "349479188840976385",
+    "text": "Microsoft dévoile « Bing for schools », une version sans publicité de son moteur de recherche, axée sur l'appr... http://t.co/1D3ncVrH9z",
+    "source": "<a href=\"http://twitterfeed.com\" rel=\"nofollow\">twitterfeed</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 55410398,
+      "id_str": "55410398",
+      "name": "Developpez.com",
+      "screen_name": "Developpez",
+      "location": "Francophonie internationale",
+      "description": "Club des professionnels en informatique",
+      "url": "http://t.co/Opg73fK1tZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/Opg73fK1tZ",
+              "expanded_url": "http://www.developpez.com/",
+              "display_url": "developpez.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 12998,
+      "friends_count": 63,
+      "listed_count": 643,
+      "created_at": "Fri Jul 10 00:15:04 +0000 2009",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 10665,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DFE2E2",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "87BC44",
+      "profile_sidebar_fill_color": "E0FF92",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 0,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/1D3ncVrH9z",
+          "expanded_url": "http://bit.ly/17a3rXW",
+          "display_url": "bit.ly/17a3rXW",
+          "indices": [
+            114,
+            136
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:48:03 +0000 2013",
+    "id": 349479091180814340,
+    "id_str": "349479091180814336",
+    "text": "Firefox 22 available, promises real-time comms and 3D gaming http://t.co/dNi2lRhBaa",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 13,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/dNi2lRhBaa",
+          "expanded_url": "http://zd.net/136gUC3",
+          "display_url": "zd.net/136gUC3",
+          "indices": [
+            61,
+            83
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 10:40:06 +0000 2013",
+    "id": 349477094071349250,
+    "id_str": "349477094071349248",
+    "text": "4G : les enchères pour les 700 MHz pourraient arriver en 2015 http://t.co/LZ3HBlDb6H",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 2,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/LZ3HBlDb6H",
+          "expanded_url": "http://bit.ly/14o7Mny",
+          "display_url": "bit.ly/14o7Mny",
+          "indices": [
+            62,
+            84
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:34:05 +0000 2013",
+    "id": 349475578493157400,
+    "id_str": "349475578493157376",
+    "text": "Qualcomm finalise son investissement au sein de Sharp http://t.co/nPh5apTkky",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 1,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/nPh5apTkky",
+          "expanded_url": "http://bit.ly/14o6SHV",
+          "display_url": "bit.ly/14o6SHV",
+          "indices": [
+            54,
+            76
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:30:30 +0000 2013",
+    "id": 349474676046704640,
+    "id_str": "349474676046704640",
+    "text": "Une version stable de CyanogenMod 10.1.0 est disponible : http://t.co/vma0OcTclk",
+    "source": "<a href=\"http://www.frandroid.com\" rel=\"nofollow\">Publication FrAndroid</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 25260412,
+      "id_str": "25260412",
+      "name": "FrAndroid",
+      "screen_name": "twandroid",
+      "location": "Android World",
+      "description": "Première communauté Android francophone et seconde mondiale  Toute l'actu #Android : #applis, #jeux, #smartphones, #tests",
+      "url": "http://t.co/M4dhAG94kU",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/M4dhAG94kU",
+              "expanded_url": "http://www.frandroid.com/",
+              "display_url": "frandroid.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 29075,
+      "friends_count": 3776,
+      "listed_count": 1295,
+      "created_at": "Thu Mar 19 08:45:51 +0000 2009",
+      "favourites_count": 24,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 21414,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_link_color": "009999",
+      "profile_sidebar_border_color": "EEEEEE",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 14,
+    "favorite_count": 3,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/vma0OcTclk",
+          "expanded_url": "http://bit.ly/11DX1zc",
+          "display_url": "bit.ly/11DX1zc",
+          "indices": [
+            58,
+            80
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:28:05 +0000 2013",
+    "id": 349474067608387600,
+    "id_str": "349474067608387584",
+    "text": "Numericable : la Box s'enrichit d'un navigateur Web et de YouTube http://t.co/x82XKcYJWr",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 3,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/x82XKcYJWr",
+          "expanded_url": "http://bit.ly/14o5J2S",
+          "display_url": "bit.ly/14o5J2S",
+          "indices": [
+            66,
+            88
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 10:27:03 +0000 2013",
+    "id": 349473806655565800,
+    "id_str": "349473806655565824",
+    "text": "Israel's 1Gbps fiber will show the world what superfast broadband can really do: Cisco CEO http://t.co/SYsc3wciYW",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 22,
+    "favorite_count": 3,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/SYsc3wciYW",
+          "expanded_url": "http://zd.net/136fwzb",
+          "display_url": "zd.net/136fwzb",
+          "indices": [
+            91,
+            113
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  }
+]

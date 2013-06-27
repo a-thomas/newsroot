@@ -7,6 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -145,6 +148,60 @@ public class TwitterManager
     public boolean isAuthorized()
     {
         return mAuthorized;
+    }
+
+    public List<Object> findTweets() throws TwitterAccessException
+    {
+        try {
+            PreparedQuery<Tweet> lTweetsQuery = mTweetDao.queryBuilder()
+                                                         .limit(DEFAULT_PAGE_SIZE)
+                                                         .orderBy("TWT_CREATE_AT", false)
+                                                         .prepare();
+            List<Tweet> lTweets = mTweetDao.query(lTweetsQuery);
+
+            // TODO Should be 1st of previous page!!
+            List<TimeGap> lTimeGaps = new ArrayList<TimeGap>();
+            if (lTweets.size() > 1) {
+                PreparedQuery<TimeGap> lTimeGapsQuery = mTimeGapDao.queryBuilder()
+                                                                   .where()
+                                                                   .le("TMG_TWT_EARLIEST_ID", lTweets.get(0).getId())
+                                                                   .and()
+                                                                   .ge("TMG_TWT_OLDEST_ID", lTweets.get(lTweets.size()).getId())
+                                                                   .prepare();
+                lTimeGaps = mTimeGapDao.query(lTimeGapsQuery);
+            }
+
+            List<Object> lNews = new ArrayList<Object>(lTweets.size() + lTimeGaps.size());
+            lNews.addAll(lTweets);
+            lNews.addAll(lTimeGaps);
+            Collections.sort(lNews, new Comparator<Object>() {
+                public int compare(Object pLhs, Object pRhs)
+                {
+                    long lId1 = -1;
+                    long lId2 = -1;
+                    if (pLhs instanceof TimeGap) {
+                        lId1 = ((TimeGap) pLhs).getOldestBound() + 1;
+                    } else if (pLhs instanceof Tweet) {
+                        lId1 = ((Tweet) pLhs).getId();
+                    }
+                    if (pRhs instanceof TimeGap) {
+                        lId2 = ((TimeGap) pRhs).getOldestBound() + 1;
+                    } else if (pRhs instanceof Tweet) {
+                        lId2 = ((Tweet) pRhs).getId();
+                    }
+                    if (lId1 > lId2) {
+                        return 1;
+                    } else if (lId1 < lId2) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            return lNews;
+        } catch (SQLException eSQLException) {
+            throw TwitterAccessException.from(eSQLException);
+        }
     }
 
     public List<Tweet> findNewTweets() throws TwitterAccessException

@@ -1,5 +1,1340 @@
 [
   {
+    "created_at": "Tue Jun 25 08:28:06 +0000 2013",
+    "id": 349443871694012400,
+    "id_str": "349443871694012418",
+    "text": "Clément Méric : ce que disent les caméras de surveillance http://t.co/oFCsTY6ijH",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 102,
+    "favorite_count": 13,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/oFCsTY6ijH",
+          "expanded_url": "http://lemde.fr/10Qard9",
+          "display_url": "lemde.fr/10Qard9",
+          "indices": [
+            58,
+            80
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:12:04 +0000 2013",
+    "id": 349439840015745000,
+    "id_str": "349439840015745024",
+    "text": "ACDSee 16 disponible, toujours une référence ? http://t.co/rDVDzBeiFe",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 1,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/rDVDzBeiFe",
+          "expanded_url": "http://bit.ly/1a9QbpW",
+          "display_url": "bit.ly/1a9QbpW",
+          "indices": [
+            47,
+            69
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:00:48 +0000 2013",
+    "id": 349437004410400800,
+    "id_str": "349437004410400769",
+    "text": "RT @LG_Blog_France: Test du #LG Optimus G Pro (E986) à lire chez @twandroid http://t.co/gQOA38kTWd",
+    "source": "<a href=\"http://itunes.apple.com/us/app/twitter/id409789998?mt=12\" rel=\"nofollow\">Twitter for Mac</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 25260412,
+      "id_str": "25260412",
+      "name": "FrAndroid",
+      "screen_name": "twandroid",
+      "location": "Android World",
+      "description": "Première communauté Android francophone et seconde mondiale  Toute l'actu #Android : #applis, #jeux, #smartphones, #tests",
+      "url": "http://t.co/M4dhAG94kU",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/M4dhAG94kU",
+              "expanded_url": "http://www.frandroid.com/",
+              "display_url": "frandroid.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 29075,
+      "friends_count": 3776,
+      "listed_count": 1295,
+      "created_at": "Thu Mar 19 08:45:51 +0000 2009",
+      "favourites_count": 24,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 21414,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme14/bg.gif",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
+      "profile_link_color": "009999",
+      "profile_sidebar_border_color": "EEEEEE",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Jun 25 07:48:31 +0000 2013",
+      "id": 349433913845874700,
+      "id_str": "349433913845874689",
+      "text": "Test du #LG Optimus G Pro (E986) à lire chez @twandroid http://t.co/gQOA38kTWd",
+      "source": "<a href=\"http://twitter.com/tweetbutton\" rel=\"nofollow\">Tweet Button</a>",
+      "truncated": false,
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 18982329,
+        "id_str": "18982329",
+        "name": "LG_France",
+        "screen_name": "LG_Blog_France",
+        "location": "",
+        "description": "Compte officiel de LG Electronics France\r\n#LG #SmartTV #WeareLG\r\nhttps://t.co/ET3EKcPcjy",
+        "url": "http://t.co/sZSZIuo9WG",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "http://t.co/sZSZIuo9WG",
+                "expanded_url": "http://www.lgblog.fr/",
+                "display_url": "lgblog.fr",
+                "indices": [
+                  0,
+                  22
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": [
+              {
+                "url": "https://t.co/ET3EKcPcjy",
+                "expanded_url": "https://www.facebook.com/lgfrance",
+                "display_url": "facebook.com/lgfrance",
+                "indices": [
+                  65,
+                  88
+                ]
+              }
+            ]
+          }
+        },
+        "protected": false,
+        "followers_count": 5812,
+        "friends_count": 994,
+        "listed_count": 215,
+        "created_at": "Wed Jan 14 16:43:22 +0000 2009",
+        "favourites_count": 19,
+        "utc_offset": 3600,
+        "time_zone": "Paris",
+        "geo_enabled": true,
+        "verified": false,
+        "statuses_count": 2060,
+        "lang": "fr",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "profile_background_color": "FFFFFF",
+        "profile_background_image_url": "http://a0.twimg.com/profile_background_images/344511763024825455/ac878934176ecc68c1d080cc28dced1a.png",
+        "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/344511763024825455/ac878934176ecc68c1d080cc28dced1a.png",
+        "profile_background_tile": false,
+        "profile_image_url": "http://a0.twimg.com/profile_images/2789521590/483e1291fdab25d2509728c9bedf556a_normal.png",
+        "profile_image_url_https": "https://si0.twimg.com/profile_images/2789521590/483e1291fdab25d2509728c9bedf556a_normal.png",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/18982329/1371024423",
+        "profile_link_color": "1F98C7",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "EFEFEF",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": null,
+        "follow_request_sent": null,
+        "notifications": null
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "retweet_count": 2,
+      "favorite_count": 0,
+      "entities": {
+        "hashtags": [
+          {
+            "text": "LG",
+            "indices": [
+              8,
+              11
+            ]
+          }
+        ],
+        "symbols": [],
+        "urls": [
+          {
+            "url": "http://t.co/gQOA38kTWd",
+            "expanded_url": "http://www.frandroid.com/test/147924_test-du-lg-optimus-g-pro-e986",
+            "display_url": "frandroid.com/test/147924_te…",
+            "indices": [
+              56,
+              78
+            ]
+          }
+        ],
+        "user_mentions": [
+          {
+            "screen_name": "twandroid",
+            "name": "FrAndroid",
+            "id": 25260412,
+            "id_str": "25260412",
+            "indices": [
+              45,
+              55
+            ]
+          }
+        ]
+      },
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "fr"
+    },
+    "retweet_count": 2,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [
+        {
+          "text": "LG",
+          "indices": [
+            28,
+            31
+          ]
+        }
+      ],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/gQOA38kTWd",
+          "expanded_url": "http://www.frandroid.com/test/147924_test-du-lg-optimus-g-pro-e986",
+          "display_url": "frandroid.com/test/147924_te…",
+          "indices": [
+            76,
+            98
+          ]
+        }
+      ],
+      "user_mentions": [
+        {
+          "screen_name": "LG_Blog_France",
+          "name": "LG_France",
+          "id": 18982329,
+          "id_str": "18982329",
+          "indices": [
+            3,
+            18
+          ]
+        },
+        {
+          "screen_name": "twandroid",
+          "name": "FrAndroid",
+          "id": 25260412,
+          "id_str": "25260412",
+          "indices": [
+            65,
+            75
+          ]
+        }
+      ]
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:30:58 +0000 2013",
+    "id": 349429493900906500,
+    "id_str": "349429493900906498",
+    "text": "Immobilier: le neuf ralentit sa chute http://t.co/XwS77O4YJ6",
+    "source": "<a href=\"http://twitter.com/tweetbutton\" rel=\"nofollow\">Tweet Button</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 140776364,
+      "id_str": "140776364",
+      "name": "BFM Business",
+      "screen_name": "bfmbusiness",
+      "location": "",
+      "description": "Compte officiel de BFM Business",
+      "url": "http://t.co/JBiTL29ifZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/JBiTL29ifZ",
+              "expanded_url": "http://www.bfmbusiness.com",
+              "display_url": "bfmbusiness.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 27619,
+      "friends_count": 353,
+      "listed_count": 662,
+      "created_at": "Thu May 06 10:21:56 +0000 2010",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 6606,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "C0DEED",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_link_color": "0084B4",
+      "profile_sidebar_border_color": "C0DEED",
+      "profile_sidebar_fill_color": "DDEEF6",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": true,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 9,
+    "favorite_count": 4,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/XwS77O4YJ6",
+          "expanded_url": "http://www.bfmtv.com/economie/immobilier-neuf-ralentit-chute-545340.html",
+          "display_url": "bfmtv.com/economie/immob…",
+          "indices": [
+            38,
+            60
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:30:52 +0000 2013",
+    "id": 349429468894478340,
+    "id_str": "349429468894478336",
+    "text": "Laurent #Jalabert : \"Je ne peux pas dire que ce soit faux, je ne peux pas dire que ce soit vrai\" http://t.co/8vz7sE0VhL",
+    "source": "<a href=\"http://www.tweetdeck.com\" rel=\"nofollow\">TweetDeck</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 37,
+    "favorite_count": 3,
+    "entities": {
+      "hashtags": [
+        {
+          "text": "Jalabert",
+          "indices": [
+            8,
+            17
+          ]
+        }
+      ],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/8vz7sE0VhL",
+          "expanded_url": "http://lemde.fr/14Uzzyx",
+          "display_url": "lemde.fr/14Uzzyx",
+          "indices": [
+            97,
+            119
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:28:34 +0000 2013",
+    "id": 349428889900163100,
+    "id_str": "349428889900163072",
+    "text": "L'opposition tire le signal d'alarme sur les déficits http://t.co/53fJ7IMcXy",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 7,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/53fJ7IMcXy",
+          "expanded_url": "http://lemde.fr/1ch2k8Y",
+          "display_url": "lemde.fr/1ch2k8Y",
+          "indices": [
+            54,
+            76
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:26:05 +0000 2013",
+    "id": 349428264630100000,
+    "id_str": "349428264630099969",
+    "text": "Reconnaissance de mouvements : dernière ligne droite pour Leap Motion http://t.co/eydvc86yet",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 2,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/eydvc86yet",
+          "expanded_url": "http://bit.ly/1a9K2tI",
+          "display_url": "bit.ly/1a9K2tI",
+          "indices": [
+            70,
+            92
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:24:51 +0000 2013",
+    "id": 349427954293555200,
+    "id_str": "349427954293555200",
+    "text": "Tamim Al-Thani, un héritier prudent à la tête du #Qatar http://t.co/Vfp6RrjsSJ",
+    "source": "<a href=\"http://www.tweetdeck.com\" rel=\"nofollow\">TweetDeck</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 30,
+    "favorite_count": 4,
+    "entities": {
+      "hashtags": [
+        {
+          "text": "Qatar",
+          "indices": [
+            49,
+            55
+          ]
+        }
+      ],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/Vfp6RrjsSJ",
+          "expanded_url": "http://lemde.fr/14UzYRC",
+          "display_url": "lemde.fr/14UzYRC",
+          "indices": [
+            56,
+            78
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:18:30 +0000 2013",
+    "id": 349426357484269600,
+    "id_str": "349426357484269570",
+    "text": "Michel-Edouard Leclerc: \"les corporations font pression sur l'Etat\" http://t.co/bBBunpUI7a",
+    "source": "<a href=\"http://twitter.com/tweetbutton\" rel=\"nofollow\">Tweet Button</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 140776364,
+      "id_str": "140776364",
+      "name": "BFM Business",
+      "screen_name": "bfmbusiness",
+      "location": "",
+      "description": "Compte officiel de BFM Business",
+      "url": "http://t.co/JBiTL29ifZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/JBiTL29ifZ",
+              "expanded_url": "http://www.bfmbusiness.com",
+              "display_url": "bfmbusiness.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 27619,
+      "friends_count": 353,
+      "listed_count": 662,
+      "created_at": "Thu May 06 10:21:56 +0000 2010",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 6606,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "C0DEED",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_link_color": "0084B4",
+      "profile_sidebar_border_color": "C0DEED",
+      "profile_sidebar_fill_color": "DDEEF6",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": true,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 4,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/bBBunpUI7a",
+          "expanded_url": "http://www.bfmtv.com/economie/michel-edouard-leclerc-les-corporations-font-pression-letat-545306.html",
+          "display_url": "bfmtv.com/economie/miche…",
+          "indices": [
+            68,
+            90
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:16:39 +0000 2013",
+    "id": 349425893216747500,
+    "id_str": "349425893216747520",
+    "text": "L'écrivain de science-fiction Richard Matheson (auteur de \"Je suis une légende\", sorti en 1954) est mort http://t.co/9klXwAgmnj",
+    "source": "<a href=\"http://www.tweetdeck.com\" rel=\"nofollow\">TweetDeck</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 99,
+    "favorite_count": 12,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/9klXwAgmnj",
+          "expanded_url": "http://lemde.fr/14UzoTP",
+          "display_url": "lemde.fr/14UzoTP",
+          "indices": [
+            105,
+            127
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:12:33 +0000 2013",
+    "id": 349424859861880800,
+    "id_str": "349424859861880833",
+    "text": "L'armée libanaise prend le contrôle du QG d'un cheikh sunnite radical http://t.co/7e41duGqq6",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 24,
+    "favorite_count": 5,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/7e41duGqq6",
+          "expanded_url": "http://lemde.fr/1cgZscu",
+          "display_url": "lemde.fr/1cgZscu",
+          "indices": [
+            70,
+            92
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 07:06:52 +0000 2013",
+    "id": 349423431990779900,
+    "id_str": "349423431990779904",
+    "text": "Free brade la Freebox Crystal à 1,99 euro/mois sur http://t.co/lHfoFbdBBd http://t.co/rIYRuFjSO9",
+    "source": "web",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 11,
+    "favorite_count": 2,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/lHfoFbdBBd",
+          "expanded_url": "http://Vente-privee.com",
+          "display_url": "Vente-privee.com",
+          "indices": [
+            51,
+            73
+          ]
+        },
+        {
+          "url": "http://t.co/rIYRuFjSO9",
+          "expanded_url": "http://bit.ly/1ce987u",
+          "display_url": "bit.ly/1ce987u",
+          "indices": [
+            74,
+            96
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
     "created_at": "Wed Jun 19 19:31:43 +0000 2013",
     "id": 347436551153791000,
     "id_str": "347436551153790977",

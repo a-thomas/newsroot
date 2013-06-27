@@ -52,15 +52,13 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         mDatabase.recreate();
 
         mServerConfig = mock(MockBackend.Config.class);
+        mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
     }
 
     @Override
     protected void tearDown() throws Exception
     {
-        if (mServer != null) {
-            mServer.stop();
-            mServer = null;
-        }
+        mServer.stop();
         super.tearDown();
     }
 
@@ -157,11 +155,10 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         return lTwitterManager;
     }
 
-    public void testFindNewTweets_emptyTimeline() throws TwitterAccessException
+    public void testFindNewTweets_noResult_emptyTimeline() throws Exception
     {
         // Setup
-        mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
-        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/tweets_empty.json");
+        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_empty.json");
         TwitterManager lTwitterManager = setupTwitterManagerAuthenticated();
         // Run
         List<Tweet> lTweets = lTwitterManager.findNewTweets();
@@ -170,21 +167,14 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertThat(lTweets.size(), equalTo(0));
     }
 
-    public void testFindNewTweets_nonEmptyTimeline_noResult() throws TwitterAccessException
+    public void testFindNewTweets_noResult_nonEmptyTimeline() throws Exception
     {
         // Setup
-        mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
-        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/tweets_02.json")
-                                                                                    .thenReturn("twitter/tweets_empty.json");
+        executeSqlScript(getInstrumentation().getContext(), mDatabase.getWritableDatabase(), "twitter/ctx_timeline_04.sql", false);
+        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_empty.json");
         TwitterManager lTwitterManager = setupTwitterManagerAuthenticated();
         // Run
         List<Tweet> lTweets = lTwitterManager.findNewTweets();
-        // Check
-        assertThat(lTweets, notNullValue());
-        assertThat(lTweets.size(), equalTo(20));
-
-        // Run
-        lTweets = lTwitterManager.findNewTweets();
         // Check
         assertThat(lTweets, notNullValue());
         assertThat(lTweets.size(), equalTo(0));

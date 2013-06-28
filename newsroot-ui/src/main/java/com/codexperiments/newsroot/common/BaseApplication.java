@@ -13,7 +13,6 @@ import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
 import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;
 import com.codexperiments.robolabor.task.handler.Task;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public abstract class BaseApplication extends Application
 {
@@ -53,7 +52,7 @@ public abstract class BaseApplication extends Application
         // StrictMode.setVmPolicy(new VmPolicy.Builder().detectAll().build());
         // }
 
-        TwitterDatabase lDatabase = OpenHelperManager.getHelper(this, TwitterDatabase.class);
+        TwitterDatabase lDatabase = new TwitterDatabase(this);
 
         registerService(Platform.Factory.findCurrentPlatform(this));
         registerService(new AndroidEventBus());

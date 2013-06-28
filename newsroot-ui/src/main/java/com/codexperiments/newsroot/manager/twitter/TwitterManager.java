@@ -6,12 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -20,8 +15,13 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
+
+import org.w3c.dom.Comment;
+
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
@@ -30,8 +30,6 @@ import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
 
 public class TwitterManager
 {
@@ -51,13 +49,10 @@ public class TwitterManager
 
     private Config mConfig;
     private SharedPreferences mPreferences;
+    private TwitterDatabase mDatabase;
+    private JsonFactory mJSONFactory;
     private OAuthConsumer mConsumer;
     private OAuthProvider mProvider;
-
-    private JsonFactory mJSONFactory;
-    private Dao<Tweet, Integer> mTweetDao;
-    private Dao<Timeline, Integer> mTimelineDao;
-    private Dao<TimeGap, Integer> mTimeGapDao;
 
     private String mId;
     private String mScreenName;
@@ -70,11 +65,8 @@ public class TwitterManager
         super();
         mConfig = pConfig;
         mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);
-
+        mDatabase = pDatabase;
         mJSONFactory = new JsonFactory();
-        mTweetDao = pDatabase.getTweetDao();
-        mTimelineDao = pDatabase.getTimelineDao();
-        mTimeGapDao = pDatabase.getTimeGapDao();
 
         mId = mPreferences.getString(PREF_USER_ID, null);
         mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
@@ -152,134 +144,160 @@ public class TwitterManager
 
     public List<Object> findTweets() throws TwitterAccessException
     {
+        SQLiteDatabase lConnection = mDatabase.getConnection();
+        Cursor lCursor = lConnection.rawQuery("select * from VIEW_TIMELINE limit ?",
+                                              new String[] { String.valueOf(DEFAULT_PAGE_SIZE) });
+        lCursor.moveToFirst();
         try {
-            PreparedQuery<Tweet> lTweetsQuery = mTweetDao.queryBuilder()
-                                                         .limit(DEFAULT_PAGE_SIZE)
-                                                         .orderBy("TWT_CREATE_AT", false)
-                                                         .prepare();
-            List<Tweet> lTweets = mTweetDao.query(lTweetsQuery);
-
-            // TODO Should be 1st of previous page!!
-            List<TimeGap> lTimeGaps = new ArrayList<TimeGap>();
-            if (lTweets.size() > 1) {
-                PreparedQuery<TimeGap> lTimeGapsQuery = mTimeGapDao.queryBuilder()
-                                                                   .where()
-                                                                   .le("TMG_TWT_EARLIEST_ID", lTweets.get(0).getId())
-                                                                   .and()
-                                                                   .ge("TMG_TWT_OLDEST_ID", lTweets.get(lTweets.size()).getId())
-                                                                   .prepare();
-                lTimeGaps = mTimeGapDao.query(lTimeGapsQuery);
+            while (!lCursor.isAfterLast()) {
+                Comment comment = cursorToComment(lCursor);
+                comments.add(comment);
+                lCursor.moveToNext();
             }
-
-            List<Object> lNews = new ArrayList<Object>(lTweets.size() + lTimeGaps.size());
-            lNews.addAll(lTweets);
-            lNews.addAll(lTimeGaps);
-            Collections.sort(lNews, new Comparator<Object>() {
-                public int compare(Object pLhs, Object pRhs)
-                {
-                    long lId1 = -1;
-                    long lId2 = -1;
-                    if (pLhs instanceof TimeGap) {
-                        lId1 = ((TimeGap) pLhs).getOldestBound() + 1;
-                    } else if (pLhs instanceof Tweet) {
-                        lId1 = ((Tweet) pLhs).getId();
-                    }
-                    if (pRhs instanceof TimeGap) {
-                        lId2 = ((TimeGap) pRhs).getOldestBound() + 1;
-                    } else if (pRhs instanceof Tweet) {
-                        lId2 = ((Tweet) pRhs).getId();
-                    }
-                    if (lId1 > lId2) {
-                        return 1;
-                    } else if (lId1 < lId2) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
-            return lNews;
-        } catch (SQLException eSQLException) {
-            throw TwitterAccessException.from(eSQLException);
+        } finally {
+            lCursor.close();
         }
+        return comments;
+
+        return null;
+        // try {
+        // PreparedQuery<Tweet> lTweetsQuery = mTweetDao.queryBuilder()
+        // .limit(DEFAULT_PAGE_SIZE)
+        // .orderBy("TWT_CREATE_AT", false)
+        // .prepare();
+        // CloseableIterator<Tweet> lTweetCursor = mTweetDao.iterator(lTweetsQuery);
+        //
+        // PreparedQuery<Tweet> lTweetsQuery = mTweetDao.queryBuilder()
+        // .limit(DEFAULT_PAGE_SIZE)
+        // .orderBy("TWT_CREATE_AT", false)
+        // .prepare();
+        // List<Tweet> lTweets = mTweetDao.query(lTweetsQuery);
+        //
+        // TODO Should be 1st of previous page!!
+        // List<TimeGap> lTimeGaps = new ArrayList<TimeGap>();
+        // CloseableIterator<TimeGap> lTimeGapIterator;
+        // if (lTweets.size() > 1) {
+        // PreparedQuery<TimeGap> lTimeGapsQuery = mTimeGapDao.queryBuilder()
+        // .where()
+        // .le("TMG_TWT_EARLIEST_ID", lTweets.get(0).getId())
+        // .and()
+        // .ge("TMG_TWT_OLDEST_ID", lTweets.get(lTweets.size()).getId())
+        // .prepare();
+        // CloseableIterator<TimeGap> lTimeGapIterator = mTimeGapDao.iterator(lTimeGapsQuery);
+        // }
+        //
+        // List<Object> lNews = new ArrayList<Object>(lTweets.size() + lTimeGaps.size());
+        // lNews.addAll(lTweets);
+        // lNews.addAll(lTimeGaps);
+        // Collections.sort(lNews, new Comparator<Object>() {
+        // public int compare(Object pLhs, Object pRhs)
+        // {
+        // long lId1 = -1;
+        // long lId2 = -1;
+        // if (pLhs instanceof TimeGap) {
+        // lId1 = ((TimeGap) pLhs).getOldestBound() + 1;
+        // } else if (pLhs instanceof Tweet) {
+        // lId1 = ((Tweet) pLhs).getId();
+        // }
+        // if (pRhs instanceof TimeGap) {
+        // lId2 = ((TimeGap) pRhs).getOldestBound() + 1;
+        // } else if (pRhs instanceof Tweet) {
+        // lId2 = ((Tweet) pRhs).getId();
+        // }
+        // if (lId1 > lId2) {
+        // return 1;
+        // } else if (lId1 < lId2) {
+        // return -1;
+        // } else {
+        // return 0;
+        // }
+        // }
+        // });
+        // return lNews;
+        // } catch (SQLException eSQLException) {
+        // throw TwitterAccessException.from(eSQLException);
+        // }
     }
 
-    public List<Tweet> findNewTweets() throws TwitterAccessException
+    public List<Tweet> findLatestTweets() throws TwitterAccessException
     {
-        try {
-            PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_EARLIEST_ID", -1).prepare();
-            TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
-            if (lTimeGap == null) {
-                lTimeGap = TimeGap.initialTimeGap();
-            }
-            return findTweetsInGap(lTimeGap);
-        } catch (SQLException eSQLException) {
-            throw TwitterAccessException.from(eSQLException);
-        }
+        // try {
+        // PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_EARLIEST_ID", -1).prepare();
+        // TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
+        // if (lTimeGap == null) {
+        // lTimeGap = TimeGap.initialTimeGap();
+        // }
+        // return findTweetsInGap(lTimeGap);
+        // } catch (SQLException eSQLException) {
+        // throw TwitterAccessException.from(eSQLException);
+        // }
+        return null;
     }
 
     public List<Tweet> findOldTweets() throws TwitterAccessException
     {
-        try {
-            PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_OLDEST_ID", -1).prepare();
-            TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
-            if (lTimeGap == null) {
-                lTimeGap = TimeGap.initialTimeGap();
-            }
-            return findTweetsInGap(lTimeGap);
-        } catch (SQLException eSQLException) {
-            throw TwitterAccessException.from(eSQLException);
-        }
+        // try {
+        // PreparedQuery<TimeGap> lQuery = mTimeGapDao.queryBuilder().where().eq("TMG_TWT_OLDEST_ID", -1).prepare();
+        // TimeGap lTimeGap = mTimeGapDao.queryForFirst(lQuery);
+        // if (lTimeGap == null) {
+        // lTimeGap = TimeGap.initialTimeGap();
+        // }
+        // return findTweetsInGap(lTimeGap);
+        // } catch (SQLException eSQLException) {
+        // throw TwitterAccessException.from(eSQLException);
+        // }
+        return null;
     }
 
     public List<Tweet> findTweetsInGap(final TimeGap pTimeGap) throws TwitterAccessException
     {
-        // TODO Use URLEncodedUtils, trim_user, exclude_replies
-        StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)
-                                                                 .append("?count=")
-                                                                 .append(DEFAULT_PAGE_SIZE);
-        if (!pTimeGap.isFutureGap()) {
-            lUrl.append("&max_id=").append(pTimeGap.getEarliestBound() - 1);
-        }
-        if (!pTimeGap.isPastGap()) {
-            lUrl.append("&since_id=").append(pTimeGap.getOldestBound());
-        }
-
-        final List<Tweet> lTweets = parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
-            public List<Tweet> parse(JsonParser pParser) throws Exception
-            {
-                return TwitterParser.parseTweetList(pParser);
-            }
-        });
-
-        try {
-            mTweetDao.callBatchTasks(new Callable<Void>() {
-                public Void call() throws Exception
-                {
-                    if (lTweets.size() > 0) {
-                        for (Tweet lTweet : lTweets) {
-                            mTweetDao.create(lTweet);
-                        }
-
-                        if (pTimeGap.isInitialGap()) {
-                            mTimeGapDao.create(TimeGap.futureTimeGap(lTweets));
-                            mTimeGapDao.create(TimeGap.pastTimeGap(lTweets));
-                        } else {
-                            TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
-                            mTimeGapDao.update(lRemainingTimeGap);
-                        }
-                    } else {
-                        if (!pTimeGap.isFutureGap()) {
-                            mTimeGapDao.delete(pTimeGap);
-                        }
-                    }
-                    return null;
-                }
-            });
-        } catch (Exception eException) {
-            throw TwitterAccessException.from(eException);
-        }
-        return lTweets;
+        // // TODO Use URLEncodedUtils, trim_user, exclude_replies
+        // StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)
+        // .append("?count=")
+        // .append(DEFAULT_PAGE_SIZE);
+        // if (!pTimeGap.isFutureGap()) {
+        // lUrl.append("&max_id=").append(pTimeGap.getEarliestBound() - 1);
+        // }
+        // if (!pTimeGap.isPastGap()) {
+        // lUrl.append("&since_id=").append(pTimeGap.getOldestBound());
+        // }
+        //
+        // final List<Tweet> lTweets = parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
+        // public List<Tweet> parse(JsonParser pParser) throws Exception
+        // {
+        // return TwitterParser.parseTweetList(pParser);
+        // }
+        // });
+        //
+        // try {
+        // mTweetDao.callBatchTasks(new Callable<Void>() {
+        // public Void call() throws Exception
+        // {
+        // if (lTweets.size() > 0) {
+        // for (Tweet lTweet : lTweets) {
+        // mTweetDao.create(lTweet);
+        // }
+        //
+        // if (pTimeGap.isInitialGap()) {
+        // mTimeGapDao.create(TimeGap.futureTimeGap(lTweets));
+        // mTimeGapDao.create(TimeGap.pastTimeGap(lTweets));
+        // } else {
+        // TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+        // mTimeGapDao.update(lRemainingTimeGap);
+        // }
+        // } else {
+        // if (!pTimeGap.isFutureGap()) {
+        // mTimeGapDao.delete(pTimeGap);
+        // }
+        // }
+        // return null;
+        // }
+        // });
+        // } catch (Exception eException) {
+        // throw TwitterAccessException.from(eException);
+        // }
+        // return lTweets;
+        return null;
     }
 
     private <TResult> TResult parseJSON(StringBuilder pUrlBuilder, ParseHandler<TResult> pParseHandler)

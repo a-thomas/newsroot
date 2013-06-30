@@ -1,21 +1,15 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-import com.j256.ormlite.field.DatabaseField;
 
-public class Tweet
+public class Tweet implements Timeline.Item
 {
-    @DatabaseField(id = true, columnName = "TWT_ID", canBeNull = false)
     private long mId;
     // @DatabaseField(columnName = "TWT_TML_ID", canBeNull = false)
     // private long mTimelineId;
-    @DatabaseField(columnName = "TWT_NAME")
     private String mName;
-    @DatabaseField(columnName = "TWT_SCREEN_NAME")
     private String mScreenName;
-    @DatabaseField(columnName = "TWT_TEXT")
     private String mText;
-    @DatabaseField(columnName = "TWT_CREATED_AT")
-    private String mCreatedAt;
+    private long mCreatedAt;
 
     public Tweet()
     {
@@ -31,6 +25,12 @@ public class Tweet
     public void setId(long pId)
     {
         mId = pId;
+    }
+
+    @Override
+    public long getTimelineId()
+    {
+        return mId;
     }
 
     public String getName()
@@ -63,12 +63,12 @@ public class Tweet
         mText = pText;
     }
 
-    public String getCreatedAt()
+    public long getCreatedAt()
     {
         return mCreatedAt;
     }
 
-    public void setCreatedAt(String pCreatedAt)
+    public void setCreatedAt(long pCreatedAt)
     {
         mCreatedAt = pCreatedAt;
     }

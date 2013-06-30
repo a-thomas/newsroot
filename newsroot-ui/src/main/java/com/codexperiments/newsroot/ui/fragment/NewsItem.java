@@ -6,6 +6,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 
 public class NewsItem extends RelativeLayout
@@ -41,11 +43,17 @@ public class NewsItem extends RelativeLayout
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    public void setContent(Tweet pNews)
+    public void setContent(Timeline.Item pNews)
     {
-        mUINewsName.setText(pNews.getName());
-        mUINewsScreenName.setText(pNews.getScreenName());
-        mUINewsText.setText(pNews.getText());
-        mUINewsCreatedAt.setText(pNews.getCreatedAt().toString());
+        if (pNews instanceof Tweet) {
+            Tweet lTweet = (Tweet) pNews;
+            mUINewsName.setText(lTweet.getName());
+            mUINewsScreenName.setText(lTweet.getScreenName());
+            mUINewsText.setText(lTweet.getText());
+            mUINewsCreatedAt.setText(String.valueOf(lTweet.getCreatedAt()));
+        } else if (pNews instanceof TimeGap) {
+            TimeGap lTimeGap = (TimeGap) pNews;
+            mUINewsName.setText(lTimeGap.getEarliestBound() + "==" + lTimeGap.getOldestBound());
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.Application;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
+import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
@@ -14,12 +15,10 @@ import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
 import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;
 import com.codexperiments.robolabor.task.handler.Task;
 
-public abstract class BaseApplication extends Application
-{
+public abstract class BaseApplication extends Application {
     private List<Object> mServices;
 
-    public static <TService> TService getServiceFrom(Activity activity, Class<TService> serviceType)
-    {
+    public static <TService> TService getServiceFrom(Activity activity, Class<TService> serviceType) {
         if (activity != null) {
             Application application = activity.getApplication();
             if ((application != null) && (application instanceof BaseApplication)) {
@@ -29,23 +28,20 @@ public abstract class BaseApplication extends Application
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    protected static <TService> TService getServiceFrom(Application application, Class<TService> serviceType)
-    {
+    protected static <TService> TService getServiceFrom(Application application, Class<TService> serviceType) {
         if ((application != null) && (application instanceof BaseApplication)) {
             return ((BaseApplication) application).getService(serviceType);
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    public BaseApplication()
-    {
+    public BaseApplication() {
         super();
         mServices = new LinkedList<Object>();
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         super.onCreate();
         // if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
         // StrictMode.setThreadPolicy(new ThreadPolicy.Builder().detectAll().build());
@@ -58,39 +54,33 @@ public abstract class BaseApplication extends Application
         registerService(new AndroidEventBus());
         registerService(new TaskManagerAndroid(this, new TaskManagerConfigAndroid(this) {
             @Override
-            public boolean keepResultOnHold(Task<?> pTask)
-            {
+            public boolean keepResultOnHold(Task<?> pTask) {
                 // if (pTask) {
                 return true;
                 // }
                 // return super.keepResultOnHold(pTask);
             }
         }));
-        registerService(new TwitterManager(this, lDatabase, new TwitterManager.Config() {
-            public String getHost()
-            {
+        registerService(new TwitterManager(this, getService(EventBus.class), lDatabase, new TwitterManager.Config() {
+            public String getHost() {
                 return "https://api.twitter.com/";
             }
 
-            public String getConsumerKey()
-            {
+            public String getConsumerKey() {
                 return "3Ng9QGTB7EpZCHDOIT2jg";
             }
 
-            public String getConsumerSecret()
-            {
+            public String getConsumerSecret() {
                 return "OolXzfWdSF6uMdgt2mvLNpDl4HOA1JNlN487LvDUA4";
             }
 
-            public String getCallbackURL()
-            {
+            public String getCallbackURL() {
                 return "oauth://newsroot-callback";
             }
         }));
     }
 
-    public void registerService(Object service)
-    {
+    public void registerService(Object service) {
         mServices.add(service);
     }
 
@@ -102,8 +92,7 @@ public abstract class BaseApplication extends Application
      * 
      * @param serviceType Type du service � supprimer.
      */
-    public void unregisterService(Class<?> serviceType)
-    {
+    public void unregisterService(Class<?> serviceType) {
         for (Object iservice : mServices) {
             if (serviceType.isInstance(iservice)) {
                 mServices.remove(iservice);
@@ -123,8 +112,7 @@ public abstract class BaseApplication extends Application
      * @throws UnknownServiceException Si le service n'est pas enregistr�.
      */
     @SuppressWarnings("unchecked")
-    public <TService> TService getService(Class<TService> serviceType)
-    {
+    public <TService> TService getService(Class<TService> serviceType) {
         for (Object service : mServices) {
             if (serviceType.isInstance(service)) {
                 return (TService) service;

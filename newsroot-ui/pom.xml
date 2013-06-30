@@ -34,10 +34,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-android</artifactId>
         </dependency>

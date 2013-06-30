@@ -15,27 +15,26 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.id.TaskId;
 import com.codexperiments.robolabor.task.util.TaskAdapter;
 
-public class NewsFragment extends Fragment
-{
+public class NewsFragment extends Fragment {
     private EventBus mEventBus;
     private TaskManager mTaskManager;
     private TwitterManager mTwitterManager;
 
-    private List<Tweet> mTweets;
+    private Timeline mTimeline;
+    private List<Timeline.Item> mTweets;
     private boolean mHasMore; // TODO
 
     private NewsAdapter mUIListAdapter;
     private ListView mUIList;
     private ProgressDialog mUIDialog;
 
-    public static final NewsFragment home()
-    {
+    public static final NewsFragment home() {
         NewsFragment lFragment = new NewsFragment();
         Bundle lArguments = new Bundle();
         lFragment.setArguments(lArguments);
@@ -43,21 +42,20 @@ public class NewsFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater pLayoutInflater, ViewGroup pContainer, Bundle pBundle)
-    {
+    public View onCreateView(LayoutInflater pLayoutInflater, ViewGroup pContainer, Bundle pBundle) {
         super.onCreateView(pLayoutInflater, pContainer, pBundle);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
 
-        mTweets = new ArrayList<Tweet>(100); // TODO Get from prefs.
+        mTimeline = new Timeline();
+        mTweets = new ArrayList<Timeline.Item>(); // TODO Get from prefs.
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
         mUIListAdapter = new NewsAdapter(pLayoutInflater, mTweets, mHasMore, new NewsAdapter.Callback() {
             @Override
-            public void onLoadMore()
-            {
+            public void onLoadMore() {
                 loadMoreTweets();
             }
         });
@@ -69,65 +67,96 @@ public class NewsFragment extends Fragment
         return lUIFragment;
     }
 
-    public void onInitializeInstanceState(Bundle pBundle)
-    {
+    public void onInitializeInstanceState(Bundle pBundle) {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle pBundle)
-    {
+    public void onSaveInstanceState(Bundle pBundle) {
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         super.onStart();
+        mEventBus.registerListener(this);
         mTaskManager.manage(this);
         loadMoreTweets();
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         super.onStop();
         mUIDialog.dismiss();
         mTaskManager.unmanage(this);
+        mEventBus.unregisterListener(this);
     }
 
-    private void loadMoreTweets()
-    {
-        mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
+    public void refresh() {
+        mTaskManager.execute(new TaskAdapter<List<Timeline.Item>>() {
             TwitterManager lTwitterManager = mTwitterManager;
+            Timeline lTimeline = mTimeline;
 
             @Override
-            public TaskId getId()
-            {
+            public TaskId getId() {
                 return super.getId();
             }
 
             @Override
-            public void onStart(boolean pIsRestored)
-            {
+            public void onStart(boolean pIsRestored) {
                 mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
             }
 
             @Override
-            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception
-            {
-                return lTwitterManager.findOldTweets();
+            public List<Timeline.Item> onProcess(TaskManager pTaskManager) throws Exception {
+                return lTwitterManager.findLatestTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, List<Tweet> pResult)
-            {
+            public void onFinish(TaskManager pTaskManager, List<Timeline.Item> pResult) {
                 mUIDialog.dismiss();
-                mTweets.addAll(pResult);
-                mUIListAdapter.notifyDataSetChanged(mTweets);
+                // mTweets.addAll(pResult);
+                // mTimeline.appendNewItems(mTweets);
+                // mUIListAdapter.notifyDataSetChanged(mTweets);
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException)
-            {
+            public void onFail(TaskManager pTaskManager, Throwable pException) {
+                mUIDialog.dismiss();
+                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+                pException.printStackTrace();
+            }
+        });
+    }
+
+    private void loadMoreTweets() {
+        mTaskManager.execute(new TaskAdapter<List<Timeline.Item>>() {
+            TwitterManager lTwitterManager = mTwitterManager;
+            Timeline lTimeline = mTimeline;
+
+            @Override
+            public TaskId getId() {
+                return super.getId();
+            }
+
+            @Override
+            public void onStart(boolean pIsRestored) {
+                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
+            }
+
+            @Override
+            public List<Timeline.Item> onProcess(TaskManager pTaskManager) throws Exception {
+                return lTwitterManager.findOlderTweets(lTimeline);
+            }
+
+            @Override
+            public void onFinish(TaskManager pTaskManager, List<Timeline.Item> pResult) {
+                mUIDialog.dismiss();
+                // mTweets.addAll(pResult);
+                // mTimeline.appendOldItems(mTweets);
+                // mUIListAdapter.notifyDataSetChanged(mTweets);
+            }
+
+            @Override
+            public void onFail(TaskManager pTaskManager, Throwable pException) {
                 mUIDialog.dismiss();
                 Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
                 pException.printStackTrace();

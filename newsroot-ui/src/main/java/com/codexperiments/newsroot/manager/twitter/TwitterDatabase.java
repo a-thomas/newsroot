@@ -1,128 +1,91 @@
 package com.codexperiments.newsroot.manager.twitter;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
-import android.util.Log;
 
-public class TwitterDatabase
-{
+public class TwitterDatabase extends Database {
     private static final String DATABASE_NAME = "twitter_database";
     private static final int DATABASE_VERSION = 1;
 
-    private Helper mHelper;
-    private SQLiteDatabase mConnection;
-
-    public TwitterDatabase(Application pApplication)
-    {
-        mHelper = new Helper(pApplication);
-        mConnection = mHelper.getWritableDatabase();
+    public enum DB_TWITTER implements Table {
+        TWT_TWEET() {
+            public Enum<?>[] columns() {
+                return COL_VIEW_TIMELINE.values();
+            }
+        },
+        TML_TIMELINE() {
+            public Enum<?>[] columns() {
+                return COL_VIEW_TIMELINE.values();
+            }
+        },
+        TMG_TIMEGAP() {
+            public Enum<?>[] columns() {
+                return COL_VIEW_TIMELINE.values();
+            }
+        },
+        VIEW_TIMELINE() {
+            public Enum<?>[] columns() {
+                return COL_VIEW_TIMELINE.values();
+            }
+        };
     }
 
-    public void close()
-    {
-        mConnection.close();
+    public static enum COL_TWT_TWEET {
+        TWT_ID, TWT_CREATED_AT, TWT_TEXT, TWT_NAME, TWT_SCREEN_NAME
     }
 
-    public void recreate()
-    {
+    public static enum COL_TML_TIMELINE {
+        TML_ID
+    }
+
+    public static enum COL_TMG_TIMEGAP {
+        TMG_ID, TMG_TWT_EARLIEST_ID, TMG_TWT_OLDEST_ID
+    }
+
+    public static enum COL_VIEW_TIMELINE {
+        VIEW_KIND,
+        VIEW_TIMELINE_ID,
+        TWT_ID,
+        TWT_CREATED_AT,
+        TWT_TEXT,
+        TWT_NAME,
+        TWT_SCREEN_NAME,
+        TMG_ID,
+        TMG_TWT_EARLIEST_ID,
+        TMG_TWT_OLDEST_ID
+    }
+
+    public TwitterDatabase(Application pApplication) {
+        super(pApplication, DATABASE_NAME, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase pDatabase) {
+        super.onCreate(pDatabase);
         try {
-            executeScript("sql/twitter_drop.sql");
-            mHelper.onCreate(mConnection);
+            executeAssetScript("sql/twitter_create.sql");
+            // executeAssetScript("sql/ctx_timeline_01.sql");
+            // executeAssetScript("sql/ctx_timeline_02.sql");
+            // executeAssetScript("sql/ctx_timeline_03.sql");
+            // executeAssetScript("sql/ctx_timeline_04.sql");
+            // executeAssetScript("sql/ctx_timeline_05.sql");
+            // executeAssetScript("sql/ctx_timeline_combine_all.sql");
         } catch (IOException eIOException) {
             // TODO Exception handling
             throw new RuntimeException(eIOException);
         }
     }
 
-    public void executeScript(String pAssetPath) throws IOException
-    {
-        mHelper.executeScript(mConnection, pAssetPath);
-    }
-
-    public SQLiteDatabase getConnection()
-    {
-        return mConnection;
-    }
-
-
-    private static class Helper extends SQLiteOpenHelper
-    {
-        private Application mApplication;
-
-        public Helper(Application pApplication)
-        {
-            super(pApplication, DATABASE_NAME, null, DATABASE_VERSION);
-            mApplication = pApplication;
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase pDatabase)
-        {
-            try {
-                executeScript(pDatabase, "sql/twitter_create.sql");
-            } catch (IOException eIOException) {
-                // TODO Exception handling
-                throw new RuntimeException(eIOException);
-            }
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase pDatabase, int pOldVersion, int pNewVersion)
-        {
-            try {
-                executeScript(pDatabase, "sql/twitter_drop.sql");
-                onCreate(pDatabase);
-            } catch (IOException eIOException) {
-                // TODO Exception handling
-                throw new RuntimeException(eIOException);
-            }
-        }
-
-        public void executeScript(SQLiteDatabase pDatabase, String pAssetPath) throws IOException
-        {
-            InputStream lAssetStream = null;
-            pDatabase.beginTransaction();
-            try {
-                lAssetStream = mApplication.getAssets().open(pAssetPath);
-                // File can't be more than 2 Go...
-                byte[] lScript = new byte[lAssetStream.available()];
-                lAssetStream.read(lScript);
-
-                int lPreviousIndex = 0;
-                byte lPreviousChar = '\0';
-                byte lCurrentChar;
-                boolean lIgnore = false;
-                int lScriptSize = lScript.length;
-                for (int i = 0; i < lScriptSize; ++i) {
-                    lCurrentChar = lScript[i];
-                    if ((lCurrentChar == '\n' || lCurrentChar == '\r') && (lPreviousChar == ';')) {
-                        String lStatement = new String(lScript, lPreviousIndex, (i - lPreviousIndex) + 1, "UTF-8");
-                        if (!lIgnore && !TextUtils.isEmpty(lStatement)) {
-                            pDatabase.execSQL(lStatement);
-                        }
-
-                        lPreviousIndex = i + 1;
-                        lIgnore = false;
-                    } else if ((lCurrentChar == '-') && (lPreviousChar == '-')) {
-                        lIgnore = true;
-                    }
-
-                    lPreviousChar = lCurrentChar;
-                }
-                pDatabase.setTransactionSuccessful();
-            } finally {
-                pDatabase.endTransaction();
-                try {
-                    if (lAssetStream != null) lAssetStream.close();
-                } catch (IOException eIOException) {
-                    Log.e(TwitterDatabase.class.getSimpleName(), "Error while reading assets", eIOException);
-                }
-            }
+    @Override
+    public void onDestroy(SQLiteDatabase pDatabase) {
+        super.onDestroy(pDatabase);
+        try {
+            executeAssetScript("sql/twitter_drop.sql");
+        } catch (IOException eIOException) {
+            // TODO Exception handling
+            throw new RuntimeException(eIOException);
         }
     }
 }

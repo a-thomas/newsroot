@@ -16,8 +16,7 @@ import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
 import com.codexperiments.newsroot.ui.fragment.NewsFragment;
 import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 
-public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener
-{
+public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
     private EventBus mEventBus;
     private TwitterManager mTweetManager;
 
@@ -26,8 +25,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
     private Button mButton3;
 
     @Override
-    protected void onCreate(Bundle pBundle)
-    {
+    protected void onCreate(Bundle pBundle) {
         super.onCreate(pBundle);
         setContentView(R.layout.activity_home);
 
@@ -37,32 +35,30 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mButton1 = (Button) findViewById(R.id.button1);
         mButton1.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View pV)
-            {
+            public void onClick(View pV) {
+                NewsFragment lNewsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
+                lNewsFragment.refresh();
             }
         });
 
         mButton2 = (Button) findViewById(R.id.button2);
         mButton2.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View pV)
-            {
+            public void onClick(View pV) {
             }
         });
 
         mButton3 = (Button) findViewById(R.id.button3);
         mButton3.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View pV)
-            {
+            public void onClick(View pV) {
             }
         });
 
         onInitializeInstanceState(pBundle);
     }
 
-    protected void onInitializeInstanceState(Bundle pBundle)
-    {
+    protected void onInitializeInstanceState(Bundle pBundle) {
         if (pBundle != null) {
         } else {
             if (!mTweetManager.isAuthorized()) {
@@ -74,53 +70,45 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle pBundle)
-    {
+    protected void onSaveInstanceState(Bundle pBundle) {
         super.onSaveInstanceState(pBundle);
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         mEventBus.registerListener(this);
         super.onStart();
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
         mEventBus.unregisterListener(this);
     }
 
-    private void authorize()
-    {
+    private void authorize() {
         getSupportFragmentManager().beginTransaction()
                                    .replace(R.id.activity_content, AuthorizationFragment.authenticate())
                                    .commit();
     }
 
     @Override
-    public void onAuthorized()
-    {
+    public void onAuthorized() {
         Toast.makeText(this, "Authorized!!!", Toast.LENGTH_LONG).show();
         showHome();
     }
 
     @Override
-    public void onAuthorizationFailed()
-    {
+    public void onAuthorizationFailed() {
         Toast.makeText(this, "Authorization failed...", Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onAuthorizationDenied()
-    {
+    public void onAuthorizationDenied() {
         Toast.makeText(this, "Authorization denied!?", Toast.LENGTH_LONG).show();
     }
 
-    private void showHome()
-    {
+    private void showHome() {
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_content, NewsFragment.home()).commit();
     }
 }

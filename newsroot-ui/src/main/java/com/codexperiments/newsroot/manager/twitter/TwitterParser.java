@@ -1,8 +1,12 @@
 package com.codexperiments.newsroot.manager.twitter;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -11,6 +15,13 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class TwitterParser
 {
+    private static final SimpleDateFormat DATE_FORMAT;
+
+    static {
+        DATE_FORMAT = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", Locale.US);
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     public static List<Tweet> parseTweetList(JsonParser pParser) throws JsonParseException, IOException
     {
         boolean lFinished = false;
@@ -64,7 +75,7 @@ public class TwitterParser
                 if ("id".equals(lField)) {
                     lStatus.setId(pParser.getLongValue());
                 } else if ("created_at".equals(lField)) {
-                    lStatus.setCreatedAt(pParser.getText());
+                    lStatus.setCreatedAt(getDate(pParser.getText()));
                 } else if ("text".equals(lField)) {
                     lStatus.setText(pParser.getText());
                 }
@@ -146,6 +157,16 @@ public class TwitterParser
             default:
                 break;
             }
+        }
+    }
+
+    private static long getDate(String pDate)
+    {
+        try {
+            return DATE_FORMAT.parse(pDate).getTime();
+        } catch (ParseException eParseException) {
+            // TODO
+            return 0;
         }
     }
 }

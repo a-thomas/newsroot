@@ -8,18 +8,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 
 public class NewsAdapter extends BaseAdapter
 {
     private Callback mCallback;
     private LayoutInflater mLayoutInflater;
 
-    private List<Tweet> mTweets;
+    private List<Timeline.Item> mTweets;
     private boolean mHasMore;
     private int mLastPosition = 0;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, List<Tweet> pTweets, boolean pHasMore, Callback pCallback)
+    public NewsAdapter(LayoutInflater pLayoutInflater, List<Timeline.Item> pTweets, boolean pHasMore, Callback pCallback)
     {
         super();
         mCallback = pCallback;
@@ -65,12 +65,11 @@ public class NewsAdapter extends BaseAdapter
         return mTweets.size();
     }
 
-    public void notifyDataSetChanged(List<Tweet> pTweets)
+    public void notifyDataSetChanged(List<Timeline.Item> pTweets)
     {
         mTweets = pTweets;
         super.notifyDataSetChanged();
     }
-
 
     public interface Callback
     {

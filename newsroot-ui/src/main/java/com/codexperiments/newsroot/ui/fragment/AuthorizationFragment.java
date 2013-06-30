@@ -21,8 +21,7 @@ import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.util.TaskAdapter;
 
-public class AuthorizationFragment extends Fragment
-{
+public class AuthorizationFragment extends Fragment {
     private static final String BUNDLE_REDIRECTION = "redirection";
 
     private Platform mPlatform;
@@ -35,8 +34,7 @@ public class AuthorizationFragment extends Fragment
     private WebView mUIWebView;
     private ProgressDialog mUIDialog;
 
-    public static final AuthorizationFragment authenticate()
-    {
+    public static final AuthorizationFragment authenticate() {
         AuthorizationFragment lFragment = new AuthorizationFragment();
         Bundle lArguments = new Bundle();
         lFragment.setArguments(lArguments);
@@ -44,8 +42,7 @@ public class AuthorizationFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer, Bundle pBundle)
-    {
+    public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer, Bundle pBundle) {
         super.onCreateView(pInflater, pContainer, pBundle);
         mPlatform = BaseApplication.getServiceFrom(getActivity(), Platform.class);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
@@ -58,8 +55,7 @@ public class AuthorizationFragment extends Fragment
         mPlatform.setupWebViewWithJavascript(mUIWebView, new WebChromeClient());
         mUIWebView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onPageFinished(WebView pWebView, String pUrl)
-            {
+            public void onPageFinished(WebView pWebView, String pUrl) {
                 super.onPageFinished(pWebView, pUrl);
                 pWebView.requestFocus(View.FOCUS_DOWN);
                 mUIDialog.dismiss();
@@ -70,8 +66,7 @@ public class AuthorizationFragment extends Fragment
             }
 
             @Override
-            public boolean shouldOverrideUrlLoading(WebView pUIWebView, String pUrl)
-            {
+            public boolean shouldOverrideUrlLoading(WebView pUIWebView, String pUrl) {
                 if (mRedirection.isCallbackUrl(pUrl)) {
                     confirmAuthorization(Uri.parse(pUrl));
                     return true;
@@ -81,15 +76,13 @@ public class AuthorizationFragment extends Fragment
             }
 
             @Override
-            public void onReceivedError(WebView pWebViewiew, int pErrorCode, String pDescription, String pFailingUrl)
-            {
+            public void onReceivedError(WebView pWebViewiew, int pErrorCode, String pDescription, String pFailingUrl) {
                 onConnectionError();
             }
         });
         mUIWebView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_UP:
@@ -108,22 +101,20 @@ public class AuthorizationFragment extends Fragment
         return lUIFragment;
     }
 
-    public void onInitializeInstanceState(Bundle pBundle)
-    {
+    public void onInitializeInstanceState(Bundle pBundle) {
         mRedirection = pBundle.getParcelable(BUNDLE_REDIRECTION);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle pBundle)
-    {
+    public void onSaveInstanceState(Bundle pBundle) {
         pBundle.putParcelable(BUNDLE_REDIRECTION, mRedirection);
     }
 
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         mTaskManager.manage(this);
         if (mRedirection == null) {
+            mEventBus.registerListener(this);
             mUIWebView.loadUrl("file:///android_asset/twitter_authorize.html.html");
         } else {
             mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
@@ -132,96 +123,83 @@ public class AuthorizationFragment extends Fragment
     }
 
     @Override
-    public void onStop()
-    {
+    public void onStop() {
         super.onStop();
         mUIDialog.dismiss();
+        mEventBus.unregisterListener(this);
         mTaskManager.unmanage(this);
         mUIWebView.setWebViewClient(new WebViewClient());
         mPlatform.stopWebView(mUIWebView);
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         mPlatform.pauseWebView(mUIWebView);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         mPlatform.resumeWebView(mUIWebView);
     }
 
-    protected void onConnectionError()
-    {
+    protected void onConnectionError() {
         mEventBus.dispatch(new UnauthorizedEvent());
     }
 
-    private void requestAuthorizationTwitter()
-    {
+    private void requestAuthorizationTwitter() {
         mTaskManager.execute(new TaskAdapter<TwitterAuthorizationCallback>() {
             TwitterManager lTwitterManager = mTwitterManager;
 
             @Override
-            public void onStart(boolean pIsRestored)
-            {
+            public void onStart(boolean pIsRestored) {
                 mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
             }
 
             @Override
-            public TwitterAuthorizationCallback onProcess(TaskManager pTaskManager) throws Exception
-            {
+            public TwitterAuthorizationCallback onProcess(TaskManager pTaskManager) throws Exception {
                 return lTwitterManager.requestAuthorization();
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, TwitterAuthorizationCallback pRedirection)
-            {
+            public void onFinish(TaskManager pTaskManager, TwitterAuthorizationCallback pRedirection) {
                 mRedirection = pRedirection;
                 mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
                 // Dialog will get dismissed when page is loaded.
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException)
-            {
+            public void onFail(TaskManager pTaskManager, Throwable pException) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new UnauthorizedEvent(pException));
             }
         });
     }
 
-    public void confirmAuthorization(final Uri pUri)
-    {
+    public void confirmAuthorization(final Uri pUri) {
         mTaskManager.execute(new TaskAdapter<Void>() {
             TwitterManager lTweetManager = mTwitterManager;
 
             @Override
-            public void onStart(boolean pIsRestored)
-            {
+            public void onStart(boolean pIsRestored) {
                 mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
             }
 
             @Override
-            public Void onProcess(TaskManager pTaskManager) throws Exception
-            {
+            public Void onProcess(TaskManager pTaskManager) throws Exception {
                 lTweetManager.confirmAuthorization(pUri);
                 return null;
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, Void pEmpty)
-            {
+            public void onFinish(TaskManager pTaskManager, Void pEmpty) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new AuthorizedEvent());
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException)
-            {
+            public void onFail(TaskManager pTaskManager, Throwable pException) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new UnauthorizedEvent(pException));
             }

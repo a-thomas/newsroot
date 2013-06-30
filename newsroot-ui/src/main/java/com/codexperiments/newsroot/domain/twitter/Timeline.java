@@ -1,23 +1,42 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-import com.j256.ormlite.field.DatabaseField;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Timeline
-{
-    @DatabaseField(id = true, columnName = "TML_ID", canBeNull = false)
+public class Timeline {
     private long mId;
 
-    // @DatabaseField(columnName = "TML_TWT_EARLIEST_ID")
+    private List<Item> mItems;
+
     // private long mEarliestId;
-    // @DatabaseField(columnName = "TML_TWT_OLDEST_ID")
     // private long mOldestId;
 
-    public Timeline()
-    {
+    public Timeline() {
         super();
         mId = -1;
+        mItems = new ArrayList<Timeline.Item>();
         // mEarliestId = -1;
         // mOldestId = -1;
+    }
+
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long pId) {
+        mId = pId;
+    }
+
+    public List<Item> getItems() {
+        return mItems;
+    }
+
+    public void appendNewItems(List<Item> pItems) {
+        mItems.addAll(0, pItems);
+    }
+
+    public void appendOldItems(List<Item> pItems) {
+        mItems.addAll(pItems);
     }
 
     // public TimeGap refresh(TimeGap pTimeGap, List<Tweet> pTweets, int pPageSize)
@@ -46,13 +65,31 @@ public class Timeline
     // return (mEarliestId != -1) && (mOldestId != -1);
     // }
     //
-    // public long getEarliestId()
-    // {
-    // return mEarliestId;
-    // }
-    //
-    // public long getOldestId()
-    // {
-    // return mOldestId;
-    // }
+    public long getEarliestBound() {
+        if (mItems.size() == 0) {
+            return -1;
+        } else {
+            return mItems.get(0).getTimelineId();
+        }
+    }
+
+    public long getOldestBound() {
+        if (mItems.size() == 0) {
+            return -1;
+        } else {
+            return mItems.get(mItems.size() - 1).getTimelineId();
+        }
+    }
+
+    public boolean hasOldestBound() {
+        return getEarliestBound() != -1;
+    }
+
+    public boolean hasEarliestBound() {
+        return getEarliestBound() != -1;
+    }
+
+    public interface Item {
+        long getTimelineId();
+    }
 }

@@ -2,36 +2,27 @@ package com.codexperiments.newsroot.domain.twitter;
 
 import java.util.List;
 
-import com.j256.ormlite.field.DatabaseField;
-
-public class TimeGap
-{
-    @DatabaseField(generatedId = true, columnName = "TMG_ID", canBeNull = false)
+// TODO Make immutable
+public class TimeGap implements Timeline.Item {
     private long mId;
-    @DatabaseField(columnName = "TMG_TWT_EARLIEST_ID")
     private long mEarliestBound;
-    @DatabaseField(columnName = "TMG_TWT_OLDEST_ID")
     private long mOldestBound;
 
     // private transient List<Tweet> mTweets;
 
-    public static TimeGap initialTimeGap()
-    {
+    public static TimeGap initialTimeGap() {
         return new TimeGap(-1, -1);
     }
 
-    public static TimeGap futureTimeGap(List<Tweet> pTweets)
-    {
+    public static TimeGap futureTimeGap(List<Tweet> pTweets) {
         return new TimeGap(-1, pTweets.get(0).getId());
     }
 
-    public static TimeGap pastTimeGap(List<Tweet> pTweets)
-    {
+    public static TimeGap pastTimeGap(List<Tweet> pTweets) {
         return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), -1);
     }
 
-    public TimeGap()
-    {
+    public TimeGap() {
         super();
         // mId = 0;
         mEarliestBound = -1;
@@ -39,8 +30,7 @@ public class TimeGap
         // mTweets = null;
     }
 
-    public TimeGap(long pEarliestBound, long pOldestBound)
-    {
+    public TimeGap(long pEarliestBound, long pOldestBound) {
         super();
         // mId = 0;
         mEarliestBound = pEarliestBound;
@@ -48,8 +38,7 @@ public class TimeGap
         // mTweets = null;
     }
 
-    protected TimeGap(long pId, long pEarliestBound, long pOldestBound)
-    {
+    protected TimeGap(long pId, long pEarliestBound, long pOldestBound) {
         super();
         mId = pId;
         mEarliestBound = pEarliestBound;
@@ -57,9 +46,8 @@ public class TimeGap
         // mTweets = null;
     }
 
-    public TimeGap substract(List<Tweet> pTweets, int pPageSize)
-    {
-        if (pTweets.size() == pPageSize) {
+    public TimeGap substract(List<Tweet> pTweets, int pPageSize) {
+        if (pTweets.size() >= pPageSize) {
             if (isFutureGap()) {
                 long lEarliestTweetId = pTweets.get(0).getId();
                 return new TimeGap(mEarliestBound, (lEarliestTweetId > mOldestBound) ? lEarliestTweetId : mOldestBound);
@@ -76,33 +64,44 @@ public class TimeGap
         }
     }
 
-    public long getId()
-    {
+    public long getId() {
         return mId;
     }
 
-    public boolean isInitialGap()
-    {
+    public void setId(long pId) {
+        mId = pId;
+    }
+
+    @Override
+    public long getTimelineId() {
+        return mOldestBound;
+    }
+
+    public void setEarliestBound(long pEarliestBound) {
+        mEarliestBound = pEarliestBound;
+    }
+
+    public void setOldestBound(long pOldestBound) {
+        mOldestBound = pOldestBound;
+    }
+
+    public boolean isInitialGap() {
         return isFutureGap() && isPastGap();
     }
 
-    public boolean isFutureGap()
-    {
+    public boolean isFutureGap() {
         return mEarliestBound == -1;
     }
 
-    public boolean isPastGap()
-    {
+    public boolean isPastGap() {
         return mOldestBound == -1;
     }
 
-    public long getEarliestBound()
-    {
+    public long getEarliestBound() {
         return mEarliestBound;
     }
 
-    public long getOldestBound()
-    {
+    public long getOldestBound() {
         return mOldestBound;
     }
 }

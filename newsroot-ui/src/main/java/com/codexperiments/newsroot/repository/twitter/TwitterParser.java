@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager.twitter;
+package com.codexperiments.newsroot.repository.twitter;
 
 import java.io.IOException;
 import java.text.ParseException;

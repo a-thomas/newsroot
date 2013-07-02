@@ -6,11 +6,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -21,27 +19,16 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.COL_VIEW_TIMELINE;
-import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
+import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterManager {
-    private static final int DEFAULT_PAGE_SIZE = 20;
-
-    private static final String REQUEST_URL = "oauth/request_token";
-    private static final String ACCESS_URL = "oauth/access_token";
-    private static final String AUTHORIZE_URL = "oauth/authorize";
-    private static final String API_HOME_TIMELINE = "1.1/statuses/home_timeline.json";
-
     private static final String PREF_NAME = "com_codexperiments_newsroot_twittermanager";
     private static final String PREF_USER_ID = "user_id";
     private static final String PREF_USER_SCREEN_NAME = "user_screen_name";
@@ -69,16 +56,9 @@ public class TwitterManager {
         mListeners.remove(pTweetListener);
     }
 
-    private TwitterDatabase mDatabase;
-    private TweetDAO mTweetDAO;
-    private TimeGapDAO mTimeGapDAO;
-    private ViewTimelineDAO mViewTimelineDAO;
-
-    private String mId;
-    private String mScreenName;
+    // private String mId;
+    // private String mScreenName;
     private boolean mAuthorized;
-
-    private Timeline mTimeline;
 
     public TwitterManager(Application pApplication, EventBus pEventBus, TwitterDatabase pDatabase, Config pConfig) {
         super();
@@ -89,23 +69,16 @@ public class TwitterManager {
         mJSONFactory = new JsonFactory();
         mListeners = new HashSet<TwitterManager.TweetListener>();
 
-        mDatabase = pDatabase;
-        mTweetDAO = new TweetDAO(mDatabase);
-        mTimeGapDAO = new TimeGapDAO(mDatabase);
-        mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
-
-        mId = mPreferences.getString(PREF_USER_ID, null);
-        mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
+        // mId = mPreferences.getString(PREF_USER_ID, null);
+        // mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
         checkAuthorization();
-
-        mTimeline = new Timeline();
     }
 
     public void checkAuthorization() {
         mConsumer = new DefaultOAuthConsumer(mConfig.getConsumerKey(), mConfig.getConsumerSecret());
-        mProvider = new DefaultOAuthProvider(mConfig.getHost() + REQUEST_URL, //
-                                             mConfig.getHost() + ACCESS_URL, //
-                                             mConfig.getHost() + AUTHORIZE_URL);
+        mProvider = new DefaultOAuthProvider(mConfig.getHost() + "oauth/request_token",
+                                             mConfig.getHost() + "oauth/access_token",
+                                             mConfig.getHost() + "oauth/authorize");
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (mAuthorized) {
             String lToken = mPreferences.getString(PREF_USER_TOKEN, null);
@@ -160,125 +133,17 @@ public class TwitterManager {
     }
 
     public boolean isAuthorized() {
-        // return mAuthorized;
-        return true;
+        return mAuthorized;
     }
 
-    public void listen() {
-
-    }
-
-    public List<Timeline.Item> findLatestTweets(Timeline pTimeline) throws TwitterAccessException {
-        List<Timeline.Item> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
-        pTimeline.appendOldItems(lResult);
-        lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
-        pTimeline.appendNewItems(lResult);
-        return lResult;
-    }
-
-    public List<Timeline.Item> findOlderTweets(Timeline pTimeline) throws TwitterAccessException {
-        List<Timeline.Item> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
-        pTimeline.appendOldItems(lResult);
-        return lResult;
-    }
-
-    private List<Timeline.Item> findTweets(TimeGap pTimeGap) throws TwitterAccessException {
-        Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values())
-                                        .selectAll(DB_TWITTER.VIEW_TIMELINE)
-                                        .from(DB_TWITTER.VIEW_TIMELINE)
-                                        .limit(DEFAULT_PAGE_SIZE);
-        if (pTimeGap.isFutureGap()) {
-            lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound());
-        } else if (pTimeGap.isPastGap()) {
-            lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
-        } else if (!pTimeGap.isInitialGap()) {
-            lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound())
-                  .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
-        }
-
-        final List<Timeline.Item> lResult = new ArrayList<Timeline.Item>(DEFAULT_PAGE_SIZE);
-        lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
-            public void handleRow(ResultHandler.Row pRow, Cursor pCursor) {
-                switch (mViewTimelineDAO.getKind(pRow)) {
-                case TWEET:
-                    lResult.add(mViewTimelineDAO.getTweet(pRow));
-                    break;
-                case TIMEGAP:
-                    lResult.add(mViewTimelineDAO.getTimeGap(pRow));
-                    break;
-                }
-            }
-        });
-        for (TweetListener lListener : mListeners) {
-            lListener.onNewsLoaded(lResult);
-        }
-        return lResult;
-    }
-
-    public List<Timeline.Item> findTweetsInGap(final TimeGap pTimeGap) throws TwitterAccessException {
-        // TODO Use URLEncodedUtils, trim_user, exclude_replies
-        StringBuilder lUrl = new StringBuilder(mConfig.getHost()).append(API_HOME_TIMELINE)
-                                                                 .append("?count=")
-                                                                 .append(DEFAULT_PAGE_SIZE);
-        if (!pTimeGap.isFutureGap()) {
-            lUrl.append("&max_id=").append(pTimeGap.getEarliestBound() - 1);
-        }
-        if (!pTimeGap.isPastGap()) {
-            lUrl.append("&since_id=").append(pTimeGap.getOldestBound());
-        }
-
-        final List<Tweet> lTweets = parseJSON(lUrl, new ParseHandler<List<Tweet>>() {
-            public List<Tweet> parse(JsonParser pParser) throws Exception {
-                return TwitterParser.parseTweetList(pParser);
-            }
-        });
-
-        try {
-            mDatabase.executeInTransaction(new Callable<Void>() {
-                public Void call() throws Exception {
-                    if (lTweets.size() > 0) {
-                        for (Tweet lTweet : lTweets) {
-                            mTweetDAO.create(lTweet);
-                        }
-
-                        if (pTimeGap.isInitialGap()) {
-                            mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
-                            mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
-                        } else {
-                            TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
-                            mTimeGapDAO.update(lRemainingTimeGap);
-                        }
-                    } else {
-                        if (!pTimeGap.isFutureGap()) {
-                            mTimeGapDAO.delete(pTimeGap);
-                        }
-                    }
-                    return null;
-                }
-            });
-        } catch (Exception eException) {
-            throw TwitterAccessException.from(eException);
-        }
-
-        final List<Timeline.Item> lItems = new ArrayList<Timeline.Item>(lTweets);
-        // new Handler(Looper.getMainLooper()).post(new Runnable() {
-        // public void run() {
-        for (TweetListener lListener : mListeners) {
-            lListener.onNewsLoaded(lItems);
-        }
-        // }
-        // });
-        return lItems;
-    }
-
-    private <TResult> TResult parseJSON(StringBuilder pUrlBuilder, ParseHandler<TResult> pParseHandler)
-                    throws TwitterAccessException
+    public <TResult> TResult query(TwitterQuery pQuery, TwitterQuery.Handler<TResult> pQueryHandler)
+        throws TwitterAccessException
     {
         JsonParser lParser = null;
         HttpURLConnection lRequest = null;
         InputStream lInputStream = null;
         try {
-            URL lUrl = new URL(pUrlBuilder.toString());
+            URL lUrl = new URL(pQuery.toString());
             Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
             lRequest = (HttpURLConnection) lUrl.openConnection();
             lRequest.setDoInput(true);
@@ -292,7 +157,7 @@ public class TwitterManager {
 
             lInputStream = new BufferedInputStream(lRequest.getInputStream());
             lParser = mJSONFactory.createParser(lInputStream);
-            return pParseHandler.parse(lParser);
+            return pQueryHandler.parse(lParser);
         } catch (MalformedURLException eMalformedURLException) {
             throw TwitterAccessException.from(eMalformedURLException);
         } catch (IOException eIOException) {
@@ -320,8 +185,8 @@ public class TwitterManager {
         }
     }
 
-    private interface ParseHandler<TResult> {
-        TResult parse(JsonParser pParser) throws Exception;
+    public TwitterQuery queryHome() {
+        return new TwitterQuery(mConfig.getHost(), "1.1/statuses/home_timeline.json");
     }
 
     public interface Config {

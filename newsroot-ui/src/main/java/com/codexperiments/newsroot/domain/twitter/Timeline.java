@@ -5,18 +5,16 @@ import java.util.List;
 
 public class Timeline {
     private long mId;
-
+    private long mEarliestId;
+    private long mOldestId;
     private List<Item> mItems;
-
-    // private long mEarliestId;
-    // private long mOldestId;
 
     public Timeline() {
         super();
         mId = -1;
+        mEarliestId = -1;
+        mOldestId = -1;
         mItems = new ArrayList<Timeline.Item>();
-        // mEarliestId = -1;
-        // mOldestId = -1;
     }
 
     public long getId() {

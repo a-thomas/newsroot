@@ -52,6 +52,16 @@ public abstract class Database extends SQLiteOpenHelper {
         }
     }
 
+    public void executeInTransaction(Runnable pRunnable) throws Exception {
+        mConnection.beginTransaction();
+        try {
+            pRunnable.run();
+            mConnection.setTransactionSuccessful();
+        } finally {
+            mConnection.endTransaction();
+        }
+    }
+
     public void executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mApplication);
     }

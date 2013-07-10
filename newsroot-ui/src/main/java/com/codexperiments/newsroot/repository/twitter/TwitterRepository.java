@@ -134,43 +134,45 @@ public class TwitterRepository {
                     }
                 });
             }
-        }).pipe(new TaskAdapter<List<Tweet>>() {
-            @Override
-            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
-                try {
-                    mDatabase.executeInTransaction(new Runnable() {
-                        public void run() {
-                            if (lTweets.size() > 0) {
-                                for (Tweet lTweet : lTweets) {
-                                    mTweetDAO.create(lTweet);
-                                }
-
-                                if (pTimeGap.isInitialGap()) {
-                                    mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
-                                    mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
-                                } else {
-                                    TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
-                                    mTimeGapDAO.update(lRemainingTimeGap);
-                                }
-                            } else {
-                                if (!pTimeGap.isFutureGap()) {
-                                    mTimeGapDAO.delete(pTimeGap);
-                                }
-                            }
-                        }
-                    });
-                } catch (Exception eException) {
-                    throw TwitterAccessException.from(eException);
-                }
-            }
-        }).pipe(new TaskAdapter<List<Tweet>>() {
-            @Override
-            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
-                for (TweetListener lListener : mListeners) {
-                    lListener.onNewsLoaded(lItems);
-                }
-            }
         });
+        return null;
+        // .pipe(new TaskAdapter<List<Tweet>>() {
+        // @Override
+        // public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
+        // try {
+        // mDatabase.executeInTransaction(new Runnable() {
+        // public void run() {
+        // if (lTweets.size() > 0) {
+        // for (Tweet lTweet : lTweets) {
+        // mTweetDAO.create(lTweet);
+        // }
+        //
+        // if (pTimeGap.isInitialGap()) {
+        // mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
+        // mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
+        // } else {
+        // TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+        // mTimeGapDAO.update(lRemainingTimeGap);
+        // }
+        // } else {
+        // if (!pTimeGap.isFutureGap()) {
+        // mTimeGapDAO.delete(pTimeGap);
+        // }
+        // }
+        // }
+        // });
+        // } catch (Exception eException) {
+        // throw TwitterAccessException.from(eException);
+        // }
+        // }
+        // }).pipe(new TaskAdapter<List<Tweet>>() {
+        // @Override
+        // public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
+        // for (TweetListener lListener : mListeners) {
+        // lListener.onNewsLoaded(lItems);
+        // }
+        // }
+        // });
 
         // TwitterQuery lQuery = mTwitterManager.queryHome().withParam("count", DEFAULT_PAGE_SIZE);
         // if (!pTimeGap.isFutureGap()) {

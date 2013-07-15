@@ -1,9 +1,5 @@
 package com.codexperiments.newsroot.ui.activity;
 
-import rx.Observable;
-import rx.concurrency.Schedulers;
-import rx.util.functions.Action0;
-import rx.util.functions.Action1;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -80,22 +76,22 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
 
     public void doSome() {
         Log.e("launch", "launch");
-        Observable.from("toto", "titi", "tutu", "tete", "tata", "tyty")
-                  .subscribeOn(Schedulers.newThread())
-                  .observeOn(AndroidScheduler.getInstance())
-                  .subscribe(new Action1<String>() {
-                      public void call(String pT1) {
-                          Log.e("wtf", "==" + pT1);
-                      }
-                  }, new Action1<Exception>() {
-                      public void call(Exception pT1) {
-                          Log.e("wtf", "error");
-                      }
-                  }, new Action0() {
-                      public void call() {
-                          Log.e("wtf", "completed");
-                      }
-                  });
+        // Observable.from("toto", "titi", "tutu", "tete", "tata", "tyty")
+        // .subscribeOn(Schedulers.newThread())
+        // .observeOn(AndroidScheduler.getInstance())
+        // .subscribe(new Action1<String>() {
+        // public void call(String pT1) {
+        // Log.e("wtf", "==" + pT1);
+        // }
+        // }, new Action1<Exception>() {
+        // public void call(Exception pT1) {
+        // Log.e("wtf", "error");
+        // }
+        // }, new Action0() {
+        // public void call() {
+        // Log.e("wtf", "completed");
+        // }
+        // });
         Log.e("continue", "continue");
     }
 

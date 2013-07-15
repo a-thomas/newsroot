@@ -10,6 +10,7 @@ import rx.Observer;
 import rx.Subscription;
 import rx.concurrency.Schedulers;
 import rx.subscriptions.Subscriptions;
+import rx.util.functions.Action0;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Application;
@@ -242,11 +243,11 @@ public class TwitterRepository {
         // return null;
         // }
 
-        Observable.from(mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
-            public List<Tweet> parse(JsonParser pParser) throws Exception {
-                return TwitterParser.parseTweetList2(pParser);
-            }
-        }));
+        // Observable.from(mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
+        // public List<Tweet> parse(JsonParser pParser) throws Exception {
+        // return TwitterParser.parseTweetList2(pParser);
+        // }
+        // }));
         Observable.create(new Func1<Observer<List<Tweet>>, Subscription>() {
             public Subscription call(Observer<List<Tweet>> pT1) {
                 try {
@@ -260,35 +261,46 @@ public class TwitterRepository {
                 }
                 return Subscriptions.empty();
             }
-        }).subscribeOn(Schedulers.threadPoolForIO()).map(new Func1<List<Tweet>, List<Tweet>>() {
-            public List<Tweet> call(List<Tweet> pTweets) {
-                if (pTweets.size() == 0) {
-                    if (!pTimeGap.isFutureGap()) {
-                        mTimeGapDAO.delete(pTimeGap);
-                    }
-                } else {
-                    for (Tweet lTweet : pTweets) {
-                        mTweetDAO.create(lTweet);
-                    }
+        })
+                  .subscribeOn(Schedulers.threadPoolForIO())
+                  .observeOn(AndroidScheduler.threadPoolForDatabase())
+                  .map(new Func1<List<Tweet>, List<Tweet>>() {
+                      public List<Tweet> call(List<Tweet> pTweets) {
+                          if (pTweets.size() == 0) {
+                              if (!pTimeGap.isFutureGap()) {
+                                  mTimeGapDAO.delete(pTimeGap);
+                              }
+                          } else {
+                              for (Tweet lTweet : pTweets) {
+                                  mTweetDAO.create(lTweet);
+                              }
 
-                    if (pTimeGap.isInitialGap()) {
-                        mTimeGapDAO.create(TimeGap.futureTimeGap(pTweets));
-                        mTimeGapDAO.create(TimeGap.pastTimeGap(pTweets));
-                    } else {
-                        TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
-                        mTimeGapDAO.update(lRemainingTimeGap);
-                    }
-                }
-                return null;
-            }
-        }).subscribeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Action1<List<Tweet>>() {
-            public void call(List<Tweet> pTweets) {
-                final List<Timeline.Item> lItems = new ArrayList<Timeline.Item>(pTweets);
-                for (TweetListener lListener : mListeners) {
-                    lListener.onNewsLoaded(lItems);
-                }
-            }
-        }, null, null, null);
+                              if (pTimeGap.isInitialGap()) {
+                                  mTimeGapDAO.create(TimeGap.futureTimeGap(pTweets));
+                                  mTimeGapDAO.create(TimeGap.pastTimeGap(pTweets));
+                              } else {
+                                  TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
+                                  mTimeGapDAO.update(lRemainingTimeGap);
+                              }
+                          }
+                          return null;
+                      }
+                  })
+                  .observeOn(AndroidScheduler.getInstance())
+                  .subscribe(new Action1<List<Tweet>>() {
+                      public void call(List<Tweet> pTweets) {
+                          final List<Timeline.Item> lItems = new ArrayList<Timeline.Item>(pTweets);
+                          for (TweetListener lListener : mListeners) {
+                              lListener.onNewsLoaded(lItems);
+                          }
+                      }
+                  }, new Action1<Exception>() {
+                      public void call(Exception pT1) {
+                      }
+                  }, new Action0() {
+                      public void call() {
+                      }
+                  });
         return null;
 
         //

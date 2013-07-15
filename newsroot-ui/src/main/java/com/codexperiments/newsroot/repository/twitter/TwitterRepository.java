@@ -260,7 +260,7 @@ public class TwitterRepository {
                     pT1.onError(e);
                 }
                 return Subscriptions.empty();
-            }
+            }//
         }).subscribeOn(Schedulers.threadPoolForIO()).map(new Func1<List<Tweet>, List<Tweet>>() {
             public List<Tweet> call(List<Tweet> pT1) {
                 if (pTweets.size() == 0) {

@@ -11,6 +11,7 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
+import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
 import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;
 import com.codexperiments.robolabor.task.handler.Task;
@@ -78,6 +79,19 @@ public abstract class BaseApplication extends Application {
                 return "oauth://newsroot-callback";
             }
         }));
+        registerService(new TwitterRepository(this,
+                                              getService(EventBus.class),
+                                              getService(TwitterManager.class),
+                                              lDatabase,
+                                              new TwitterRepository.Config() {
+                                                  public String getHost() {
+                                                      return "https://api.twitter.com/";
+                                                  }
+
+                                                  public String getCallbackURL() {
+                                                      return "oauth://newsroot-callback";
+                                                  }
+                                              }));
     }
 
     public void registerService(Object service) {

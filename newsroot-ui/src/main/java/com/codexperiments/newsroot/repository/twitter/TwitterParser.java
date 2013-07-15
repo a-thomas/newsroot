@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+import rx.util.functions.Func1;
+
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class TwitterParser
-{
+public class TwitterParser {
     private static final SimpleDateFormat DATE_FORMAT;
 
     static {
@@ -22,8 +27,7 @@ public class TwitterParser
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public static List<Tweet> parseTweetList(JsonParser pParser) throws JsonParseException, IOException
-    {
+    public static List<Tweet> parseTweetList2(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         List<Tweet> lResult = new ArrayList<Tweet>(20);
 
@@ -45,8 +49,61 @@ public class TwitterParser
         return lResult;
     }
 
-    public static Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException
-    {
+    public static Observable<Tweet> parseTweetList(final JsonParser pParser) throws JsonParseException, IOException {
+        return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
+            public Subscription call(Observer<Tweet> pObserver) {
+                try {
+                    boolean lFinished = false;
+                    if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
+                    while (!lFinished) {
+                        switch (pParser.nextToken()) {
+                        case START_OBJECT:
+                            pObserver.onNext(parseTweet(pParser));
+                            break;
+                        case END_ARRAY:
+                            lFinished = true;
+                            break;
+                        case NOT_AVAILABLE:
+                            throw new IOException();
+                        default:
+                            break;
+                        }
+                    }
+                    pObserver.onCompleted();
+                } catch (JsonParseException eJsonParseException) {
+                    pObserver.onError(eJsonParseException);
+                } catch (IOException eIOException) {
+                    pObserver.onError(eIOException);
+                }
+                return Subscriptions.empty();
+            }
+        });
+    }
+
+    public static TwitterQuery.Handler2<Tweet> parseTweetList() {
+        return new TwitterQuery.Handler2<Tweet>() {
+            public void parse(JsonParser pParser, Observer<Tweet> pObserver) throws Exception {
+                boolean lFinished = false;
+                if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
+                while (!lFinished) {
+                    switch (pParser.nextToken()) {
+                    case START_OBJECT:
+                        pObserver.onNext(parseTweet(pParser));
+                        break;
+                    case END_ARRAY:
+                        lFinished = true;
+                        break;
+                    case NOT_AVAILABLE:
+                        throw new IOException();
+                    default:
+                        break;
+                    }
+                }
+            }
+        };
+    }
+
+    public static Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         String lField = "";
         Tweet lStatus = new Tweet();
@@ -85,8 +142,7 @@ public class TwitterParser
         return lStatus;
     }
 
-    public static Tweet parseUser(Tweet pStatus, JsonParser pParser) throws JsonParseException, IOException
-    {
+    public static Tweet parseUser(Tweet pStatus, JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         String lField = "";
 
@@ -118,8 +174,7 @@ public class TwitterParser
         return pStatus;
     }
 
-    public static void skipObject(JsonParser pParser) throws JsonParseException, IOException
-    {
+    public static void skipObject(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
 
         while (!lFinished) {
@@ -139,8 +194,7 @@ public class TwitterParser
         }
     }
 
-    public static void skipArray(JsonParser pParser) throws JsonParseException, IOException
-    {
+    public static void skipArray(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
 
         while (!lFinished) {
@@ -160,8 +214,7 @@ public class TwitterParser
         }
     }
 
-    private static long getDate(String pDate)
-    {
+    private static long getDate(String pDate) {
         try {
             return DATE_FORMAT.parse(pDate).getTime();
         } catch (ParseException eParseException) {

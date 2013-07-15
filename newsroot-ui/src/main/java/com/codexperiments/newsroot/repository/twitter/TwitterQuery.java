@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.repository.twitter;
 
+import rx.Observer;
+
 import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterQuery {
@@ -39,5 +41,9 @@ public class TwitterQuery {
 
     public interface Handler<TResult> {
         TResult parse(JsonParser pParser) throws Exception;
+    }
+
+    public interface Handler2<TResult> {
+        void parse(JsonParser pParser, Observer<TResult> pObserver) throws Exception;
     }
 }

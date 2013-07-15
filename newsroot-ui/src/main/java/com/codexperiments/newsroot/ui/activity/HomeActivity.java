@@ -1,7 +1,12 @@
 package com.codexperiments.newsroot.ui.activity;
 
+import rx.Observable;
+import rx.concurrency.Schedulers;
+import rx.util.functions.Action0;
+import rx.util.functions.Action1;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -52,21 +57,46 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mButton3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View pV) {
+                doSome();
             }
         });
 
         onInitializeInstanceState(pBundle);
+        doSome();
     }
 
     protected void onInitializeInstanceState(Bundle pBundle) {
         if (pBundle != null) {
         } else {
+            // getSupportFragmentManager().beginTransaction().replace(R.id.activity_content,
+            // TestFragment.authenticate()).commit();
             if (!mTweetManager.isAuthorized()) {
                 authorize();
             } else {
                 showHome();
             }
         }
+    }
+
+    public void doSome() {
+        Log.e("launch", "launch");
+        Observable.from("toto", "titi", "tutu", "tete", "tata", "tyty")
+                  .subscribeOn(Schedulers.newThread())
+                  .observeOn(AndroidScheduler.getInstance())
+                  .subscribe(new Action1<String>() {
+                      public void call(String pT1) {
+                          Log.e("wtf", "==" + pT1);
+                      }
+                  }, new Action1<Exception>() {
+                      public void call(Exception pT1) {
+                          Log.e("wtf", "error");
+                      }
+                  }, new Action0() {
+                      public void call() {
+                          Log.e("wtf", "completed");
+                      }
+                  });
+        Log.e("continue", "continue");
     }
 
     @Override

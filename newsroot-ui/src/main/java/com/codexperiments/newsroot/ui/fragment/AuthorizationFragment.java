@@ -115,7 +115,7 @@ public class AuthorizationFragment extends Fragment {
         mTaskManager.manage(this);
         if (mRedirection == null) {
             mEventBus.registerListener(this);
-            mUIWebView.loadUrl("file:///android_asset/twitter_authorize.html.html");
+            mUIWebView.loadUrl("file:///android_asset/twitter_authorize.html");
         } else {
             mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
         }

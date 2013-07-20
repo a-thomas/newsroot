@@ -298,10 +298,6 @@ public class TwitterManager {
         }
     }
 
-    public TwitterQuery queryHome() {
-        return new TwitterQuery(mConfig.getHost(), "1.1/statuses/home_timeline.json");
-    }
-
     public interface Config {
         String getHost();
 

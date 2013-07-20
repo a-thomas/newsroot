@@ -1,0 +1,4 @@
+insert into TML_TIMELINE(TML_ID BIGINT, TML_TWT_EARLIEST_ID, TML_TWT_OLDEST_ID)
+select 1, min(TWT_ID), max(TWT_ID)
+from TWT_TWEET
+group by 1

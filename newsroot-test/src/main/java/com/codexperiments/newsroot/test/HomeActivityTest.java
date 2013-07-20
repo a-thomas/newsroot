@@ -1,25 +1,49 @@
 package com.codexperiments.newsroot.test;
 
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.List;
+
 import android.app.Application;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
+import com.codexperiments.newsroot.domain.twitter.Timeline.Item;
+import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
+import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
+import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.test.server.MockBackend;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private Application mApplication;
     private TwitterDatabase mDatabase;
     private MockBackend.Config mServerConfig;
     private MockBackend.Server mServer;
+
     private EventBus mEventBus;
+    private TwitterManager mTwitterManager;
+    private TwitterRepository mTwitterRepository;
 
     public HomeActivityTest() {
         super(HomeActivity.class);
+    }
+
+    private JsonParser createParser(String pAssetPath) throws IOException {
+        return new JsonFactory().createParser(getInstrumentation().getContext().getAssets().open(pAssetPath));
     }
 
     @Override
@@ -31,7 +55,23 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         mServerConfig = mock(MockBackend.Config.class);
         mServer = new MockBackend.Server(getInstrumentation().getContext(), mServerConfig);
+
         mEventBus = new AndroidEventBus();
+        mTwitterManager = mock(TwitterManager.class);
+        TwitterRepository.Config lRepositoryConfig = new TwitterRepository.Config() {
+            public String getHost() {
+                return "http://localhost:8378/";
+            }
+
+            public String getCallbackURL() {
+                return "oauth://newsroot-callback";
+            }
+        };
+        mTwitterRepository = new TwitterRepository(mApplication, mEventBus, mTwitterManager, mDatabase, lRepositoryConfig);
+
+        // Record
+        when(mTwitterManager.isAuthorized()).thenReturn(true);
+        // when(mTwitterManager.queryHome()).thenReturn(new TwitterQuery(lRepositoryConfig.getHost(), pQuery));
     }
 
     @Override
@@ -41,27 +81,10 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         super.tearDown();
     }
 
-    private TwitterManager setupTwitterManager() {
-        Application lApplication = (Application) getInstrumentation().getTargetContext().getApplicationContext();
-        TwitterManager lTwitterManager = new TwitterManager(lApplication, mEventBus, mDatabase, new TwitterManager.Config() {
-            public String getHost() {
-                return "http://localhost:8378/";
-            }
-
-            public String getConsumerKey() {
-                return "3Ng9QGTB7EpZCHDOIT2jg";
-            }
-
-            public String getConsumerSecret() {
-                return "OolXzfWdSF6uMdgt2mvLNpDl4HOA1JNlN487LvDUA4";
-            }
-
-            public String getCallbackURL() {
-                return "oauth://newsroot-callback";
-            }
-        });
-        return lTwitterManager;
-    }
+    // private TwitterManager setupTwitterManager() {
+    // TwitterManager lTwitterManager = new TwitterManager(mApplication, mEventBus, mDatabase, mManagerConfig);
+    // return lTwitterManager;
+    // }
 
     public void testFindNewTweets_noResult_emptyTimeline() throws Exception {
         // Setup
@@ -83,6 +106,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // assertThat(lTweets, notNullValue());
         // assertThat(lTweets.size(), equalTo(0));
     }
+
     // public void testFindNewTweets_noResult_emptyTimeline() throws Exception
     // {
     // // Setup
@@ -219,4 +243,20 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     // public void testFindTweetsInGap_nonEmptyTimeline_withResults() throws TwitterAccessException
     // {
     // }
+
+    public void testFindNewTweets_nonEmptyTimeline_withResults() throws IOException, TwitterAccessException {
+        // Setup
+        mDatabase.executeAssetScript("twitter/ctx_timeline_02.sql", getInstrumentation().getContext());
+        mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
+        // TODO Data
+        Timeline lTimeline = new Timeline(1, 349497246842241000l, 349443896905965600l);
+        // Record
+        // when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/tweets_03.json");
+        when(mTwitterManager.query(argThat(any(TwitterQuery.class)))).thenReturn(createParser("twitter/tweets_03.json"));
+        // Run
+        List<Item> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+        // Verify
+        assertThat(lTweets, notNullValue());
+        assertThat(lTweets.size(), equalTo(20));
+    }
 }

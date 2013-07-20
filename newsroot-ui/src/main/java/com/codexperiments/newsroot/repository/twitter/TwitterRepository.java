@@ -5,14 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
-import rx.util.functions.Action0;
-import rx.util.functions.Action1;
-import rx.util.functions.Func1;
 import android.app.Application;
 import android.database.Cursor;
 
@@ -30,8 +22,8 @@ import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.COL_VIEW_TIME
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.robolabor.task.util.TaskAdapter;
 import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterRepository {
@@ -204,13 +196,62 @@ public class TwitterRepository {
         // }
         // });
 
-        final TwitterQuery lQuery = mTwitterManager.queryHome().withParam("count", DEFAULT_PAGE_SIZE);
-        if (!pTimeGap.isFutureGap()) {
-            lQuery.withParam("max_id", pTimeGap.getEarliestBound() - 1);
-        }
-        if (!pTimeGap.isPastGap()) {
-            lQuery.withParam("since_id", pTimeGap.getOldestBound());
-        }
+        mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
+            @Override
+            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
+                TwitterQuery lQuery = TwitterQuery.queryHome()
+                                                  .withParam("count", DEFAULT_PAGE_SIZE)
+                                                  .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
+                                                  .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
+                return mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
+                    public List<Tweet> parse(JsonParser pParser) throws Exception {
+                        return TwitterParser.parseTweetList(pParser);
+                    }
+                });
+                return null;
+            }
+        })
+                    .pipe(new TaskAdapter<List<Tweet>>() {
+                        @Override
+                        public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
+                            // try {
+                            // mDatabase.executeInTransaction(new Runnable() {
+                            // public void run() {
+                            // if (lTweets.size() > 0) {
+                            // for (Tweet lTweet : lTweets) {
+                            // mTweetDAO.create(lTweet);
+                            // }
+                            //
+                            // if (pTimeGap.isInitialGap()) {
+                            // mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
+                            // mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
+                            // } else {
+                            // TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+                            // mTimeGapDAO.update(lRemainingTimeGap);
+                            // }
+                            // } else {
+                            // if (!pTimeGap.isFutureGap()) {
+                            // mTimeGapDAO.delete(pTimeGap);
+                            // }
+                            // }
+                            // }
+                            // });
+                            // } catch (Exception eException) {
+                            // throw TwitterAccessException.from(eException);
+                            // }
+                            return null;
+                        }
+                    })
+                    .pipe(new TaskAdapter<List<Tweet>>() {
+                        @Override
+                        public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
+                            // for (TweetListener lListener : mListeners) {
+                            // lListener.onNewsLoaded(lItems);
+                            // }
+                            return null;
+                        }
+                    });
+
         // public Void parse(JsonParser pParser) throws Exception {
         // TwitterParser.parseTweetList(pParser).map(new Func1<Tweet, Tweet>() {
         // public Tweet call(Tweet pTweet) {
@@ -248,59 +289,59 @@ public class TwitterRepository {
         // return TwitterParser.parseTweetList2(pParser);
         // }
         // }));
-        Observable.create(new Func1<Observer<List<Tweet>>, Subscription>() {
-            public Subscription call(Observer<List<Tweet>> pT1) {
-                try {
-                    pT1.onNext(mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
-                        public List<Tweet> parse(JsonParser pParser) throws Exception {
-                            return TwitterParser.parseTweetList2(pParser);
-                        }
-                    }));
-                } catch (TwitterAccessException e) {
-                    pT1.onError(e);
-                }
-                return Subscriptions.empty();
-            }
-        })
-                  .subscribeOn(Schedulers.threadPoolForIO())
-                  .observeOn(AndroidScheduler.threadPoolForDatabase())
-                  .map(new Func1<List<Tweet>, List<Tweet>>() {
-                      public List<Tweet> call(List<Tweet> pTweets) {
-                          if (pTweets.size() == 0) {
-                              if (!pTimeGap.isFutureGap()) {
-                                  mTimeGapDAO.delete(pTimeGap);
-                              }
-                          } else {
-                              for (Tweet lTweet : pTweets) {
-                                  mTweetDAO.create(lTweet);
-                              }
-
-                              if (pTimeGap.isInitialGap()) {
-                                  mTimeGapDAO.create(TimeGap.futureTimeGap(pTweets));
-                                  mTimeGapDAO.create(TimeGap.pastTimeGap(pTweets));
-                              } else {
-                                  TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
-                                  mTimeGapDAO.update(lRemainingTimeGap);
-                              }
-                          }
-                          return null;
-                      }
-                  })
-                  .observeOn(AndroidScheduler.getInstance())
-                  .subscribe(new Action1<List<Tweet>>() {
-                      public void call(List<Tweet> pTweets) {
-                          final List<Timeline.Item> lItems = new ArrayList<Timeline.Item>(pTweets);
-                          for (TweetListener lListener : mListeners) {
-                              lListener.onNewsLoaded(lItems);
-                          }
-                      }
-                  }, new Action1<Exception>() {
-                      public void call(Exception pT1) {
-                      }
-                  }, new Action0() {
-                      public void call() {
-                      }
-                  });
+        // Observable.create(new Func1<Observer<List<Tweet>>, Subscription>() {
+        // public Subscription call(Observer<List<Tweet>> pT1) {
+        // try {
+        // pT1.onNext(mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
+        // public List<Tweet> parse(JsonParser pParser) throws Exception {
+        // return TwitterParser.parseTweetList2(pParser);
+        // }
+        // }));
+        // } catch (TwitterAccessException e) {
+        // pT1.onError(e);
+        // }
+        // return Subscriptions.empty();
+        // }
+        // })
+        // .subscribeOn(Schedulers.threadPoolForIO())
+        // .observeOn(AndroidScheduler.threadPoolForDatabase())
+        // .map(new Func1<List<Tweet>, List<Tweet>>() {
+        // public List<Tweet> call(List<Tweet> pTweets) {
+        // if (pTweets.size() == 0) {
+        // if (!pTimeGap.isFutureGap()) {
+        // mTimeGapDAO.delete(pTimeGap);
+        // }
+        // } else {
+        // for (Tweet lTweet : pTweets) {
+        // mTweetDAO.create(lTweet);
+        // }
+        //
+        // if (pTimeGap.isInitialGap()) {
+        // mTimeGapDAO.create(TimeGap.futureTimeGap(pTweets));
+        // mTimeGapDAO.create(TimeGap.pastTimeGap(pTweets));
+        // } else {
+        // TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
+        // mTimeGapDAO.update(lRemainingTimeGap);
+        // }
+        // }
+        // return null;
+        // }
+        // })
+        // .observeOn(AndroidScheduler.getInstance())
+        // .subscribe(new Action1<List<Tweet>>() {
+        // public void call(List<Tweet> pTweets) {
+        // final List<Timeline.Item> lItems = new ArrayList<Timeline.Item>(pTweets);
+        // for (TweetListener lListener : mListeners) {
+        // lListener.onNewsLoaded(lItems);
+        // }
+        // }
+        // }, new Action1<Exception>() {
+        // public void call(Exception pT1) {
+        // }
+        // }, new Action0() {
+        // public void call() {
+        // }
+        // });
         return null;
 
         //

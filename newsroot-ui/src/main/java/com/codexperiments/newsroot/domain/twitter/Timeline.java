@@ -17,6 +17,14 @@ public class Timeline {
         mItems = new ArrayList<Timeline.Item>();
     }
 
+    public Timeline(long pId, long pEarliestId, long pOldestId) {
+        super();
+        mId = pId;
+        mEarliestId = pEarliestId;
+        mOldestId = pOldestId;
+        mItems = new ArrayList<Timeline.Item>();
+    }
+
     public long getId() {
         return mId;
     }

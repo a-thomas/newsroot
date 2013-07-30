@@ -18,6 +18,7 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.robolabor.task.handler.TaskNotifier;
 import com.codexperiments.robolabor.task.id.TaskId;
 import com.codexperiments.robolabor.task.util.TaskAdapter;
 
@@ -107,12 +108,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.Item> onProcess(TaskManager pTaskManager) throws Exception {
+            public List<Timeline.Item> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findLatestTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, List<Timeline.Item> pResult) {
+            public void onFinish(List<Timeline.Item> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendNewItems(mTweets);
@@ -120,7 +121,7 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException) {
+            public void onFail(Throwable pException) {
                 mUIDialog.dismiss();
                 Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
                 pException.printStackTrace();
@@ -169,12 +170,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.Item> onProcess(TaskManager pTaskManager) throws Exception {
+            public List<Timeline.Item> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findOlderTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, List<Timeline.Item> pResult) {
+            public void onFinish(List<Timeline.Item> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendOldItems(mTweets);
@@ -182,7 +183,7 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException) {
+            public void onFail(Throwable pException) {
                 mUIDialog.dismiss();
                 Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
                 pException.printStackTrace();

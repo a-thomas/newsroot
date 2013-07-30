@@ -62,7 +62,3 @@ insert into TWT_TWEET (TWT_CREATED_AT, TWT_TEXT, TWT_NAME, TWT_SCREEN_NAME, TWT_
 insert into TWT_TWEET (TWT_CREATED_AT, TWT_TEXT, TWT_NAME, TWT_SCREEN_NAME, TWT_ID) values ('Tue Jun 25 14:18:07 +0000 2013','Want your app on Google Play for Education? Join our live panel on http://t.co/4309n5UY5m on June 25, at 9:30am CDT to learn more. #ISTE13','Google Developers','googledevs',349531957522202600);
 insert into TWT_TWEET (TWT_CREATED_AT, TWT_TEXT, TWT_NAME, TWT_SCREEN_NAME, TWT_ID) values ('Tue Jun 25 14:16:07 +0000 2013','Is Microsoft winning or losing the war for developers? Live debate today http://t.co/vunmJKyf7y','ZDNet','ZDNet',349531455686316000);
 insert into TWT_TWEET (TWT_CREATED_AT, TWT_TEXT, TWT_NAME, TWT_SCREEN_NAME, TWT_ID) values ('Tue Jun 25 14:15:35 +0000 2013','Polémiques autour du déficit public http://t.co/hWa90W6Zfc','BFM Business','bfmbusiness',349531321246294000);
-insert into TMG_TIMEGAP (TMG_TWT_EARLIEST_ID, TMG_ID, TMG_TWT_OLDEST_ID) values (-1,1,349582282497073151);
-insert into TMG_TIMEGAP (TMG_TWT_EARLIEST_ID, TMG_ID, TMG_TWT_OLDEST_ID) values (349531321246294000,2,-1);
-delete from SQLITE_SEQUENCE;
-insert into SQLITE_SEQUENCE values ('TMG_TIMEGAP', 2);

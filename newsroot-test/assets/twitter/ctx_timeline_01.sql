@@ -30,7 +30,3 @@ insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAM
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Wed Jun 19 18:30:03 +0000 2013','Twittez-nous vos meilleures photos de votre chat prises avec #SnapCat ! Plus d''infos par ici http://t.co/hT3JzpghO6','FrAndroid','twandroid',347421031176224800);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Wed Jun 19 18:20:29 +0000 2013','La Fed maintient sa politique de soutien à l''économie http://t.co/NB0tYD3aqa','BFM Business','bfmbusiness',347418623427620860);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Wed Jun 19 18:17:43 +0000 2013','Facebook adding ability to post image comments http://t.co/kNrgkjMAB4','The Verge','verge',347417929584889860);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (-1,1,349443871694012401);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (347417929584889860,2,-1);
-delete from SQLITE_SEQUENCE;
-insert into SQLITE_SEQUENCE values ('TMG_TIMEGAP', 2);

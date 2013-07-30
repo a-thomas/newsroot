@@ -11,7 +11,6 @@ import android.database.Cursor;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.Query;
 import com.codexperiments.newsroot.manager.twitter.ResultHandler;
 import com.codexperiments.newsroot.manager.twitter.TimeGapDAO;
@@ -23,8 +22,6 @@ import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
 import com.codexperiments.robolabor.task.TaskManager;
-import com.codexperiments.robolabor.task.util.TaskAdapter;
-import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterRepository {
     private static final int DEFAULT_PAGE_SIZE = 20;
@@ -33,6 +30,7 @@ public class TwitterRepository {
     private EventBus mEventBus;
     private TaskManager mTaskManager;
     private TwitterManager mTwitterManager;
+    private TwitterAPI mTwitterAPI;
     private Set<TweetListener> mListeners;
 
     public interface TweetListener {
@@ -54,7 +52,9 @@ public class TwitterRepository {
 
     public TwitterRepository(Application pApplication,
                              EventBus pEventBus,
+                             TaskManager pTaskManager,
                              TwitterManager pTwitterManager,
+                             TwitterAPI pTwitterAPI,
                              TwitterDatabase pDatabase,
                              Config pConfig)
     {
@@ -62,7 +62,9 @@ public class TwitterRepository {
         mConfig = pConfig;
         mEventBus = pEventBus;
         mEventBus.registerListener(this);
+        mTaskManager = pTaskManager;
         mTwitterManager = pTwitterManager;
+        mTwitterAPI = pTwitterAPI;
 
         mDatabase = pDatabase;
         mTweetDAO = new TweetDAO(mDatabase);
@@ -196,62 +198,6 @@ public class TwitterRepository {
         // }
         // });
 
-        mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
-            @Override
-            public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
-                TwitterQuery lQuery = TwitterQuery.queryHome()
-                                                  .withParam("count", DEFAULT_PAGE_SIZE)
-                                                  .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-                                                  .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-                return mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
-                    public List<Tweet> parse(JsonParser pParser) throws Exception {
-                        return TwitterParser.parseTweetList(pParser);
-                    }
-                });
-                return null;
-            }
-        })
-                    .pipe(new TaskAdapter<List<Tweet>>() {
-                        @Override
-                        public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
-                            // try {
-                            // mDatabase.executeInTransaction(new Runnable() {
-                            // public void run() {
-                            // if (lTweets.size() > 0) {
-                            // for (Tweet lTweet : lTweets) {
-                            // mTweetDAO.create(lTweet);
-                            // }
-                            //
-                            // if (pTimeGap.isInitialGap()) {
-                            // mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
-                            // mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
-                            // } else {
-                            // TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
-                            // mTimeGapDAO.update(lRemainingTimeGap);
-                            // }
-                            // } else {
-                            // if (!pTimeGap.isFutureGap()) {
-                            // mTimeGapDAO.delete(pTimeGap);
-                            // }
-                            // }
-                            // }
-                            // });
-                            // } catch (Exception eException) {
-                            // throw TwitterAccessException.from(eException);
-                            // }
-                            return null;
-                        }
-                    })
-                    .pipe(new TaskAdapter<List<Tweet>>() {
-                        @Override
-                        public List<Tweet> onProcess(TaskManager pTaskManager) throws Exception {
-                            // for (TweetListener lListener : mListeners) {
-                            // lListener.onNewsLoaded(lItems);
-                            // }
-                            return null;
-                        }
-                    });
-
         // public Void parse(JsonParser pParser) throws Exception {
         // TwitterParser.parseTweetList(pParser).map(new Func1<Tweet, Tweet>() {
         // public Tweet call(Tweet pTweet) {
@@ -342,7 +288,6 @@ public class TwitterRepository {
         // public void call() {
         // }
         // });
-        return null;
 
         //
         // mTwitterManager.query(lQuery, TwitterParser.parseTweetList()) //
@@ -441,6 +386,56 @@ public class TwitterRepository {
         // // }
         // // });
         // return lItems;
+
+        // ///////////////////////////////////////
+        // ///////////////////////////////////////
+        // ///////////////////////////////////////
+        // July 27
+        // mTaskManager.execute(new TaskAdapter<List<Tweet>>() {
+        // @Override
+        // public List<Tweet> onProcess(TaskNotifier pNotifier) throws Exception {
+        // return mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
+        // }
+        // }).pipe(new TaskAdapter<List<Tweet>>() {
+        // @Override
+        // public List<Tweet> onProcess(TaskNotifier pNotifier) throws Exception {
+        // // try {
+        // // mDatabase.executeInTransaction(new Runnable() {
+        // // public void run() {
+        // // if (lTweets.size() > 0) {
+        // // for (Tweet lTweet : lTweets) {
+        // // mTweetDAO.create(lTweet);
+        // // }
+        // //
+        // // if (pTimeGap.isInitialGap()) {
+        // // mTimeGapDAO.create(TimeGap.futureTimeGap(lTweets));
+        // // mTimeGapDAO.create(TimeGap.pastTimeGap(lTweets));
+        // // } else {
+        // // TimeGap lRemainingTimeGap = pTimeGap.substract(lTweets, DEFAULT_PAGE_SIZE);
+        // // mTimeGapDAO.update(lRemainingTimeGap);
+        // // }
+        // // } else {
+        // // if (!pTimeGap.isFutureGap()) {
+        // // mTimeGapDAO.delete(pTimeGap);
+        // // }
+        // // }
+        // // }
+        // // });
+        // // } catch (Exception eException) {
+        // // throw TwitterAccessException.from(eException);
+        // // }
+        // return null;
+        // }
+        // }).pipe(new TaskAdapter<List<Tweet>>() {
+        // @Override
+        // public List<Tweet> onProcess(TaskNotifier pNotifier) throws Exception {
+        // // for (TweetListener lListener : mListeners) {
+        // // lListener.onNewsLoaded(lItems);
+        // // }
+        // return null;
+        // }
+        // });
+        return null;
     }
 
     public interface Config {

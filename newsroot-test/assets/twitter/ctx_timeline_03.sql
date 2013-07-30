@@ -31,7 +31,3 @@ insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAM
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 12:05:02 +0000 2013','Professional Heathcare Resources - Astute Networks Customer Profile http://t.co/sqLL8L7tJV','ZDNet','ZDNet',349498466604564500);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 12:04:03 +0000 2013','Roambi Business brings iOS data viz to the cloud http://t.co/tpv8LVdHJV','ZDNet','ZDNet',349498217349652500);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 12:02:39 +0000 2013','Déficit public: Gilles Carrez conteste la version du gouvernement. http://t.co/nEUmXzXVzZ','BFM Business','bfmbusiness',349497868853321700);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (-1,1,349530834786721801);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (349497868853321700,2,-1);
-delete from SQLITE_SEQUENCE;
-insert into SQLITE_SEQUENCE values ('TMG_TIMEGAP', 2);

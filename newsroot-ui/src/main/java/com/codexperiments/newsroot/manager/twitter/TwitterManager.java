@@ -17,11 +17,6 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
-import rx.util.functions.Func1;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -141,6 +136,163 @@ public class TwitterManager {
         return mAuthorized;
     }
 
+    // public <TResult> TResult query(TwitterQuery pQuery, TwitterQuery.Handler<TResult> pQueryHandler)
+    // throws TwitterAccessException
+    // {
+    // JsonParser lParser = null;
+    // HttpURLConnection lRequest = null;
+    // InputStream lInputStream = null;
+    // try {
+    // URL lUrl = new URL(pQuery.toString());
+    // Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
+    // lRequest = (HttpURLConnection) lUrl.openConnection();
+    // lRequest.setDoInput(true);
+    // lRequest.setDoOutput(false);
+    //
+    // mConsumer.sign(lRequest);
+    // lRequest.connect();
+    // int lStatusCode = lRequest.getResponseCode();
+    // if (lStatusCode != 200) throw new IOException();
+    // // TODO 429
+    //
+    // lInputStream = new BufferedInputStream(lRequest.getInputStream());
+    // lParser = mJSONFactory.createParser(lInputStream);
+    // return pQueryHandler.parse(lParser);
+    // } catch (MalformedURLException eMalformedURLException) {
+    // throw TwitterAccessException.from(eMalformedURLException);
+    // } catch (IOException eIOException) {
+    // throw TwitterAccessException.from(eIOException);
+    // } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
+    // throw TwitterAccessException.from(eOAuthMessageSignerException);
+    // } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
+    // throw TwitterAccessException.from(eOAuthExpectationFailedException);
+    // } catch (OAuthCommunicationException eOAuthCommunicationException) {
+    // throw TwitterAccessException.from(eOAuthCommunicationException);
+    // } catch (Exception eException) {
+    // throw TwitterAccessException.from(eException);
+    // } finally {
+    // try {
+    // if (lParser != null) lParser.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // try {
+    // if (lInputStream != null) lInputStream.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // if (lRequest != null) lRequest.disconnect();
+    // }
+    // }
+
+    // public <TResult> Observable<TResult> query(final TwitterQuery pQuery, final TwitterQuery.Handler2<TResult> pQueryHandler) {
+    // return Observable.create(new Func1<Observer<TResult>, Subscription>() {
+    // public Subscription call(Observer<TResult> pObserver) {
+    // JsonParser lParser = null;
+    // HttpURLConnection lRequest = null;
+    // InputStream lInputStream = null;
+    // try {
+    // URL lUrl = new URL(pQuery.toString());
+    // Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
+    // lRequest = (HttpURLConnection) lUrl.openConnection();
+    // lRequest.setDoInput(true);
+    // lRequest.setDoOutput(false);
+    //
+    // mConsumer.sign(lRequest);
+    // lRequest.connect();
+    // int lStatusCode = lRequest.getResponseCode();
+    // if (lStatusCode != 200) throw new IOException();
+    // // TODO 429
+    //
+    // lInputStream = new BufferedInputStream(lRequest.getInputStream());
+    // lParser = mJSONFactory.createParser(lInputStream);
+    // pQueryHandler.parse(lParser, pObserver);
+    // pObserver.onCompleted();
+    // } catch (MalformedURLException eMalformedURLException) {
+    // pObserver.onError(TwitterAccessException.from(eMalformedURLException));
+    // } catch (IOException eIOException) {
+    // pObserver.onError(TwitterAccessException.from(eIOException));
+    // } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
+    // pObserver.onError(TwitterAccessException.from(eOAuthMessageSignerException));
+    // } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
+    // pObserver.onError(TwitterAccessException.from(eOAuthExpectationFailedException));
+    // } catch (OAuthCommunicationException eOAuthCommunicationException) {
+    // pObserver.onError(TwitterAccessException.from(eOAuthCommunicationException));
+    // } catch (Exception eException) {
+    // pObserver.onError(TwitterAccessException.from(eException));
+    // } finally {
+    // try {
+    // if (lParser != null) lParser.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // try {
+    // if (lInputStream != null) lInputStream.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // if (lRequest != null) lRequest.disconnect();
+    // }
+    // return Subscriptions.empty();
+    // }
+    // });
+    // }
+
+    // public <TResult> Observable<TResult> insert(final SQLiteDatabase pDatabase, final Action1<TResult> pAction) {
+    // return Observable.create(new Func1<Observer<TResult>, Subscription>() {
+    // public Subscription call(Observer<TResult> pObserver) {
+    // pDatabase.beginTransaction();
+    // try {
+    // pAction.call(t1);
+    // pDatabase.setTransactionSuccessful();
+    // } finally {
+    // pDatabase.endTransaction();
+    // }
+    // return Subscriptions.empty();
+    // }
+    // });
+    // }
+
+    // public JsonParser query(TwitterQuery pQuery) throws TwitterAccessException {
+    // HttpURLConnection lRequest = null;
+    // InputStream lInputStream = null;
+    // try {
+    // URL lUrl = new URL(pQuery.toString());
+    // Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
+    // lRequest = (HttpURLConnection) lUrl.openConnection();
+    // lRequest.setDoInput(true);
+    // lRequest.setDoOutput(false);
+    //
+    // mConsumer.sign(lRequest);
+    // lRequest.connect();
+    // int lStatusCode = lRequest.getResponseCode();
+    // if (lStatusCode != 200) throw new IOException();
+    // // TODO 429
+    //
+    // lInputStream = new BufferedInputStream(lRequest.getInputStream());
+    // return mJSONFactory.createParser(lInputStream);
+    // } catch (MalformedURLException eMalformedURLException) {
+    // throw TwitterAccessException.from(eMalformedURLException);
+    // } catch (IOException eIOException) {
+    // throw TwitterAccessException.from(eIOException);
+    // } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
+    // throw TwitterAccessException.from(eOAuthMessageSignerException);
+    // } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
+    // throw TwitterAccessException.from(eOAuthExpectationFailedException);
+    // } catch (OAuthCommunicationException eOAuthCommunicationException) {
+    // throw TwitterAccessException.from(eOAuthCommunicationException);
+    // } catch (Exception eException) {
+    // throw TwitterAccessException.from(eException);
+    // } finally {
+    // try {
+    // if (lInputStream != null) lInputStream.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // if (lRequest != null) lRequest.disconnect();
+    // }
+    // }
+
     public <TResult> TResult query(TwitterQuery pQuery, TwitterQuery.Handler<TResult> pQueryHandler)
         throws TwitterAccessException
     {
@@ -181,114 +333,6 @@ public class TwitterManager {
             } catch (IOException eIOException) {
                 eIOException.printStackTrace();
             }
-            try {
-                if (lInputStream != null) lInputStream.close();
-            } catch (IOException eIOException) {
-                eIOException.printStackTrace();
-            }
-            if (lRequest != null) lRequest.disconnect();
-        }
-    }
-
-    public <TResult> Observable<TResult> query(final TwitterQuery pQuery, final TwitterQuery.Handler2<TResult> pQueryHandler) {
-        return Observable.create(new Func1<Observer<TResult>, Subscription>() {
-            public Subscription call(Observer<TResult> pObserver) {
-                JsonParser lParser = null;
-                HttpURLConnection lRequest = null;
-                InputStream lInputStream = null;
-                try {
-                    URL lUrl = new URL(pQuery.toString());
-                    Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
-                    lRequest = (HttpURLConnection) lUrl.openConnection();
-                    lRequest.setDoInput(true);
-                    lRequest.setDoOutput(false);
-
-                    mConsumer.sign(lRequest);
-                    lRequest.connect();
-                    int lStatusCode = lRequest.getResponseCode();
-                    if (lStatusCode != 200) throw new IOException();
-                    // TODO 429
-
-                    lInputStream = new BufferedInputStream(lRequest.getInputStream());
-                    lParser = mJSONFactory.createParser(lInputStream);
-                    pQueryHandler.parse(lParser, pObserver);
-                    pObserver.onCompleted();
-                } catch (MalformedURLException eMalformedURLException) {
-                    pObserver.onError(TwitterAccessException.from(eMalformedURLException));
-                } catch (IOException eIOException) {
-                    pObserver.onError(TwitterAccessException.from(eIOException));
-                } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
-                    pObserver.onError(TwitterAccessException.from(eOAuthMessageSignerException));
-                } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
-                    pObserver.onError(TwitterAccessException.from(eOAuthExpectationFailedException));
-                } catch (OAuthCommunicationException eOAuthCommunicationException) {
-                    pObserver.onError(TwitterAccessException.from(eOAuthCommunicationException));
-                } catch (Exception eException) {
-                    pObserver.onError(TwitterAccessException.from(eException));
-                } finally {
-                    try {
-                        if (lParser != null) lParser.close();
-                    } catch (IOException eIOException) {
-                        eIOException.printStackTrace();
-                    }
-                    try {
-                        if (lInputStream != null) lInputStream.close();
-                    } catch (IOException eIOException) {
-                        eIOException.printStackTrace();
-                    }
-                    if (lRequest != null) lRequest.disconnect();
-                }
-                return Subscriptions.empty();
-            }
-        });
-    }
-
-    // public <TResult> Observable<TResult> insert(final SQLiteDatabase pDatabase, final Action1<TResult> pAction) {
-    // return Observable.create(new Func1<Observer<TResult>, Subscription>() {
-    // public Subscription call(Observer<TResult> pObserver) {
-    // pDatabase.beginTransaction();
-    // try {
-    // pAction.call(t1);
-    // pDatabase.setTransactionSuccessful();
-    // } finally {
-    // pDatabase.endTransaction();
-    // }
-    // return Subscriptions.empty();
-    // }
-    // });
-    // }
-
-    public JsonParser query(TwitterQuery pQuery) throws TwitterAccessException {
-        HttpURLConnection lRequest = null;
-        InputStream lInputStream = null;
-        try {
-            URL lUrl = new URL(pQuery.toString());
-            Log.e(TwitterManager.class.getSimpleName(), lUrl.toString());
-            lRequest = (HttpURLConnection) lUrl.openConnection();
-            lRequest.setDoInput(true);
-            lRequest.setDoOutput(false);
-
-            mConsumer.sign(lRequest);
-            lRequest.connect();
-            int lStatusCode = lRequest.getResponseCode();
-            if (lStatusCode != 200) throw new IOException();
-            // TODO 429
-
-            lInputStream = new BufferedInputStream(lRequest.getInputStream());
-            return mJSONFactory.createParser(lInputStream);
-        } catch (MalformedURLException eMalformedURLException) {
-            throw TwitterAccessException.from(eMalformedURLException);
-        } catch (IOException eIOException) {
-            throw TwitterAccessException.from(eIOException);
-        } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
-            throw TwitterAccessException.from(eOAuthMessageSignerException);
-        } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
-            throw TwitterAccessException.from(eOAuthExpectationFailedException);
-        } catch (OAuthCommunicationException eOAuthCommunicationException) {
-            throw TwitterAccessException.from(eOAuthCommunicationException);
-        } catch (Exception eException) {
-            throw TwitterAccessException.from(eException);
-        } finally {
             try {
                 if (lInputStream != null) lInputStream.close();
             } catch (IOException eIOException) {

@@ -19,6 +19,7 @@ import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationCallback;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.robolabor.task.handler.TaskNotifier;
 import com.codexperiments.robolabor.task.util.TaskAdapter;
 
 public class AuthorizationFragment extends Fragment {
@@ -158,19 +159,19 @@ public class AuthorizationFragment extends Fragment {
             }
 
             @Override
-            public TwitterAuthorizationCallback onProcess(TaskManager pTaskManager) throws Exception {
+            public TwitterAuthorizationCallback onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterManager.requestAuthorization();
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, TwitterAuthorizationCallback pRedirection) {
+            public void onFinish(TwitterAuthorizationCallback pRedirection) {
                 mRedirection = pRedirection;
                 mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
                 // Dialog will get dismissed when page is loaded.
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException) {
+            public void onFail(Throwable pException) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new UnauthorizedEvent(pException));
             }
@@ -187,19 +188,19 @@ public class AuthorizationFragment extends Fragment {
             }
 
             @Override
-            public Void onProcess(TaskManager pTaskManager) throws Exception {
+            public Void onProcess(TaskNotifier pNotifier) throws Exception {
                 lTweetManager.confirmAuthorization(pUri);
                 return null;
             }
 
             @Override
-            public void onFinish(TaskManager pTaskManager, Void pEmpty) {
+            public void onFinish(Void pEmpty) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new AuthorizedEvent());
             }
 
             @Override
-            public void onFail(TaskManager pTaskManager, Throwable pException) {
+            public void onFail(Throwable pException) {
                 mUIDialog.dismiss();
                 mEventBus.dispatch(new UnauthorizedEvent(pException));
             }

@@ -28,7 +28,3 @@ insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAM
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 17:52:05 +0000 2013','Les pilotes GeForce passent en version 320.49 http://t.co/WE7B2bcS91','Clubic','Clubic',349585806089912300);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 17:49:36 +0000 2013','Ouya console launches at Amazon and Best Buy, but early backers are still waiting http://t.co/gqvlutaejT','The Verge','verge',349585179926466560);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 17:42:02 +0000 2013','Oracle''s master stroke: Boxing, locking Salesforce in http://t.co/V6x2dIiCEQ','ZDNet','ZDNet',349583276823945200);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (-1,1,349648959993675801);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (349583276823945200,2,-1);
-delete from SQLITE_SEQUENCE;
-insert into SQLITE_SEQUENCE values ('TMG_TIMEGAP', 2);

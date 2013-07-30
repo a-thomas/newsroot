@@ -11,9 +11,11 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
+import com.codexperiments.newsroot.repository.twitter.TwitterAPI;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
-import com.codexperiments.robolabor.task.android.TaskManagerAndroid;
-import com.codexperiments.robolabor.task.android.TaskManagerConfigAndroid;
+import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.robolabor.task.android.AndroidTaskManager;
+import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
 import com.codexperiments.robolabor.task.handler.Task;
 
 public abstract class BaseApplication extends Application {
@@ -53,7 +55,7 @@ public abstract class BaseApplication extends Application {
 
         registerService(Platform.Factory.findCurrentPlatform(this));
         registerService(new AndroidEventBus());
-        registerService(new TaskManagerAndroid(this, new TaskManagerConfigAndroid(this) {
+        registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
             @Override
             public boolean keepResultOnHold(Task<?> pTask) {
                 // if (pTask) {
@@ -79,9 +81,12 @@ public abstract class BaseApplication extends Application {
                 return "oauth://newsroot-callback";
             }
         }));
+        registerService(new TwitterAPI(getService(TwitterManager.class), "https://api.twitter.com/"));
         registerService(new TwitterRepository(this,
                                               getService(EventBus.class),
+                                              getService(TaskManager.class),
                                               getService(TwitterManager.class),
+                                              getService(TwitterAPI.class),
                                               lDatabase,
                                               new TwitterRepository.Config() {
                                                   public String getHost() {

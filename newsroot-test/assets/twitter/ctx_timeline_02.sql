@@ -58,7 +58,3 @@ insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAM
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 08:30:10 +0000 2013','Sony''s SmartWatch 2 is the company''s latest effort to get on your wrist http://t.co/hSa8Obz1y3','The Verge','verge',349444395252203500);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 08:28:29 +0000 2013','Sony Xperia Z Ultra takes on the Galaxy Note with insanely large 6.4-inch display http://t.co/T4R4CMmflI','The Verge','verge',349443968586620900);
 insert into TWT_TWEET ('TWT_CREATED_AT', 'TWT_TEXT', 'TWT_NAME', 'TWT_SCREEN_NAME', 'TWT_ID') values ('Tue Jun 25 08:28:12 +0000 2013','RT @jeuxvideofr: Age Of Empires bientôt sur mobiles http://t.co/2EI9CZx739','Clubic','Clubic',349443896905965600);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (-1,1,349497246842241001);
-insert into TMG_TIMEGAP ('TMG_TWT_EARLIEST_ID', 'TMG_ID', 'TMG_TWT_OLDEST_ID') values (349443896905965600,2,-1);
-delete from SQLITE_SEQUENCE;
-insert into SQLITE_SEQUENCE values ('TMG_TIMEGAP', 2);

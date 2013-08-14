@@ -38,7 +38,7 @@ public class TwitterRepository {
     private Set<TweetListener> mListeners;
 
     public interface TweetListener {
-        void onNewsLoaded(List<Timeline.News> pItems);
+        void onNewsLoaded(List<News> pItems);
     }
 
     public void register(TweetListener pTweetListener) {
@@ -78,21 +78,29 @@ public class TwitterRepository {
         mListeners = new HashSet<TwitterRepository.TweetListener>();
     }
 
-    public List<Timeline.News> findLatestTweets(Timeline pTimeline) throws TwitterAccessException {
-        List<Timeline.News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
+    public Observable<News> findLatestTweets(Timeline pTimeline) throws TwitterAccessException {
+        List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         pTimeline.appendOldItems(lResult);
         lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
         pTimeline.appendNewItems(lResult);
         return lResult;
     }
 
-    public List<Timeline.News> findOlderTweets(Timeline pTimeline) throws TwitterAccessException {
-        List<Timeline.News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
+    public List<News> findLatestTweets(Timeline pTimeline) throws TwitterAccessException {
+        List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
+        pTimeline.appendOldItems(lResult);
+        lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
+        pTimeline.appendNewItems(lResult);
+        return lResult;
+    }
+
+    public List<News> findOlderTweets(Timeline pTimeline) throws TwitterAccessException {
+        List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         pTimeline.appendOldItems(lResult);
         return lResult;
     }
 
-    private List<Timeline.News> findTweets(TimeGap pTimeGap) throws TwitterAccessException {
+    private List<News> findTweets(TimeGap pTimeGap) throws TwitterAccessException {
         Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values())
                                         .selectAll(DB_TWITTER.VIEW_TIMELINE)
                                         .from(DB_TWITTER.VIEW_TIMELINE)
@@ -106,7 +114,7 @@ public class TwitterRepository {
                   .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
         }
 
-        final List<Timeline.News> lResult = new ArrayList<Timeline.News>(DEFAULT_PAGE_SIZE);
+        final List<News> lResult = new ArrayList<News>(DEFAULT_PAGE_SIZE);
         lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
             public void handleRow(ResultHandler.Row pRow, Cursor pCursor) {
                 switch (mViewTimelineDAO.getKind(pRow)) {

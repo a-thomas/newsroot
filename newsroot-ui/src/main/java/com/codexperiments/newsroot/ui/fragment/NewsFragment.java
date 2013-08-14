@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.robolabor.task.TaskManager;
@@ -28,7 +29,7 @@ public class NewsFragment extends Fragment {
     private TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
-    private List<Timeline.News> mTweets;
+    private List<News> mTweets;
     private boolean mHasMore; // TODO
 
     private NewsAdapter mUIListAdapter;
@@ -50,7 +51,7 @@ public class NewsFragment extends Fragment {
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
         mTimeline = new Timeline();
-        mTweets = new ArrayList<Timeline.News>(); // TODO Get from prefs.
+        mTweets = new ArrayList<News>(); // TODO Get from prefs.
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
@@ -93,7 +94,10 @@ public class NewsFragment extends Fragment {
     }
 
     public void refresh() {
-        mTaskManager.execute(new TaskAdapter<List<Timeline.News>>() {
+        mTwitterRepository.findLatestTweets(mTimeline);
+        
+        
+        mTaskManager.execute(new TaskAdapter<List<News>>() {
             TwitterRepository lTwitterRepository = mTwitterRepository;
             Timeline lTimeline = mTimeline;
 
@@ -108,12 +112,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.News> onProcess(TaskNotifier pNotifier) throws Exception {
+            public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findLatestTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(List<Timeline.News> pResult) {
+            public void onFinish(List<News> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendNewItems(mTweets);
@@ -155,7 +159,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void loadMoreTweets() {
-        mTaskManager.execute(new TaskAdapter<List<Timeline.News>>() {
+        mTaskManager.execute(new TaskAdapter<List<News>>() {
             TwitterRepository lTwitterRepository = mTwitterRepository;
             Timeline lTimeline = mTimeline;
 
@@ -170,12 +174,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.News> onProcess(TaskNotifier pNotifier) throws Exception {
+            public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findOlderTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(List<Timeline.News> pResult) {
+            public void onFinish(List<News> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendOldItems(mTweets);

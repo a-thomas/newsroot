@@ -6,8 +6,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 
 public class NewsItem extends RelativeLayout
@@ -43,7 +43,7 @@ public class NewsItem extends RelativeLayout
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    public void setContent(Timeline.News pNews)
+    public void setContent(News pNews)
     {
         if (pNews instanceof Tweet) {
             Tweet lTweet = (Tweet) pNews;

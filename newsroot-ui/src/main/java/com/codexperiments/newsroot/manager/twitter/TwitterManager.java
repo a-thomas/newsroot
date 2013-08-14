@@ -45,7 +45,7 @@ public class TwitterManager {
     private Set<TweetListener> mListeners;
 
     public interface TweetListener {
-        void onNewsLoaded(List<Timeline.Item> pItems);
+        void onNewsLoaded(List<Timeline.News> pItems);
     }
 
     public void register(TweetListener pTweetListener) {

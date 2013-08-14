@@ -3,7 +3,7 @@ package com.codexperiments.newsroot.domain.twitter;
 import java.util.List;
 
 // TODO Make immutable
-public class TimeGap implements Timeline.Item {
+public class TimeGap implements News {
     private long mId;
     private long mEarliestBound;
     private long mOldestBound;

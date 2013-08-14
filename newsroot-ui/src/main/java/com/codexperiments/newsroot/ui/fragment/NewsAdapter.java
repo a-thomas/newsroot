@@ -15,11 +15,11 @@ public class NewsAdapter extends BaseAdapter
     private Callback mCallback;
     private LayoutInflater mLayoutInflater;
 
-    private List<Timeline.Item> mTweets;
+    private List<Timeline.News> mTweets;
     private boolean mHasMore;
     private int mLastPosition = 0;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, List<Timeline.Item> pTweets, boolean pHasMore, Callback pCallback)
+    public NewsAdapter(LayoutInflater pLayoutInflater, List<Timeline.News> pTweets, boolean pHasMore, Callback pCallback)
     {
         super();
         mCallback = pCallback;
@@ -65,7 +65,7 @@ public class NewsAdapter extends BaseAdapter
         return mTweets.size();
     }
 
-    public void notifyDataSetChanged(List<Timeline.Item> pTweets)
+    public void notifyDataSetChanged(List<Timeline.News> pTweets)
     {
         mTweets = pTweets;
         super.notifyDataSetChanged();

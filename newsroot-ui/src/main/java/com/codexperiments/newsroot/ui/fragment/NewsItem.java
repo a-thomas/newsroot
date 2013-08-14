@@ -43,7 +43,7 @@ public class NewsItem extends RelativeLayout
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    public void setContent(Timeline.Item pNews)
+    public void setContent(Timeline.News pNews)
     {
         if (pNews instanceof Tweet) {
             Tweet lTweet = (Tweet) pNews;

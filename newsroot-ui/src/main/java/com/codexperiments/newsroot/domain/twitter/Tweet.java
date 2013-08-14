@@ -1,8 +1,6 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-
-public class Tweet implements Timeline.Item
-{
+public class Tweet implements News {
     private long mId;
     // @DatabaseField(columnName = "TWT_TML_ID", canBeNull = false)
     // private long mTimelineId;
@@ -11,65 +9,53 @@ public class Tweet implements Timeline.Item
     private String mText;
     private long mCreatedAt;
 
-    public Tweet()
-    {
+    public Tweet() {
         super();
         mId = -1;
     }
 
-    public long getId()
-    {
+    public long getId() {
         return mId;
     }
 
-    public void setId(long pId)
-    {
+    public void setId(long pId) {
         mId = pId;
     }
 
     @Override
-    public long getTimelineId()
-    {
+    public long getTimelineId() {
         return mId;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return mName;
     }
 
-    public void setName(String pName)
-    {
+    public void setName(String pName) {
         mName = pName;
     }
 
-    public String getScreenName()
-    {
+    public String getScreenName() {
         return mScreenName;
     }
 
-    public void setScreenName(String pScreenName)
-    {
+    public void setScreenName(String pScreenName) {
         mScreenName = pScreenName;
     }
 
-    public String getText()
-    {
+    public String getText() {
         return mText;
     }
 
-    public void setText(String pText)
-    {
+    public void setText(String pText) {
         mText = pText;
     }
 
-    public long getCreatedAt()
-    {
+    public long getCreatedAt() {
         return mCreatedAt;
     }
 
-    public void setCreatedAt(long pCreatedAt)
-    {
+    public void setCreatedAt(long pCreatedAt) {
         mCreatedAt = pCreatedAt;
     }
 }

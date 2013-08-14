@@ -7,14 +7,14 @@ public class Timeline {
     private long mId;
     private long mEarliestId;
     private long mOldestId;
-    private List<Item> mItems;
+    private List<News> mItems;
 
     public Timeline() {
         super();
         mId = -1;
         mEarliestId = -1;
         mOldestId = -1;
-        mItems = new ArrayList<Timeline.Item>();
+        mItems = new ArrayList<News>();
     }
 
     public Timeline(long pId, long pEarliestId, long pOldestId) {
@@ -22,7 +22,7 @@ public class Timeline {
         mId = pId;
         mEarliestId = pEarliestId;
         mOldestId = pOldestId;
-        mItems = new ArrayList<Timeline.Item>();
+        mItems = new ArrayList<News>();
     }
 
     public long getId() {
@@ -33,15 +33,15 @@ public class Timeline {
         mId = pId;
     }
 
-    public List<Item> getItems() {
+    public List<News> getItems() {
         return mItems;
     }
 
-    public void appendNewItems(List<Item> pItems) {
+    public void appendNewItems(List<News> pItems) {
         mItems.addAll(0, pItems);
     }
 
-    public void appendOldItems(List<Item> pItems) {
+    public void appendOldItems(List<News> pItems) {
         mItems.addAll(pItems);
     }
 
@@ -93,9 +93,5 @@ public class Timeline {
 
     public boolean hasEarliestBound() {
         return getEarliestBound() != -1;
-    }
-
-    public interface Item {
-        long getTimelineId();
     }
 }

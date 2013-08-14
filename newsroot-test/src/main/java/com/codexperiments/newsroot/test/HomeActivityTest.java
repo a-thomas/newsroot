@@ -289,7 +289,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // when(mTwitterManager.query(argThat(any(TwitterQuery.class)))).thenReturn(createParser("twitter/tweets_03.json"));
         // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
         // Run
-        List<Item> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+        List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
         // Verify
         assertThat(lTweets, notNullValue());
         assertThat(lTweets.size(), equalTo(20));

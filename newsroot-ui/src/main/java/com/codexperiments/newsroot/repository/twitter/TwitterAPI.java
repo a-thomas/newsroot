@@ -3,10 +3,14 @@ package com.codexperiments.newsroot.repository.twitter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+import rx.util.functions.Func1;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
@@ -28,39 +32,49 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public List<Tweet> getHome(TimeGap pTimeGap, int pPageSize) throws TwitterAccessException {
+    public Observable<Tweet> getHome(TimeGap pTimeGap, int pPageSize) throws TwitterAccessException {
         TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
                                           .withParam("count", pPageSize)
                                           .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
                                           .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
 
-        return mTwitterManager.query(lQuery, new TwitterQuery.Handler<List<Tweet>>() {
-            public List<Tweet> parse(JsonParser pParser) throws Exception {
-                return parseTweetList(pParser);
+        return mTwitterManager.query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
+            public Observable<Tweet> parse(JsonParser pParser) throws Exception {
+                return parseTweets(pParser);
             }
         });
     }
 
-    private List<Tweet> parseTweetList(JsonParser pParser) throws JsonParseException, IOException {
-        boolean lFinished = false;
-        List<Tweet> lResult = new ArrayList<Tweet>(20);
+    public Observable<Tweet> parseTweets(final JsonParser pParser) throws JsonParseException, IOException {
+        return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
+            public Subscription call(Observer<Tweet> pObserver) {
+                try {
+                    boolean lFinished = false;
+                    if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
 
-        if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
-        while (!lFinished) {
-            switch (pParser.nextToken()) {
-            case START_OBJECT:
-                lResult.add(parseTweet(pParser));
-                break;
-            case END_ARRAY:
-                lFinished = true;
-                break;
-            case NOT_AVAILABLE:
-                throw new IOException();
-            default:
-                break;
+                    while (!lFinished) {
+                        switch (pParser.nextToken()) {
+                        case START_OBJECT:
+                            pObserver.onNext(parseTweet(pParser));
+                            break;
+                        case END_ARRAY:
+                            lFinished = true;
+                            break;
+                        case NOT_AVAILABLE:
+                            throw new IOException();
+                        default:
+                            break;
+                        }
+                    }
+                    pObserver.onCompleted();
+                } catch (JsonParseException eJsonParseException) {
+                    pObserver.onError(eJsonParseException);
+                } catch (IOException eIOException) {
+                    pObserver.onError(eIOException);
+                }
+                return Subscriptions.empty();
             }
-        }
-        return lResult;
+        });
     }
 
     private Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {

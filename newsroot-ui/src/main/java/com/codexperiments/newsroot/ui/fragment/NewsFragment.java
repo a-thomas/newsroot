@@ -28,7 +28,7 @@ public class NewsFragment extends Fragment {
     private TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
-    private List<Timeline.Item> mTweets;
+    private List<Timeline.News> mTweets;
     private boolean mHasMore; // TODO
 
     private NewsAdapter mUIListAdapter;
@@ -50,7 +50,7 @@ public class NewsFragment extends Fragment {
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
         mTimeline = new Timeline();
-        mTweets = new ArrayList<Timeline.Item>(); // TODO Get from prefs.
+        mTweets = new ArrayList<Timeline.News>(); // TODO Get from prefs.
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
@@ -93,7 +93,7 @@ public class NewsFragment extends Fragment {
     }
 
     public void refresh() {
-        mTaskManager.execute(new TaskAdapter<List<Timeline.Item>>() {
+        mTaskManager.execute(new TaskAdapter<List<Timeline.News>>() {
             TwitterRepository lTwitterRepository = mTwitterRepository;
             Timeline lTimeline = mTimeline;
 
@@ -108,12 +108,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.Item> onProcess(TaskNotifier pNotifier) throws Exception {
+            public List<Timeline.News> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findLatestTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(List<Timeline.Item> pResult) {
+            public void onFinish(List<Timeline.News> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendNewItems(mTweets);
@@ -155,7 +155,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void loadMoreTweets() {
-        mTaskManager.execute(new TaskAdapter<List<Timeline.Item>>() {
+        mTaskManager.execute(new TaskAdapter<List<Timeline.News>>() {
             TwitterRepository lTwitterRepository = mTwitterRepository;
             Timeline lTimeline = mTimeline;
 
@@ -170,12 +170,12 @@ public class NewsFragment extends Fragment {
             }
 
             @Override
-            public List<Timeline.Item> onProcess(TaskNotifier pNotifier) throws Exception {
+            public List<Timeline.News> onProcess(TaskNotifier pNotifier) throws Exception {
                 return lTwitterRepository.findOlderTweets(lTimeline);
             }
 
             @Override
-            public void onFinish(List<Timeline.Item> pResult) {
+            public void onFinish(List<Timeline.News> pResult) {
                 mUIDialog.dismiss();
                 // mTweets.addAll(pResult);
                 // mTimeline.appendOldItems(mTweets);

@@ -3,9 +3,14 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Observer;
+import rx.util.BufferClosing;
+import rx.util.functions.Func0;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +24,6 @@ import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.robolabor.task.TaskManager;
-import com.codexperiments.robolabor.task.handler.TaskNotifier;
-import com.codexperiments.robolabor.task.id.TaskId;
-import com.codexperiments.robolabor.task.util.TaskAdapter;
 
 public class NewsFragment extends Fragment {
     private EventBus mEventBus;
@@ -94,43 +96,79 @@ public class NewsFragment extends Fragment {
     }
 
     public void refresh() {
-        mTwitterRepository.findLatestTweets(mTimeline);
-        
-        
-        mTaskManager.execute(new TaskAdapter<List<News>>() {
-            TwitterRepository lTwitterRepository = mTwitterRepository;
-            Timeline lTimeline = mTimeline;
-
-            @Override
-            public TaskId getId() {
-                return super.getId();
+        final Pair<Observable<News>, Observable<BufferClosing>> lTweetPair = mTwitterRepository.findLatestTweets(mTimeline);
+        lTweetPair.first.buffer(new Func0<Observable<BufferClosing>>() {
+            public Observable<BufferClosing> call() {
+                return lTweetPair.second;
+            }
+        }).subscribe(new Observer<List<News>>() {
+            public void onNext(List<News> pNews) {
+                mTweets.addAll(pNews);
+                mUIListAdapter.notifyDataSetChanged();
             }
 
-            @Override
-            public void onStart(boolean pIsRestored) {
-                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
-            }
-
-            @Override
-            public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
-                return lTwitterRepository.findLatestTweets(lTimeline);
-            }
-
-            @Override
-            public void onFinish(List<News> pResult) {
+            public void onCompleted() {
                 mUIDialog.dismiss();
-                // mTweets.addAll(pResult);
-                // mTimeline.appendNewItems(mTweets);
-                // mUIListAdapter.notifyDataSetChanged(mTweets);
             }
 
-            @Override
-            public void onFail(Throwable pException) {
+            public void onError(Throwable pThrowable) {
                 mUIDialog.dismiss();
                 Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pException.printStackTrace();
+                pThrowable.printStackTrace();
             }
         });
+
+        // mTaskManager.execute(new TaskAdapter<List<News>>() {
+        // TwitterRepository lTwitterRepository = mTwitterRepository;
+        // Timeline lTimeline = mTimeline;
+        //
+        // @Override
+        // public TaskId getId() {
+        // return super.getId();
+        // }
+        //
+        // @Override
+        // public void onStart(boolean pIsRestored) {
+        // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
+        // }
+        //
+        // @Override
+        // public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
+        // lTwitterRepository.findLatestTweets(lTimeline)
+        // .observeOn(AndroidScheduler.getInstance())
+        // .subscribe(new Observer<News>() {
+        // public void onNext(News pArgs) {
+        // TODO
+        // }
+        //
+        // public void onCompleted() {
+        // mUIDialog.dismiss();
+        // }
+        //
+        // public void onError(Throwable pException) {
+        // mUIDialog.dismiss();
+        // Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+        // pException.printStackTrace();
+        // }
+        // });
+        // return null;
+        // }
+        //
+        // @Override
+        // public void onFinish(List<News> pResult) {
+        // // //mUIDialog.dismiss();
+        // // mTweets.addAll(pResult);
+        // // mTimeline.appendNewItems(mTweets);
+        // // mUIListAdapter.notifyDataSetChanged(mTweets);
+        // }
+        //
+        // @Override
+        // public void onFail(Throwable pException) {
+        // // //mUIDialog.dismiss();
+        // // //Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+        // // //pException.printStackTrace();
+        // }
+        // });
         // mTaskManager.execute(new Task<List<Timeline.Item>>() {
         // TwitterRepository lTwitterRepository = mTwitterRepository;
         // Timeline lTimeline = mTimeline;
@@ -159,39 +197,39 @@ public class NewsFragment extends Fragment {
     }
 
     private void loadMoreTweets() {
-        mTaskManager.execute(new TaskAdapter<List<News>>() {
-            TwitterRepository lTwitterRepository = mTwitterRepository;
-            Timeline lTimeline = mTimeline;
-
-            @Override
-            public TaskId getId() {
-                return super.getId();
-            }
-
-            @Override
-            public void onStart(boolean pIsRestored) {
-                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
-            }
-
-            @Override
-            public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
-                return lTwitterRepository.findOlderTweets(lTimeline);
-            }
-
-            @Override
-            public void onFinish(List<News> pResult) {
-                mUIDialog.dismiss();
-                // mTweets.addAll(pResult);
-                // mTimeline.appendOldItems(mTweets);
-                // mUIListAdapter.notifyDataSetChanged(mTweets);
-            }
-
-            @Override
-            public void onFail(Throwable pException) {
-                mUIDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pException.printStackTrace();
-            }
-        });
+        // mTaskManager.execute(new TaskAdapter<List<News>>() {
+        // TwitterRepository lTwitterRepository = mTwitterRepository;
+        // Timeline lTimeline = mTimeline;
+        //
+        // @Override
+        // public TaskId getId() {
+        // return super.getId();
+        // }
+        //
+        // @Override
+        // public void onStart(boolean pIsRestored) {
+        // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
+        // }
+        //
+        // @Override
+        // public List<News> onProcess(TaskNotifier pNotifier) throws Exception {
+        // return lTwitterRepository.findOlderTweets(lTimeline);
+        // }
+        //
+        // @Override
+        // public void onFinish(List<News> pResult) {
+        // mUIDialog.dismiss();
+        // // mTweets.addAll(pResult);
+        // // mTimeline.appendOldItems(mTweets);
+        // // mUIListAdapter.notifyDataSetChanged(mTweets);
+        // }
+        //
+        // @Override
+        // public void onFail(Throwable pException) {
+        // mUIDialog.dismiss();
+        // Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+        // pException.printStackTrace();
+        // }
+        // });
     }
 }

@@ -23,7 +23,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.twitter.Timeline;
+import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,7 +45,7 @@ public class TwitterManager {
     private Set<TweetListener> mListeners;
 
     public interface TweetListener {
-        void onNewsLoaded(List<Timeline.News> pItems);
+        void onNewsLoaded(List<News> pItems);
     }
 
     public void register(TweetListener pTweetListener) {
@@ -314,7 +314,7 @@ public class TwitterManager {
 
             lInputStream = new BufferedInputStream(lRequest.getInputStream());
             lParser = mJSONFactory.createParser(lInputStream);
-            return pQueryHandler.parse(lParser);
+            return pQueryHandler.parse(pQuery, lParser);
         } catch (MalformedURLException eMalformedURLException) {
             throw TwitterAccessException.from(eMalformedURLException);
         } catch (IOException eIOException) {

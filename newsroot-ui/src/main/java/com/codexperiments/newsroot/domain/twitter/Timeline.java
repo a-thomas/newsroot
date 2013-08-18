@@ -1,28 +1,26 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Timeline {
     private long mId;
-    private long mEarliestId;
-    private long mOldestId;
-    private List<News> mItems;
+
+    // private long mEarliestId;
+    // private long mOldestId;
+    // private List<News> mItems;
 
     public Timeline() {
         super();
         mId = -1;
-        mEarliestId = -1;
-        mOldestId = -1;
-        mItems = new ArrayList<News>();
+        // mEarliestId = -1;
+        // mOldestId = -1;
+        // mItems = new ArrayList<News>();
     }
 
     public Timeline(long pId, long pEarliestId, long pOldestId) {
         super();
         mId = pId;
-        mEarliestId = pEarliestId;
-        mOldestId = pOldestId;
-        mItems = new ArrayList<News>();
+        // mEarliestId = pEarliestId;
+        // mOldestId = pOldestId;
+        // mItems = new ArrayList<News>();
     }
 
     public long getId() {
@@ -33,17 +31,17 @@ public class Timeline {
         mId = pId;
     }
 
-    public List<News> getItems() {
-        return mItems;
-    }
-
-    public void appendNewItems(List<News> pItems) {
-        mItems.addAll(0, pItems);
-    }
-
-    public void appendOldItems(List<News> pItems) {
-        mItems.addAll(pItems);
-    }
+    // public List<News> getItems() {
+    // return mItems;
+    // }
+    //
+    // public void appendNewItems(List<News> pItems) {
+    // mItems.addAll(0, pItems);
+    // }
+    //
+    // public void appendOldItems(List<News> pItems) {
+    // mItems.addAll(pItems);
+    // }
 
     // public TimeGap refresh(TimeGap pTimeGap, List<Tweet> pTweets, int pPageSize)
     // {
@@ -71,27 +69,27 @@ public class Timeline {
     // return (mEarliestId != -1) && (mOldestId != -1);
     // }
     //
-    public long getEarliestBound() {
-        if (mItems.size() == 0) {
-            return -1;
-        } else {
-            return mItems.get(0).getTimelineId();
-        }
-    }
-
-    public long getOldestBound() {
-        if (mItems.size() == 0) {
-            return -1;
-        } else {
-            return mItems.get(mItems.size() - 1).getTimelineId();
-        }
-    }
-
-    public boolean hasOldestBound() {
-        return getEarliestBound() != -1;
-    }
-
-    public boolean hasEarliestBound() {
-        return getEarliestBound() != -1;
-    }
+    // public long getEarliestBound() {
+    // if (mItems.size() == 0) {
+    // return -1;
+    // } else {
+    // return mItems.get(0).getTimelineId();
+    // }
+    // }
+    //
+    // public long getOldestBound() {
+    // if (mItems.size() == 0) {
+    // return -1;
+    // } else {
+    // return mItems.get(mItems.size() - 1).getTimelineId();
+    // }
+    // }
+    //
+    // public boolean hasOldestBound() {
+    // return getEarliestBound() != -1;
+    // }
+    //
+    // public boolean hasEarliestBound() {
+    // return getEarliestBound() != -1;
+    // }
 }

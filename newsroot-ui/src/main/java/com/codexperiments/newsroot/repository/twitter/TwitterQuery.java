@@ -2,11 +2,14 @@ package com.codexperiments.newsroot.repository.twitter;
 
 import rx.Observer;
 
+import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterQuery {
     private StringBuilder mQuery;
-    private boolean mHasParameters;
+    private char mSeparator;
+    private int mPageSize;
+    private TimeGap mTimeGap;
 
     public static TwitterQuery queryHome(String pHost) {
         return new TwitterQuery(pHost, "1.1/statuses/home_timeline.json");
@@ -15,17 +18,38 @@ public class TwitterQuery {
     private TwitterQuery(String pHost, String pQuery) {
         super();
         mQuery = new StringBuilder(pHost).append(pQuery);
-        mHasParameters = false;
+        mSeparator = '?';
+    }
+
+    public int getPageSize() {
+        return mPageSize;
+    }
+
+    public TimeGap getTimeGap() {
+        return mTimeGap;
+    }
+
+    public TwitterQuery withPageSize(int pPageSize) {
+        mPageSize = pPageSize;
+        withParam("count", pPageSize);
+        return this;
+    }
+
+    public TwitterQuery withTimeGap(TimeGap pTimeGap) {
+        if (!pTimeGap.isFutureGap()) {
+            withParam("max_id", pTimeGap.getEarliestBound() - 1);
+        }
+        if (!pTimeGap.isPastGap()) {
+            withParam("since_id", pTimeGap.getOldestBound());
+        }
+        mTimeGap = pTimeGap;
+        return this;
     }
 
     public TwitterQuery withParamIf(boolean pCondition, String pParam, String pValue) {
         if (pCondition) {
-            if (!mHasParameters) {
-                mQuery.append("?");
-                mHasParameters = true;
-            } else {
-                mQuery.append("&");
-            }
+            mQuery.append(mSeparator);
+            if (mSeparator == '?') mSeparator = '&';
             // TODO Use URLEncodedUtils
             mQuery.append(pParam).append("=").append(pValue);
         }
@@ -58,7 +82,7 @@ public class TwitterQuery {
     }
 
     public interface Handler<TResult> {
-        TResult parse(JsonParser pParser) throws Exception;
+        TResult parse(TwitterQuery pQuery, JsonParser pParser) throws Exception;
     }
 
     public interface Handler2<TResult> {

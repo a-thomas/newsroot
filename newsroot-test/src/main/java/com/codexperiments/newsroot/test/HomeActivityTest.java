@@ -1,26 +1,31 @@
 package com.codexperiments.newsroot.test;
 
 import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.List;
 
+import org.mockito.Mockito;
 import org.simpleframework.http.Query;
 
+import rx.Observable;
+import rx.Observer;
+import rx.util.BufferClosing;
 import android.app.Application;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Pair;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Timeline.Item;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
@@ -120,26 +125,26 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     // return lTwitterManager;
     // }
 
-    public void testFindNewTweets_noResult_emptyTimeline() throws Exception {
-        // Setup
-        // mDatabase.executeAssetScript("twitter/ctx_timeline_04.sql", getInstrumentation().getContext());
-        // // NewsLoadedEvent.Listener lNewsLoadedEvent = mock(NewsLoadedEvent.Listener.class);
-        // when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_05.json");
-        // TweetListener lTweetListener = mock(TweetListener.class);
-        //
-        // // mEventBus.registerListener(lNewsLoadedEvent);
-        // TwitterManager lTwitterManager = setupTwitterManager();
-        // Timeline lTimeline = new Timeline();
-        // lTwitterManager.findOlderTweets(lTimeline);
-        // lTwitterManager.register(lTweetListener);
-        // // Run
-        // List<Timeline.Item> lTweets = lTwitterManager.findLatestTweets(lTimeline);
-        // lTwitterManager.unregister(lTweetListener);
-        // // Check
-        // verify(lTweetListener, times(2)).onNewsLoaded(argThat(any(List.class)));
-        // assertThat(lTweets, notNullValue());
-        // assertThat(lTweets.size(), equalTo(0));
-    }
+    // public void testFindNewTweets_noResult_emptyTimeline() throws Exception {
+    // Setup
+    // mDatabase.executeAssetScript("twitter/ctx_timeline_04.sql", getInstrumentation().getContext());
+    // // NewsLoadedEvent.Listener lNewsLoadedEvent = mock(NewsLoadedEvent.Listener.class);
+    // when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_05.json");
+    // TweetListener lTweetListener = mock(TweetListener.class);
+    //
+    // // mEventBus.registerListener(lNewsLoadedEvent);
+    // TwitterManager lTwitterManager = setupTwitterManager();
+    // Timeline lTimeline = new Timeline();
+    // lTwitterManager.findOlderTweets(lTimeline);
+    // lTwitterManager.register(lTweetListener);
+    // // Run
+    // List<Timeline.Item> lTweets = lTwitterManager.findLatestTweets(lTimeline);
+    // lTwitterManager.unregister(lTweetListener);
+    // // Check
+    // verify(lTweetListener, times(2)).onNewsLoaded(argThat(any(List.class)));
+    // assertThat(lTweets, notNullValue());
+    // assertThat(lTweets.size(), equalTo(0));
+    // }
 
     // public void testFindNewTweets_noResult_emptyTimeline() throws Exception
     // {
@@ -279,19 +284,43 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     // }
 
     public void testFindNewTweets_nonEmptyTimeline_withResults() throws IOException, TwitterAccessException {
+        @SuppressWarnings("unchecked")
+        Observer<News> observer = Mockito.mock(Observer.class);
         // Setup
-        mDatabase.executeAssetScript("twitter/ctx_timeline_02.sql", getInstrumentation().getContext());
+        mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
         mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
         // TODO Data
         Timeline lTimeline = new Timeline(1, 349497246842241000l, 349443896905965600l);
         // Record
-        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_timeline_03.sql");
+        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_02-1.json")
+                                                                                    .thenReturn("twitter/ctx_tweet_02-2.json")
+                                                                                    .thenReturn("twitter/ctx_tweet_02-3.json");
         // when(mTwitterManager.query(argThat(any(TwitterQuery.class)))).thenReturn(createParser("twitter/tweets_03.json"));
         // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
         // Run
-        List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-        // Verify
+        // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+        Pair<Observable<News>, Observable<BufferClosing>> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
         assertThat(lTweets, notNullValue());
-        assertThat(lTweets.size(), equalTo(20));
+        lTweets.first.subscribe(observer);
+        // final AtomicInteger i = new AtomicInteger();
+        // lTweets.first.subscribe(new Observer<News>() {
+        // public void onNext(News pArgs) {
+        // Log.e(String.valueOf(i.incrementAndGet()), pArgs.toString());
+        // }
+        //
+        // @Override
+        // public void onError(Throwable pE) {
+        // Log.e("A", pE.toString());
+        // }
+        //
+        // @Override
+        // public void onCompleted() {
+        // Log.e("A", "3");
+        // }
+        // });
+
+        Mockito.verify(observer, times(38)).onNext(argThat(any(News.class)));
+        Mockito.verify(observer, never()).onError(argThat(any(Throwable.class)));
+        Mockito.verify(observer, times(1)).onCompleted();
     }
 }

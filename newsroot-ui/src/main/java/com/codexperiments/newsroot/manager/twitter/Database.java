@@ -2,10 +2,18 @@ package com.codexperiments.newsroot.manager.twitter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
+import java.util.List;
 
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.util.BufferClosing;
+import rx.util.functions.Action1;
+import rx.util.functions.Func0;
+import rx.util.functions.Func1;
 import android.app.Application;
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
@@ -42,25 +50,73 @@ public abstract class Database extends SQLiteOpenHelper {
         onCreate(getWritableDatabase());
     }
 
-    public <TResult> void executeInTransaction(Callable<TResult> pCallable) throws Exception {
-        mConnection.beginTransaction();
-        try {
-            pCallable.call();
-            mConnection.setTransactionSuccessful();
-        } finally {
-            mConnection.endTransaction();
-        }
+    public <T> Observable<T> doInTransaction(final Observable<T> pObservable,
+                                             final Observable<BufferClosing> pController,
+                                             final Action1<T> pItemAction,
+                                             final Action1<List<T>> pBatchAction)
+    {
+        final Func0<Observable<BufferClosing>> controller = new Func0<Observable<BufferClosing>>() {
+            public Observable<BufferClosing> call() {
+                return pController;
+            }
+        };
+
+        return Observable.create(new Func1<Observer<T>, Subscription>() {
+            public Subscription call(final Observer<T> pObserver) {
+                return pObservable.buffer(controller).subscribe(new Observer<List<T>>() {
+                    public void onNext(List<T> pValues) {
+                        mConnection.beginTransaction();
+                        try {
+                            for (T lValue : pValues) {
+                                pItemAction.call(lValue);
+                            }
+                            pBatchAction.call(pValues);
+                            mConnection.setTransactionSuccessful();
+                            mConnection.endTransaction();
+
+                            // Once data is committed, push data further into the pipeline.
+                            for (T value : pValues) {
+                                pObserver.onNext(value);
+                            }
+                        } catch (SQLException eSQLException) {
+                            mConnection.endTransaction();
+                            pObserver.onError(eSQLException);
+                            throw eSQLException;
+                        }
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pException) {
+                        if (mConnection != null) mConnection.endTransaction();
+                        pObserver.onError(pException);
+                    }
+                });
+            }
+        });
     }
 
-    public void executeInTransaction(Runnable pRunnable) throws Exception {
-        mConnection.beginTransaction();
-        try {
-            pRunnable.run();
-            mConnection.setTransactionSuccessful();
-        } finally {
-            mConnection.endTransaction();
-        }
-    }
+    // public <TResult> void executeInTransaction(Callable<TResult> pCallable) throws Exception {
+    // mConnection.beginTransaction();
+    // try {
+    // pCallable.call();
+    // mConnection.setTransactionSuccessful();
+    // } finally {
+    // mConnection.endTransaction();
+    // }
+    // }
+    //
+    // public void executeInTransaction(Runnable pRunnable) throws Exception {
+    // mConnection.beginTransaction();
+    // try {
+    // pRunnable.run();
+    // mConnection.setTransactionSuccessful();
+    // } finally {
+    // mConnection.endTransaction();
+    // }
+    // }
 
     public void executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mApplication);

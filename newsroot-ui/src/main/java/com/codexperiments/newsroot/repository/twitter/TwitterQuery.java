@@ -1,9 +1,6 @@
 package com.codexperiments.newsroot.repository.twitter;
 
-import rx.Observer;
-
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.fasterxml.jackson.core.JsonParser;
 
 public class TwitterQuery {
     private StringBuilder mQuery;
@@ -46,46 +43,29 @@ public class TwitterQuery {
         return this;
     }
 
-    public TwitterQuery withParamIf(boolean pCondition, String pParam, String pValue) {
-        if (pCondition) {
-            mQuery.append(mSeparator);
-            if (mSeparator == '?') mSeparator = '&';
-            // TODO Use URLEncodedUtils
-            mQuery.append(pParam).append("=").append(pValue);
-        }
-        return this;
+    public void withParam(String pParam, String pValue) {
+        mQuery.append(mSeparator);
+        if (mSeparator == '?') mSeparator = '&';
+        // TODO Use URLEncodedUtils
+        mQuery.append(pParam).append("=").append(pValue);
     }
 
-    public TwitterQuery withParam(String pParam, String pValue) {
-        return withParamIf(true, pParam, pValue);
+    public void withParam(String pParam, int pValue) {
+        mQuery.append(mSeparator);
+        if (mSeparator == '?') mSeparator = '&';
+        // TODO Use URLEncodedUtils
+        mQuery.append(pParam).append("=").append(Integer.toString(pValue));
     }
 
-    public TwitterQuery withParamIf(boolean pCondition, String pParam, int pValue) {
-        return withParamIf(pCondition, pParam, Integer.toString(pValue));
-    }
-
-    public TwitterQuery withParam(String pParam, int pValue) {
-        return withParamIf(true, pParam, Integer.toString(pValue));
-    }
-
-    public TwitterQuery withParamIf(boolean pCondition, String pParam, long pValue) {
-        return withParamIf(pCondition, pParam, Long.toString(pValue));
-    }
-
-    public TwitterQuery withParam(String pParam, long pValue) {
-        return withParamIf(true, pParam, Long.toString(pValue));
+    public void withParam(String pParam, long pValue) {
+        mQuery.append(mSeparator);
+        if (mSeparator == '?') mSeparator = '&';
+        // TODO Use URLEncodedUtils
+        mQuery.append(pParam).append("=").append(Long.toString(pValue));
     }
 
     @Override
     public String toString() {
         return mQuery.toString();
-    }
-
-    public interface Handler<TResult> {
-        TResult parse(TwitterQuery pQuery, JsonParser pParser) throws Exception;
-    }
-
-    public interface Handler2<TResult> {
-        void parse(JsonParser pParser, Observer<TResult> pObserver) throws Exception;
     }
 }

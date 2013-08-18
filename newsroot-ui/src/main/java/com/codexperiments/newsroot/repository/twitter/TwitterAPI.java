@@ -3,7 +3,6 @@ package com.codexperiments.newsroot.repository.twitter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -14,22 +13,21 @@ import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
 import rx.util.BufferClosing;
 import rx.util.BufferClosings;
-import rx.util.functions.Action1;
-import rx.util.functions.Func0;
 import rx.util.functions.Func1;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.manager.twitter.Database;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
+import com.codexperiments.newsroot.manager.twitter.TwitterManager.QueryHandler;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class TwitterAPI {
+    private static final int SAFETY_COUNTER = 10;
+
     private TwitterManager mTwitterManager;
     private String mHost;
     private SimpleDateFormat mDateFormat;
@@ -41,228 +39,39 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    // public Observable<Tweet> getHome(final TimeGap pTimeGap, final int pPageSize) {
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-    // .withParam("count", pPageSize)
-    // .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-    // .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-    // return query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
-    // public Observable<Tweet> parse(JsonParser pParser) throws Exception {
-    // return parseTweets(pParser);
-    // }
-    // });
-    // }
-    // public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageSize) {
-    // Subject<Observable<Tweet>, Observable<Tweet>> lSubject;
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-    // .withParam("count", pPageSize)
-    // .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-    // .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-    // Observable<Tweet> lTweets = query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
-    // public Observable<Tweet> parse(JsonParser pParser) throws Exception {
-    // return parseTweets(pParser);
-    // }
-    // });
-    // lSubject.onNext(lTweets);
-    //
-    // Observable.publish(Observable.create(new Func1<Observer<Observable<Tweet>>, Subscription>() {
-    // public Subscription call(Observer<Observable<Tweet>> pObserver) {
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-    // .withParam("count", pPageSize)
-    // .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-    // .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-    // Observable<Tweet> lTweets = query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
-    // public Observable<Tweet> parse(JsonParser pParser) throws Exception {
-    // return parseTweets(pParser);
-    // }
-    // });
-    // pObserver.onNext(lTweets);
-    // return Subscriptions.empty();
-    // }
-    // }));
-    //
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-    // .withParam("count", pPageSize)
-    // .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-    // .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-    // return query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
-    // public Observable<Tweet> parse(JsonParser pParser) throws Exception {
-    // return parseTweets(pParser);
-    // }
-    // });
-    // }
-    //
-    // public Observable<Tweet> getHome3(final TimeGap pTimeGap, final int pPageSize) {
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-    // .withParam("count", pPageSize)
-    // .withParamIf(!pTimeGap.isFutureGap(), "max_id", pTimeGap.getEarliestBound() - 1)
-    // .withParamIf(!pTimeGap.isPastGap(), "since_id", pTimeGap.getOldestBound());
-    // return query(lQuery, new TwitterQuery.Handler<Observable<Tweet>>() {
-    // public Observable<Tweet> parse(JsonParser pParser) throws Exception {
-    // return parseTweets(pParser);
-    // }
-    // });
-    // }
-    //
-    // private <TResult> Observable<TResult> query(final TwitterQuery pQuery,
-    // final TwitterQuery.Handler<Observable<TResult>> pHandler)
-    // {
-    // return Observable.create(new Func1<Observer<TResult>, Subscription>() {
-    // public Subscription call(Observer<TResult> pObserver) {
-    // try {
-    // mTwitterManager.query(pQuery, pHandler);
-    // pObserver.onCompleted();
-    // } catch (TwitterAccessException eTwitterAccessException) {
-    // pObserver.onError(eTwitterAccessException);
-    // }
-    // return Subscriptions.empty();
-    // }
-    // });
-    // }
-    //
-    // public Observable<Tweet> getHome5(final TimeGap pTimeGap, final int pPageSize) {
-    // Func0<Observable<BufferClosing>> close = new Func0<Observable<BufferClosing>>() {
-    // public Observable<BufferClosing> call() {
-    // return Observable.create(new Func1<Observer<BufferClosing>, Subscription>() {
-    // public Subscription call(Observer<BufferClosing> observer) {
-    // observer.onNext(BufferClosings.create());
-    // observer.onCompleted();
-    // return Subscriptions.empty();
-    // }
-    // });
-    // }
-    // };
-    //
-    // return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
-    // public Subscription call(final Observer<Tweet> pObserver) {
-    // try {
-    // TimeGap lRemainingGap = pTimeGap;
-    // while (lRemainingGap != null) {
-    // TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
-    //
-    // lRemainingGap = mTwitterManager.query(lQuery, new TwitterQuery.Handler<TimeGap>() {
-    // public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-    // return parseTweets(pQuery, pObserver, pParser);
-    // }
-    // });
-    // }
-    // pObserver.onCompleted();
-    // } catch (TwitterAccessException eTwitterAccessException) {
-    // pObserver.onError(eTwitterAccessException);
-    // }
-    // return Subscriptions.empty();
-    // }
-    // });
-    // }
-
-    public interface ControlledSubscription extends Subscription {
-        Observer<BufferClosing> getController();
-    }
-
     public Pair<Observable<Tweet>, Observable<BufferClosing>> getHome(final TimeGap pTimeGap, final int pPageSize) {
         final PublishSubject<BufferClosing> lController = PublishSubject.create();
         final Observable<Tweet> lTweets = Observable.create(new Func1<Observer<Tweet>, Subscription>() {
             public Subscription call(final Observer<Tweet> pObserver) {
                 try {
                     TimeGap lRemainingGap = pTimeGap;
-                    while (lRemainingGap != null) {
+                    int lSafetyCounter = 0;
+                    // Retrieve a new page of data until we receive an empty or partial page (which means there is no more data).
+                    // The safety counter is just here to avoid a possible infinite loop. TODO Should find a better way.
+                    while ((lRemainingGap != null) && (++lSafetyCounter < SAFETY_COUNTER)) {
                         TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(lRemainingGap).withPageSize(pPageSize);
 
-                        lRemainingGap = mTwitterManager.query(lQuery, new TwitterQuery.Handler<TimeGap>() {
+                        lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
                             public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
                                 return parseTweets(pQuery, pObserver, pParser);
                             }
                         });
                         lController.onNext(BufferClosings.create());
                     }
-                    lController.onCompleted();
+
                     pObserver.onCompleted();
+                    lController.onCompleted();
                 } catch (TwitterAccessException eTwitterAccessException) {
-                    lController.onError(eTwitterAccessException);
                     pObserver.onError(eTwitterAccessException);
+                    lController.onError(eTwitterAccessException);
                 }
                 return Subscriptions.empty();
             }
         });
-        // .publish();
         return new Pair<Observable<Tweet>, Observable<BufferClosing>>(lTweets, lController);
     }
 
-    public <T> Observable<T> commitTweets(final Observable<T> pObservable,
-                                          final Observable<BufferClosing> pCloser,
-                                          final Database pDatabase,
-                                          final Action1<T> pAction,
-                                          final Action1<List<T>> pBatchAction)
-    {
-        final Func0<Observable<BufferClosing>> closer = new Func0<Observable<BufferClosing>>() {
-            public Observable<BufferClosing> call() {
-                return pCloser;
-            }
-        };
-
-        return Observable.create(new Func1<Observer<T>, Subscription>() {
-            public Subscription call(final Observer<T> pObserver) {
-                return pObservable.buffer(closer).subscribe(new Observer<List<T>>() {
-                    private Database mDatabase = pDatabase;
-                    private SQLiteDatabase mConnection = null;
-                    private List<T> mValues;
-
-                    public void onNext(List<T> pValues) {
-                        mValues = pValues;
-                        if (mConnection == null) {
-                            mConnection = mDatabase.getWritableDatabase();
-                        }
-
-                        mConnection.beginTransaction();
-                        try {
-                            // let the exception be thrown if func fails as a SafeObserver wrapping this will handle it
-                            for (T lValue : pValues) {
-                                pAction.call(lValue);
-                            }
-                            pBatchAction.call(pValues);
-                            mConnection.setTransactionSuccessful();
-                            mConnection.endTransaction();
-
-                            for (T value : mValues) {
-                                pObserver.onNext(value);
-                            }
-                        } catch (Exception eException) {
-                            pObserver.onError(eException);
-                            mConnection.endTransaction();
-                        }
-                    }
-
-                    public void onCompleted() {
-                        pObserver.onCompleted();
-                    }
-
-                    public void onError(Throwable pException) {
-                        if (mConnection != null) mConnection.endTransaction();
-                        pObserver.onError(pException);
-                    }
-                });
-            }
-        });
-    }
-
-    public <T, R> Observable<R> downcast(Observable<T> pObservable) {
-        return pObservable.map(new Func1<T, R>() {
-            @SuppressWarnings("unchecked")
-            public R call(T pT) {
-                return (R) pT;
-            }
-        });
-    }
-
-    public <T, R> Observable<R> downcast(Observable<T> pObservable, final Class<R> pDowncastedType) {
-        return pObservable.map(new Func1<T, R>() {
-            public R call(T pT) {
-                return pDowncastedType.cast(pT);
-            }
-        });
-    }
-
-    private TimeGap parseTweets(TwitterQuery pQuery, Observer<Tweet> pObserver, final JsonParser pParser)
+    private TimeGap parseTweets(TwitterQuery pQuery, Observer<Tweet> pObserver, JsonParser pParser)
         throws JsonParseException, IOException
     {
         if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();

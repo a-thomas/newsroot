@@ -64,7 +64,7 @@ public abstract class BaseApplication extends Application {
                 // return super.keepResultOnHold(pTask);
             }
         }));
-        registerService(new TwitterManager(this, getService(EventBus.class), lDatabase, new TwitterManager.Config() {
+        registerService(new TwitterManager(this, getService(EventBus.class), new TwitterManager.Config() {
             public String getHost() {
                 return "https://api.twitter.com/";
             }
@@ -87,16 +87,7 @@ public abstract class BaseApplication extends Application {
                                               getService(TaskManager.class),
                                               getService(TwitterManager.class),
                                               getService(TwitterAPI.class),
-                                              lDatabase,
-                                              new TwitterRepository.Config() {
-                                                  public String getHost() {
-                                                      return "https://api.twitter.com/";
-                                                  }
-
-                                                  public String getCallbackURL() {
-                                                      return "oauth://newsroot-callback";
-                                                  }
-                                              }));
+                                              lDatabase));
     }
 
     public void registerService(Object service) {

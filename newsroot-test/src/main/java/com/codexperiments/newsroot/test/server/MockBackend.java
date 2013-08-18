@@ -21,23 +21,20 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-public class MockBackend implements Container
-{
+public class MockBackend implements Container {
     private static final int PORT = 8378;
 
     private Context mContext;
     private Config mConfig;
 
-    public MockBackend(Context pContext, Config pConfig)
-    {
+    public MockBackend(Context pContext, Config pConfig) {
         super();
         mContext = pContext;
         mConfig = pConfig;
     }
 
     @Override
-    public void handle(Request request, Response response)
-    {
+    public void handle(Request request, Response response) {
         PrintStream body = null;
         try {
             Query lQuery = request.getQuery();
@@ -57,8 +54,7 @@ public class MockBackend implements Container
         }
     }
 
-    private PrintStream renderHeader(Request request, Response response) throws IOException
-    {
+    private PrintStream renderHeader(Request request, Response response) throws IOException {
         PrintStream body = response.getPrintStream();
         long time = System.currentTimeMillis();
 
@@ -70,8 +66,7 @@ public class MockBackend implements Container
         return body;
     }
 
-    public static String readAssetToString(AssetManager assetManager, String pAssetPath) throws IOException
-    {
+    public static String readAssetToString(AssetManager assetManager, String pAssetPath) throws IOException {
         InputStream input = null;
         try {
             input = assetManager.open(pAssetPath);
@@ -88,8 +83,9 @@ public class MockBackend implements Container
         }
     }
 
-    public static byte[] readAssetToByte(AssetManager assetManager, String pAssetPath) throws IOException
-    {
+    public static byte[] readAssetToByte(AssetManager assetManager, String pAssetPath) throws IOException {
+        if (pAssetPath == null) return new byte[0];
+
         InputStream lInput = null;
         try {
             lInput = assetManager.open(pAssetPath);
@@ -106,16 +102,13 @@ public class MockBackend implements Container
         }
     }
 
-
-    public static class Server
-    {
+    public static class Server {
         private MockBackend container;
         private org.simpleframework.transport.Server server;
         private org.simpleframework.transport.connect.Connection connection;
         private SocketAddress address;
 
-        public Server(Context pContext, Config pConfig)
-        {
+        public Server(Context pContext, Config pConfig) {
             try {
                 container = new MockBackend(pContext, pConfig);
                 server = new ContainerServer(container);
@@ -129,8 +122,7 @@ public class MockBackend implements Container
             }
         }
 
-        private void waitUntilReady() throws IOException
-        {
+        private void waitUntilReady() throws IOException {
             URL pingURL = new URL("http://127.0.0.1:" + PORT + "/?ping=1");
             URLConnection yc = pingURL.openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(yc.getInputStream()));
@@ -141,16 +133,13 @@ public class MockBackend implements Container
             in.close();
         }
 
-        public void stop() throws IOException
-        {
+        public void stop() throws IOException {
             server.stop();
             connection.close();
         }
     }
 
-
-    public interface Config
-    {
+    public interface Config {
         String getResponseAsset(Query pQuery, String pContent);
     }
 }

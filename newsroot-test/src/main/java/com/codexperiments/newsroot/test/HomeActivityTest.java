@@ -36,8 +36,6 @@ import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private Application mApplication;
@@ -55,10 +53,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         super(HomeActivity.class);
     }
 
-    private JsonParser createParser(String pAssetPath) throws IOException {
-        return new JsonFactory().createParser(getInstrumentation().getContext().getAssets().open(pAssetPath));
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -72,7 +66,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         mEventBus = new AndroidEventBus();
         mTaskManager = new AndroidTaskManager(mApplication, new AndroidTaskManagerConfig(mApplication));
         // mTwitterManager = mock(TwitterManager.class);
-        mTwitterManager = new TwitterManager(mApplication, mEventBus, mDatabase, new TwitterManager.Config() {
+        mTwitterManager = new TwitterManager(mApplication, mEventBus, new TwitterManager.Config() {
             public String getHost() {
                 return "http://localhost:8378/";
             }
@@ -91,22 +85,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         });
         // mTwitterAPI = mock(TwitterAPI.class);
         mTwitterAPI = new TwitterAPI(mTwitterManager, "http://localhost:8378/");
-        TwitterRepository.Config lRepositoryConfig = new TwitterRepository.Config() {
-            public String getHost() {
-                return "http://localhost:8378/";
-            }
-
-            public String getCallbackURL() {
-                return "oauth://newsroot-callback";
-            }
-        };
-        mTwitterRepository = new TwitterRepository(mApplication,
-                                                   mEventBus,
-                                                   mTaskManager,
-                                                   mTwitterManager,
-                                                   mTwitterAPI,
-                                                   mDatabase,
-                                                   lRepositoryConfig);
+        mTwitterRepository = new TwitterRepository(mApplication, mEventBus, mTaskManager, mTwitterManager, mTwitterAPI, mDatabase);
 
         // Record
         // when(mTwitterManager.isAuthorized()).thenReturn(true);
@@ -319,7 +298,8 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // }
         // });
 
-        Mockito.verify(observer, times(38)).onNext(argThat(any(News.class)));
+        Mockito.verify(observer, times(59)).onNext(argThat(any(News.class)));
+        Mockito.verify(observer, times(2)).onError(argThat(any(Throwable.class)));
         Mockito.verify(observer, never()).onError(argThat(any(Throwable.class)));
         Mockito.verify(observer, times(1)).onCompleted();
     }

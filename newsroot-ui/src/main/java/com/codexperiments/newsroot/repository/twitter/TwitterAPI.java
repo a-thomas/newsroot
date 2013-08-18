@@ -166,7 +166,7 @@ public class TwitterAPI {
                 try {
                     TimeGap lRemainingGap = pTimeGap;
                     while (lRemainingGap != null) {
-                        TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
+                        TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(lRemainingGap).withPageSize(pPageSize);
 
                         lRemainingGap = mTwitterManager.query(lQuery, new TwitterQuery.Handler<TimeGap>() {
                             public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
@@ -288,7 +288,7 @@ public class TwitterAPI {
             }
         }
 
-        if ((lTweetCount > 0) && (lTweetCount == pQuery.getPageSize())) {
+        if ((lTweetCount > 0) && (lTweetCount >= pQuery.getPageSize())) {
             return new TimeGap(lEarliestBound, pQuery.getTimeGap().getOldestBound());
         } else {
             return null;

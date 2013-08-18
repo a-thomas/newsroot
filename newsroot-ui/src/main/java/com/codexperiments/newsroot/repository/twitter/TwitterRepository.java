@@ -81,31 +81,16 @@ public class TwitterRepository {
         // mListeners = new HashSet<TwitterRepository.TweetListener>();
     }
 
-    @SuppressWarnings("unchecked")
     public Pair<Observable<News>, Observable<BufferClosing>> findLatestTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
         // pTimeline.appendNewItems(lResult);
         // return lResult;
-        Observable<News> lTweetsFromCache = findTweetsFromCache(new TimeGap());
+        // Observable<News> lTweetsFromCache = findTweetsFromCache(new TimeGap());
         Pair<Observable<News>, Observable<BufferClosing>> lTweetsFromNetwork = findTweetsFromNetwork(new TimeGap(-1, -1));
-        // lTweetsFromNetwork.first.subscribe(new Observer<News>() {
-        // public void onCompleted() {
-        // i = 1;
-        // }
-        //
-        // public void onError(Throwable pE) {
-        // i = 2;
-        // }
-        //
-        // public void onNext(News pArgs) {
-        // i = 3;
-        // }
-        //
-        // int i;
-        // });
-        return Pair.create(Observable.concat(lTweetsFromNetwork.first, lTweetsFromCache), lTweetsFromNetwork.second);
+        return Pair.create(lTweetsFromNetwork.first, lTweetsFromNetwork.second);
+        // return Pair.create(Observable.concat(lTweetsFromNetwork.first, lTweetsFromCache), lTweetsFromNetwork.second);
         // return Pair.create(Observable.concat(lTweetsFromCache, lTweetsFromNetwork.first), lTweetsFromNetwork.second);
     }
 

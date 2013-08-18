@@ -1,10 +1,10 @@
 [
   {
-    "created_at": "Tue Jun 25 14:13:39 +0000 2013",
-    "id": 349530834786721800,
-    "id_str": "349530834786721792",
-    "text": "SFR casse les prix des smartphones tous les lundis : http://t.co/MhBgz9yrWp",
-    "source": "<a href=\"http://www.frandroid.com\" rel=\"nofollow\">Publication FrAndroid</a>",
+    "created_at": "Tue Jun 25 09:03:03 +0000 2013",
+    "id": 349452667745087500,
+    "id_str": "349452667745087488",
+    "text": "Icahn seeks $5.2 billion loan for Dell buyout deal http://t.co/FfJMt54VdJ",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
     "truncated": false,
     "in_reply_to_status_id": null,
     "in_reply_to_status_id_str": null,
@@ -12,20 +12,20 @@
     "in_reply_to_user_id_str": null,
     "in_reply_to_screen_name": null,
     "user": {
-      "id": 25260412,
-      "id_str": "25260412",
-      "name": "FrAndroid",
-      "screen_name": "twandroid",
-      "location": "Android World",
-      "description": "Première communauté Android francophone et seconde mondiale  Toute l'actu #Android : #applis, #jeux, #smartphones, #tests",
-      "url": "http://t.co/M4dhAG94kU",
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
       "entities": {
         "url": {
           "urls": [
             {
-              "url": "http://t.co/M4dhAG94kU",
-              "expanded_url": "http://www.frandroid.com/",
-              "display_url": "frandroid.com",
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
               "indices": [
                 0,
                 22
@@ -38,29 +38,30 @@
         }
       },
       "protected": false,
-      "followers_count": 29075,
-      "friends_count": 3776,
-      "listed_count": 1295,
-      "created_at": "Thu Mar 19 08:45:51 +0000 2009",
-      "favourites_count": 24,
-      "utc_offset": null,
-      "time_zone": null,
-      "geo_enabled": true,
-      "verified": false,
-      "statuses_count": 21414,
-      "lang": "fr",
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
       "contributors_enabled": false,
       "is_translator": false,
-      "profile_background_color": "131516",
-      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme14/bg.gif",
-      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme14/bg.gif",
-      "profile_background_tile": true,
-      "profile_image_url": "http://a0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
-      "profile_image_url_https": "https://si0.twimg.com/profile_images/1865300480/FACEBOOK-AVATAR_normal.jpg",
-      "profile_link_color": "009999",
-      "profile_sidebar_border_color": "EEEEEE",
-      "profile_sidebar_fill_color": "EFEFEF",
-      "profile_text_color": "333333",
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
       "profile_use_background_image": true,
       "default_profile": false,
       "default_profile_image": false,
@@ -72,19 +73,115 @@
     "coordinates": null,
     "place": null,
     "contributors": null,
-    "retweet_count": 5,
+    "retweet_count": 4,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/FfJMt54VdJ",
+          "expanded_url": "http://zd.net/12mEfaU",
+          "display_url": "zd.net/12mEfaU",
+          "indices": [
+            51,
+            73
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 09:00:08 +0000 2013",
+    "id": 349451937235734500,
+    "id_str": "349451937235734530",
+    "text": "PSA recrute 200 personnes supplémentaires sur son site de Mulhouse http://t.co/SRnmWwrLMs",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 23,
     "favorite_count": 3,
     "entities": {
       "hashtags": [],
       "symbols": [],
       "urls": [
         {
-          "url": "http://t.co/MhBgz9yrWp",
-          "expanded_url": "http://bit.ly/1aaL091",
-          "display_url": "bit.ly/1aaL091",
+          "url": "http://t.co/SRnmWwrLMs",
+          "expanded_url": "http://lemde.fr/10QeAgU",
+          "display_url": "lemde.fr/10QeAgU",
           "indices": [
-            53,
-            75
+            67,
+            89
           ]
         }
       ],
@@ -96,10 +193,1385 @@
     "lang": "fr"
   },
   {
-    "created_at": "Tue Jun 25 14:08:10 +0000 2013",
-    "id": 349529453099089900,
-    "id_str": "349529453099089920",
-    "text": "Chômage: le gouvernement relance le traitement social  http://t.co/TcXlt0Hjur",
+    "created_at": "Tue Jun 25 09:00:07 +0000 2013",
+    "id": 349451932928184300,
+    "id_str": "349451932928184320",
+    "text": "Quand AMD détruit (symboliquement) NVIDIA http://t.co/wRgPXWAkCK",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 2,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/wRgPXWAkCK",
+          "expanded_url": "http://bit.ly/14nRcEr",
+          "display_url": "bit.ly/14nRcEr",
+          "indices": [
+            42,
+            64
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 09:00:02 +0000 2013",
+    "id": 349451910614499300,
+    "id_str": "349451910614499328",
+    "text": "Tech Mahindra finally merges with Satyam http://t.co/j1pRBOzHsZ",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 2,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/j1pRBOzHsZ",
+          "expanded_url": "http://zd.net/1369IWH",
+          "display_url": "zd.net/1369IWH",
+          "indices": [
+            41,
+            63
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:54:24 +0000 2013",
+    "id": 349450491358494700,
+    "id_str": "349450491358494722",
+    "text": "Quick read: The secret behind He-Man villain Stinkor's unending reek  http://t.co/POMCF4y9Jr",
+    "source": "<a href=\"http://www.sbnation.com\" rel=\"nofollow\">SB Nation</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 9,
+    "favorite_count": 8,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/POMCF4y9Jr",
+          "expanded_url": "http://vrge.co/10hOpgN",
+          "display_url": "vrge.co/10hOpgN",
+          "indices": [
+            70,
+            92
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:54:05 +0000 2013",
+    "id": 349450411939344400,
+    "id_str": "349450411939344384",
+    "text": "BlackBerry lance Secure Work Space sur iOS et Android http://t.co/nJO3z2ettX",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 1,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/nJO3z2ettX",
+          "expanded_url": "http://bit.ly/14nQeYL",
+          "display_url": "bit.ly/14nQeYL",
+          "indices": [
+            54,
+            76
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:49:46 +0000 2013",
+    "id": 349449324272427000,
+    "id_str": "349449324272427008",
+    "text": "RT @xternisien L'arrivée de @VanityFairFR inquiète la presse magazine française http://t.co/ZDXqQXCgua",
+    "source": "<a href=\"http://www.tweetdeck.com\" rel=\"nofollow\">TweetDeck</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 19,
+    "favorite_count": 2,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/ZDXqQXCgua",
+          "expanded_url": "http://www.lemonde.fr/actualite-medias/article/2013/06/25/l-arrivee-de-vanity-fair-en-france-inquiete-la-presse-magazine_3436027_3236.html",
+          "display_url": "lemonde.fr/actualite-medi…",
+          "indices": [
+            80,
+            102
+          ]
+        }
+      ],
+      "user_mentions": [
+        {
+          "screen_name": "xternisien",
+          "name": "Xavier Ternisien",
+          "id": 22644941,
+          "id_str": "22644941",
+          "indices": [
+            3,
+            14
+          ]
+        },
+        {
+          "screen_name": "VanityFairFR",
+          "name": "Vanity Fair France",
+          "id": 1156532173,
+          "id_str": "1156532173",
+          "indices": [
+            28,
+            41
+          ]
+        }
+      ]
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:49:23 +0000 2013",
+    "id": 349449228751355900,
+    "id_str": "349449228751355904",
+    "text": "RT @Trixxy: Even Sony recognizes that their phones and tablets are getting too big with the launch of the SBH52 mini handset http://t.co/F8…",
+    "source": "<a href=\"http://itunes.apple.com/us/app/twitter/id409789998?mt=12\" rel=\"nofollow\">Twitter for Mac</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Jun 25 08:48:59 +0000 2013",
+      "id": 349449129400860700,
+      "id_str": "349449129400860673",
+      "text": "Even Sony recognizes that their phones and tablets are getting too big with the launch of the SBH52 mini handset http://t.co/F84ogamPIH",
+      "source": "<a href=\"http://sites.google.com/site/yorufukurou/\" rel=\"nofollow\">YoruFukurou</a>",
+      "truncated": false,
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 6650602,
+        "id_str": "6650602",
+        "name": "Thomas Ricker",
+        "screen_name": "Trixxy",
+        "location": "Amsterdam",
+        "description": "Verge newshack and a parent apparently",
+        "url": "http://t.co/Z2mvgAQqNJ",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "http://t.co/Z2mvgAQqNJ",
+                "expanded_url": "http://about.me/thomasricker",
+                "display_url": "about.me/thomasricker",
+                "indices": [
+                  0,
+                  22
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 4620,
+        "friends_count": 332,
+        "listed_count": 305,
+        "created_at": "Thu Jun 07 20:58:51 +0000 2007",
+        "favourites_count": 115,
+        "utc_offset": 3600,
+        "time_zone": "Amsterdam",
+        "geo_enabled": true,
+        "verified": true,
+        "statuses_count": 6266,
+        "lang": "en",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "profile_background_color": "000000",
+        "profile_background_image_url": "http://a0.twimg.com/profile_background_images/215723600/Thomas-gadget-shot-2011.jpg",
+        "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/215723600/Thomas-gadget-shot-2011.jpg",
+        "profile_background_tile": false,
+        "profile_image_url": "http://a0.twimg.com/profile_images/1242929295/image_normal.jpg",
+        "profile_image_url_https": "https://si0.twimg.com/profile_images/1242929295/image_normal.jpg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/6650602/1355684219",
+        "profile_link_color": "009999",
+        "profile_sidebar_border_color": "EEEEEE",
+        "profile_sidebar_fill_color": "EFEFEF",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": null,
+        "follow_request_sent": null,
+        "notifications": null
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "retweet_count": 19,
+      "favorite_count": 12,
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [
+          {
+            "url": "http://t.co/F84ogamPIH",
+            "expanded_url": "http://www.theverge.com/2013/6/25/4460638/sony-xperia-z-ultra-takes-on-galaxy-note-with-6-4-inch-display",
+            "display_url": "theverge.com/2013/6/25/4460…",
+            "indices": [
+              113,
+              135
+            ]
+          }
+        ],
+        "user_mentions": []
+      },
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "en"
+    },
+    "retweet_count": 19,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [],
+      "user_mentions": [
+        {
+          "screen_name": "Trixxy",
+          "name": "Thomas Ricker",
+          "id": 6650602,
+          "id_str": "6650602",
+          "indices": [
+            3,
+            10
+          ]
+        }
+      ]
+    },
+    "favorited": false,
+    "retweeted": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:46:42 +0000 2013",
+    "id": 349448554349207550,
+    "id_str": "349448554349207552",
+    "text": "Comment repérer la crème des développeurs ? Pour un docteur en informatique, les programmeurs les plus doués a... http://t.co/oJ5RKPpTCX",
+    "source": "<a href=\"http://twitterfeed.com\" rel=\"nofollow\">twitterfeed</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 55410398,
+      "id_str": "55410398",
+      "name": "Developpez.com",
+      "screen_name": "Developpez",
+      "location": "Francophonie internationale",
+      "description": "Club des professionnels en informatique",
+      "url": "http://t.co/Opg73fK1tZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/Opg73fK1tZ",
+              "expanded_url": "http://www.developpez.com/",
+              "display_url": "developpez.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 12998,
+      "friends_count": 63,
+      "listed_count": 643,
+      "created_at": "Fri Jul 10 00:15:04 +0000 2009",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 10665,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DFE2E2",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "87BC44",
+      "profile_sidebar_fill_color": "E0FF92",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 13,
+    "favorite_count": 6,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/oJ5RKPpTCX",
+          "expanded_url": "http://bit.ly/1a9SrNR",
+          "display_url": "bit.ly/1a9SrNR",
+          "indices": [
+            114,
+            136
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:46:42 +0000 2013",
+    "id": 349448553065754600,
+    "id_str": "349448553065754624",
+    "text": "Utilisation d'AEFacturier, un facturier fonctionnant avec Tableur (Calc), un tutoriel de Jérome Bourgeois http://t.co/xQNZuqNHlY",
+    "source": "<a href=\"http://twitterfeed.com\" rel=\"nofollow\">twitterfeed</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 55410398,
+      "id_str": "55410398",
+      "name": "Developpez.com",
+      "screen_name": "Developpez",
+      "location": "Francophonie internationale",
+      "description": "Club des professionnels en informatique",
+      "url": "http://t.co/Opg73fK1tZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/Opg73fK1tZ",
+              "expanded_url": "http://www.developpez.com/",
+              "display_url": "developpez.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 12998,
+      "friends_count": 63,
+      "listed_count": 643,
+      "created_at": "Fri Jul 10 00:15:04 +0000 2009",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 10665,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DFE2E2",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/89076960/x06d6b0ed30705bbadccc79da87feda8.jpg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/317934580/TWITTER_normal.png",
+      "profile_link_color": "0000FF",
+      "profile_sidebar_border_color": "87BC44",
+      "profile_sidebar_fill_color": "E0FF92",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 1,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/xQNZuqNHlY",
+          "expanded_url": "http://bit.ly/132jDel",
+          "display_url": "bit.ly/132jDel",
+          "indices": [
+            106,
+            128
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:46:06 +0000 2013",
+    "id": 349448403773685760,
+    "id_str": "349448403773685761",
+    "text": "Le Freebox Server mis à jour pour la femtocell http://t.co/c1oXZrgevT",
+    "source": "<a href=\"http://www.clubic.com\" rel=\"nofollow\">Clubic</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/c1oXZrgevT",
+          "expanded_url": "http://bit.ly/1a9Uy47",
+          "display_url": "bit.ly/1a9Uy47",
+          "indices": [
+            47,
+            69
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:43:02 +0000 2013",
+    "id": 349447633309405200,
+    "id_str": "349447633309405184",
+    "text": "Masters en finance : le carton (presque) plein des écoles françaises http://t.co/z5fJOlmVe6",
+    "source": "<a href=\"http://dlvr.it\" rel=\"nofollow\">dlvr.it</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 24744541,
+      "id_str": "24744541",
+      "name": "Le Monde",
+      "screen_name": "lemondefr",
+      "location": "Paris",
+      "description": "Bienvenue sur le fil d'actualité du Monde.fr.",
+      "url": "http://t.co/FAAzNQ8yF3",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FAAzNQ8yF3",
+              "expanded_url": "http://www.lemonde.fr",
+              "display_url": "lemonde.fr",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 1596359,
+      "friends_count": 226,
+      "listed_count": 19776,
+      "created_at": "Mon Mar 16 18:44:51 +0000 2009",
+      "favourites_count": 107,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 82335,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "DDE1EA",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg",
+      "profile_link_color": "50B6CF",
+      "profile_sidebar_border_color": "131316",
+      "profile_sidebar_fill_color": "131316",
+      "profile_text_color": "3292A8",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 38,
+    "favorite_count": 22,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/z5fJOlmVe6",
+          "expanded_url": "http://lemde.fr/10QcsWJ",
+          "display_url": "lemde.fr/10QcsWJ",
+          "indices": [
+            69,
+            91
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:39:06 +0000 2013",
+    "id": 349446640203087900,
+    "id_str": "349446640203087872",
+    "text": "Intel denies India market power abuse following probe http://t.co/ctYGQgUW8l",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 3,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/ctYGQgUW8l",
+          "expanded_url": "http://zd.net/1368hY2",
+          "display_url": "zd.net/1368hY2",
+          "indices": [
+            54,
+            76
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:39:04 +0000 2013",
+    "id": 349446634083586050,
+    "id_str": "349446634083586048",
+    "text": "South Tyrol shows love for LibreOffice, ditches Microsoft on thousands of PCs http://t.co/WJKLqPNC2l",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 9,
+    "favorite_count": 2,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/WJKLqPNC2l",
+          "expanded_url": "http://zd.net/1368fzq",
+          "display_url": "zd.net/1368fzq",
+          "indices": [
+            78,
+            100
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:39:03 +0000 2013",
+    "id": 349446628018622460,
+    "id_str": "349446628018622464",
+    "text": "BlackBerry launches Secure Work Space for Android, iOS http://t.co/tZRVLrQtYY",
+    "source": "<a href=\"http://www.zdnet.com\" rel=\"nofollow\">zdnet API</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 3819701,
+      "id_str": "3819701",
+      "name": "ZDNet",
+      "screen_name": "ZDNet",
+      "location": "USA | UK | Asia | Australia",
+      "description": "Where technology meets business",
+      "url": "http://t.co/5onVPZr4O4",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/5onVPZr4O4",
+              "expanded_url": "http://www.zdnet.com",
+              "display_url": "zdnet.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 124089,
+      "friends_count": 106,
+      "listed_count": 7380,
+      "created_at": "Sun Apr 08 21:05:10 +0000 2007",
+      "favourites_count": 44,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 83628,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "11182A",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/820487456/e72316fd2b1aead91d29b7c2c8227939.jpeg",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/3410233170/6f4b53884126033607a080aa28fd56d9_normal.jpeg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/3819701/1363889699",
+      "profile_link_color": "11182A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "DDE4E9",
+      "profile_text_color": "6A6D6E",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 6,
+    "favorite_count": 1,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/tZRVLrQtYY",
+          "expanded_url": "http://zd.net/1368fzo",
+          "display_url": "zd.net/1368fzo",
+          "indices": [
+            55,
+            77
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:38:02 +0000 2013",
+    "id": 349446374032539650,
+    "id_str": "349446374032539648",
+    "text": "PSA va créer 200 postes de plus grâce au succès de la Peugeot 2008 http://t.co/4X2PMXphUy",
     "source": "<a href=\"http://twitter.com/tweetbutton\" rel=\"nofollow\">Tweet Button</a>",
     "truncated": false,
     "in_reply_to_status_id": null,
@@ -168,23 +1640,518 @@
     "coordinates": null,
     "place": null,
     "contributors": null,
-    "retweet_count": 2,
-    "favorite_count": 1,
+    "retweet_count": 17,
+    "favorite_count": 4,
     "entities": {
       "hashtags": [],
       "symbols": [],
       "urls": [
         {
-          "url": "http://t.co/TcXlt0Hjur",
-          "expanded_url": "http://www.bfmtv.com/economie/chomage-gouvernement-relance-traitement-social-545668.html",
-          "display_url": "bfmtv.com/economie/choma…",
+          "url": "http://t.co/4X2PMXphUy",
+          "expanded_url": "http://www.bfmtv.com/economie/psa-va-creer-200-postes-plus-grace-succes-peugeot-2008-545450.html",
+          "display_url": "bfmtv.com/economie/psa-v…",
           "indices": [
-            55,
-            77
+            67,
+            89
           ]
         }
       ],
       "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:36:30 +0000 2013",
+    "id": 349445988823470100,
+    "id_str": "349445988823470080",
+    "text": "Jean-Marc Ayrault: Les dépenses de l'Etat baisseront comme prévu http://t.co/rF1recZ34v",
+    "source": "<a href=\"http://twitter.com/tweetbutton\" rel=\"nofollow\">Tweet Button</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 140776364,
+      "id_str": "140776364",
+      "name": "BFM Business",
+      "screen_name": "bfmbusiness",
+      "location": "",
+      "description": "Compte officiel de BFM Business",
+      "url": "http://t.co/JBiTL29ifZ",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/JBiTL29ifZ",
+              "expanded_url": "http://www.bfmbusiness.com",
+              "display_url": "bfmbusiness.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 27619,
+      "friends_count": 353,
+      "listed_count": 662,
+      "created_at": "Thu May 06 10:21:56 +0000 2010",
+      "favourites_count": 0,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": false,
+      "verified": false,
+      "statuses_count": 6606,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "C0DEED",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1277958396/icon-403747057-175x175_normal.jpg",
+      "profile_link_color": "0084B4",
+      "profile_sidebar_border_color": "C0DEED",
+      "profile_sidebar_fill_color": "DDEEF6",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "default_profile": true,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 4,
+    "favorite_count": 4,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/rF1recZ34v",
+          "expanded_url": "http://www.bfmtv.com/economie/jean-marc-ayrault-depenses-letat-baisseront-prevu-545424.html",
+          "display_url": "bfmtv.com/economie/jean-…",
+          "indices": [
+            65,
+            87
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "fr"
+  },
+  {
+    "created_at": "Tue Jun 25 08:30:10 +0000 2013",
+    "id": 349444395252203500,
+    "id_str": "349444395252203520",
+    "text": "Sony's SmartWatch 2 is the company's latest effort to get on your wrist http://t.co/hSa8Obz1y3",
+    "source": "<a href=\"http://www.sbnation.com\" rel=\"nofollow\">SB Nation</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 30,
+    "favorite_count": 25,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/hSa8Obz1y3",
+          "expanded_url": "http://vrge.co/10hMn0c",
+          "display_url": "vrge.co/10hMn0c",
+          "indices": [
+            72,
+            94
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:28:29 +0000 2013",
+    "id": 349443968586620900,
+    "id_str": "349443968586620931",
+    "text": "Sony Xperia Z Ultra takes on the Galaxy Note with insanely large 6.4-inch display http://t.co/T4R4CMmflI",
+    "source": "<a href=\"http://www.sbnation.com\" rel=\"nofollow\">SB Nation</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 275686563,
+      "id_str": "275686563",
+      "name": "The Verge",
+      "screen_name": "verge",
+      "location": "NYC",
+      "description": "The Twitter account of The Verge",
+      "url": "http://t.co/FsUUISvR2o",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/FsUUISvR2o",
+              "expanded_url": "http://www.theverge.com",
+              "display_url": "theverge.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 239465,
+      "friends_count": 99,
+      "listed_count": 11239,
+      "created_at": "Fri Apr 01 19:54:22 +0000 2011",
+      "favourites_count": 410,
+      "utc_offset": -18000,
+      "time_zone": "Eastern Time (US & Canada)",
+      "geo_enabled": false,
+      "verified": true,
+      "statuses_count": 30273,
+      "lang": "en",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "FFFFFF",
+      "profile_background_image_url": "http://a0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://si0.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1450127603/TheVerge_Badge_Color1_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/275686563/1348153919",
+      "profile_link_color": "FA4D2A",
+      "profile_sidebar_border_color": "FFFFFF",
+      "profile_sidebar_fill_color": "EFEFEF",
+      "profile_text_color": "333333",
+      "profile_use_background_image": false,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweet_count": 49,
+    "favorite_count": 22,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/T4R4CMmflI",
+          "expanded_url": "http://vrge.co/179EZpq",
+          "display_url": "vrge.co/179EZpq",
+          "indices": [
+            82,
+            104
+          ]
+        }
+      ],
+      "user_mentions": []
+    },
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Tue Jun 25 08:28:12 +0000 2013",
+    "id": 349443896905965600,
+    "id_str": "349443896905965569",
+    "text": "RT @jeuxvideofr: Age Of Empires bientôt sur mobiles http://t.co/2EI9CZx739",
+    "source": "<a href=\"http://www.tweetdeck.com\" rel=\"nofollow\">TweetDeck</a>",
+    "truncated": false,
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 18239824,
+      "id_str": "18239824",
+      "name": "Clubic",
+      "screen_name": "Clubic",
+      "location": "",
+      "description": "Toute l’actu #hitech : #news, #dossiers et #tests. \r\nBonus : #bonplans + #livetweet + #teasing.",
+      "url": "http://t.co/4ipsYKyA8k",
+      "entities": {
+        "url": {
+          "urls": [
+            {
+              "url": "http://t.co/4ipsYKyA8k",
+              "expanded_url": "http://www.clubic.com",
+              "display_url": "clubic.com",
+              "indices": [
+                0,
+                22
+              ]
+            }
+          ]
+        },
+        "description": {
+          "urls": []
+        }
+      },
+      "protected": false,
+      "followers_count": 31919,
+      "friends_count": 193,
+      "listed_count": 1316,
+      "created_at": "Fri Dec 19 11:16:35 +0000 2008",
+      "favourites_count": 5,
+      "utc_offset": 3600,
+      "time_zone": "Paris",
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 35251,
+      "lang": "fr",
+      "contributors_enabled": false,
+      "is_translator": false,
+      "profile_background_color": "131516",
+      "profile_background_image_url": "http://a0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/92688003/bg_home.jpg",
+      "profile_background_tile": true,
+      "profile_image_url": "http://a0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_image_url_https": "https://si0.twimg.com/profile_images/1148040974/200-200_normal.png",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/18239824/1347980725",
+      "profile_link_color": "E1190D",
+      "profile_sidebar_border_color": "000000",
+      "profile_sidebar_fill_color": "FFFFFF",
+      "profile_text_color": "000000",
+      "profile_use_background_image": true,
+      "default_profile": false,
+      "default_profile_image": false,
+      "following": true,
+      "follow_request_sent": null,
+      "notifications": null
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "retweeted_status": {
+      "created_at": "Tue Jun 25 08:16:06 +0000 2013",
+      "id": 349440853602873340,
+      "id_str": "349440853602873344",
+      "text": "Age Of Empires bientôt sur mobiles http://t.co/2EI9CZx739",
+      "source": "<a href=\"http://www.jeuxvideo.fr\" rel=\"nofollow\">jeuxvideofr</a>",
+      "truncated": false,
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 50971030,
+        "id_str": "50971030",
+        "name": "jeuxvideo.fr",
+        "screen_name": "jeuxvideofr",
+        "location": "Lyon",
+        "description": "Suivez nous pour ne rien rater de l’actu jeux vidéo : #tests, #rumeurs, #insolite, #videos. Bonus : RT de nos journalistes + #bonplans + #jeuxconcours",
+        "url": "http://t.co/CQGuct2vWX",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "http://t.co/CQGuct2vWX",
+                "expanded_url": "http://www.jeuxvideo.fr",
+                "display_url": "jeuxvideo.fr",
+                "indices": [
+                  0,
+                  22
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 7427,
+        "friends_count": 3923,
+        "listed_count": 304,
+        "created_at": "Fri Jun 26 08:04:36 +0000 2009",
+        "favourites_count": 7,
+        "utc_offset": 3600,
+        "time_zone": "Paris",
+        "geo_enabled": false,
+        "verified": false,
+        "statuses_count": 33370,
+        "lang": "fr",
+        "contributors_enabled": false,
+        "is_translator": false,
+        "profile_background_color": "022330",
+        "profile_background_image_url": "http://a0.twimg.com/profile_background_images/673944040/76d1424cfc622aa6f88135350d78e21d.jpeg",
+        "profile_background_image_url_https": "https://si0.twimg.com/profile_background_images/673944040/76d1424cfc622aa6f88135350d78e21d.jpeg",
+        "profile_background_tile": true,
+        "profile_image_url": "http://a0.twimg.com/profile_images/1215557619/jvfr-transparent_normal.png",
+        "profile_image_url_https": "https://si0.twimg.com/profile_images/1215557619/jvfr-transparent_normal.png",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/50971030/1349085540",
+        "profile_link_color": "0084B4",
+        "profile_sidebar_border_color": "FFFFFF",
+        "profile_sidebar_fill_color": "C0DFEC",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "default_profile": false,
+        "default_profile_image": false,
+        "following": null,
+        "follow_request_sent": null,
+        "notifications": null
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "retweet_count": 10,
+      "favorite_count": 1,
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "urls": [
+          {
+            "url": "http://t.co/2EI9CZx739",
+            "expanded_url": "http://bit.ly/1a9QFfE",
+            "display_url": "bit.ly/1a9QFfE",
+            "indices": [
+              35,
+              57
+            ]
+          }
+        ],
+        "user_mentions": []
+      },
+      "favorited": false,
+      "retweeted": false,
+      "possibly_sensitive": false,
+      "lang": "fr"
+    },
+    "retweet_count": 10,
+    "favorite_count": 0,
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "urls": [
+        {
+          "url": "http://t.co/2EI9CZx739",
+          "expanded_url": "http://bit.ly/1a9QFfE",
+          "display_url": "bit.ly/1a9QFfE",
+          "indices": [
+            52,
+            74
+          ]
+        }
+      ],
+      "user_mentions": [
+        {
+          "screen_name": "jeuxvideofr",
+          "name": "jeuxvideo.fr",
+          "id": 50971030,
+          "id_str": "50971030",
+          "indices": [
+            3,
+            15
+          ]
+        }
+      ]
     },
     "favorited": false,
     "retweeted": false,

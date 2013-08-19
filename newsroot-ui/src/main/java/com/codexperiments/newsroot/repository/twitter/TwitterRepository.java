@@ -31,7 +31,7 @@ import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class TwitterRepository {
-    private static final int DEFAULT_PAGE_SIZE = 5;
+    private static final int DEFAULT_PAGE_SIZE = 20;
 
     private EventBus mEventBus;
     private TwitterAPI mTwitterAPI;

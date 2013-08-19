@@ -299,7 +299,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // });
 
         Mockito.verify(observer, times(59)).onNext(argThat(any(News.class)));
-        Mockito.verify(observer, times(2)).onError(argThat(any(Throwable.class)));
         Mockito.verify(observer, never()).onError(argThat(any(Throwable.class)));
         Mockito.verify(observer, times(1)).onCompleted();
     }

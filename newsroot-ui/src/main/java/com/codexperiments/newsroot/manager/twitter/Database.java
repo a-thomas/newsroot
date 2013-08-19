@@ -90,7 +90,6 @@ public abstract class Database extends SQLiteOpenHelper {
                     }
 
                     public void onError(Throwable pException) {
-                        if (mConnection != null) mConnection.endTransaction();
                         pObserver.onError(pException);
                     }
                 });

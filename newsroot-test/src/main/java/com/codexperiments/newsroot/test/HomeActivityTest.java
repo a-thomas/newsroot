@@ -263,9 +263,9 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     // }
 
     public void testFindNewTweets_nonEmptyTimeline_withResults() throws IOException, TwitterAccessException {
+        // Setup
         @SuppressWarnings("unchecked")
         Observer<News> observer = Mockito.mock(Observer.class);
-        // Setup
         mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
         mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
         // TODO Data

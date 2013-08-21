@@ -66,8 +66,7 @@ public class TwitterRepository {
         // pTimeline.appendNewItems(lResult);
         // return lResult;
         // Observable<News> lTweetsFromCache = findTweetsFromCache(new TimeGap());
-        Pair<Observable<News>, Observable<BufferClosing>> lTweetsFromNetwork = findTweetsFromServer(new TimeGap(-1, -1));
-        return Pair.create(lTweetsFromNetwork.first, lTweetsFromNetwork.second);
+        return findTweetsFromServer(new TimeGap(-1, -1));
         // return Pair.create(Observable.concat(lTweetsFromNetwork.first, lTweetsFromCache), lTweetsFromNetwork.second);
         // return Pair.create(Observable.concat(lTweetsFromCache, lTweetsFromNetwork.first), lTweetsFromNetwork.second);
     }

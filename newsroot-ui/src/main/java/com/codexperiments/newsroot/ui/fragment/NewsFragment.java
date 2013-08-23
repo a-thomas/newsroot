@@ -97,11 +97,13 @@ public class NewsFragment extends Fragment {
 
     public void refresh() {
         final Pair<Observable<News>, Observable<BufferClosing>> lTweetPair = mTwitterRepository.findLatestTweets(mTimeline);
-        lTweetPair.first.buffer(new Func0<Observable<BufferClosing>>() {
+        final Func0<Observable<BufferClosing>> controller = new Func0<Observable<BufferClosing>>() {
             public Observable<BufferClosing> call() {
                 return lTweetPair.second;
             }
-        }).subscribe(new Observer<List<News>>() {
+        };
+
+        lTweetPair.first.buffer(controller).subscribe(new Observer<List<News>>() {
             public void onNext(List<News> pNews) {
                 mTweets.addAll(pNews);
                 mUIListAdapter.notifyDataSetChanged();

@@ -10,9 +10,9 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
-import rx.subscriptions.Subscriptions;
 import rx.util.BufferClosing;
 import rx.util.BufferClosings;
+import rx.util.functions.Action0;
 import rx.util.functions.Func1;
 import android.util.Pair;
 
@@ -21,6 +21,7 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager.QueryHandler;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -40,35 +41,41 @@ public class TwitterAPI {
     }
 
     public Pair<Observable<Tweet>, Observable<BufferClosing>> getHome(final TimeGap pTimeGap, final int pPageSize) {
-        final PublishSubject<BufferClosing> lController = PublishSubject.create();
+        final PublishSubject<BufferClosing> controller = PublishSubject.create();
+
         final Observable<Tweet> lTweets = Observable.create(new Func1<Observer<Tweet>, Subscription>() {
             public Subscription call(final Observer<Tweet> pObserver) {
-                try {
-                    TimeGap lRemainingGap = pTimeGap;
-                    int lSafetyCounter = 0;
-                    // Retrieve a new page of data until we receive an empty or partial page (which means there is no more data).
-                    // The safety counter is just here to avoid a possible infinite loop. TODO Should find a better way.
-                    while ((lRemainingGap != null) && (++lSafetyCounter < SAFETY_COUNTER)) {
-                        TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(lRemainingGap).withPageSize(pPageSize);
+                return AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+                    public void call() {
+                        try {
+                            TimeGap lRemainingGap = pTimeGap;
+                            int lSafetyCounter = 0;
+                            // Retrieve a new page of data until we receive an empty or partial page (which means there is no more
+                            // data). The safety counter is just here to avoid a possible infinite loop.
+                            while ((lRemainingGap != null) && (++lSafetyCounter < SAFETY_COUNTER)) {
+                                TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
+                                                                  .withTimeGap(lRemainingGap)
+                                                                  .withPageSize(pPageSize);
 
-                        lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
-                            public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-                                return parseTweets(pQuery, pObserver, pParser);
+                                lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
+                                    public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
+                                        return parseTweets(pQuery, pObserver, pParser);
+                                    }
+                                });
+                                controller.onNext(BufferClosings.create());
                             }
-                        });
-                        lController.onNext(BufferClosings.create());
-                    }
 
-                    pObserver.onCompleted();
-                    lController.onCompleted();
-                } catch (TwitterAccessException eTwitterAccessException) {
-                    pObserver.onError(eTwitterAccessException);
-                    lController.onError(eTwitterAccessException);
-                }
-                return Subscriptions.empty();
+                            pObserver.onCompleted();
+                            controller.onCompleted();
+                        } catch (TwitterAccessException eTwitterAccessException) {
+                            pObserver.onError(eTwitterAccessException);
+                            controller.onError(eTwitterAccessException);
+                        }
+                    }
+                });
             }
         });
-        return new Pair<Observable<Tweet>, Observable<BufferClosing>>(lTweets, lController);
+        return new Pair<Observable<Tweet>, Observable<BufferClosing>>(lTweets, controller);
     }
 
     private TimeGap parseTweets(TwitterQuery pQuery, Observer<Tweet> pObserver, JsonParser pParser)

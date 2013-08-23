@@ -16,7 +16,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import rx.Scheduler;
@@ -33,16 +35,38 @@ import android.os.Looper;
  */
 public final class AndroidScheduler extends Scheduler {
     private static final AndroidScheduler INSTANCE = new AndroidScheduler();
+    private static final ExecutorService mIOPool;
+    private static final ExecutorService mDatabasePool;
 
     private Handler uiHandler;
-    private static ExecutorService mDatabasePool;
 
     static {
-        mDatabasePool = Executors.newSingleThreadExecutor();
+        mIOPool = createThreadPoolForIO();
+        mDatabasePool = createThreadPoolForDatabase();
+    }
+
+    private static ExecutorService createThreadPoolForIO() {
+        return Executors.newCachedThreadPool(new ThreadFactory() {
+            private final AtomicLong counter = new AtomicLong();
+
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "RxIOThreadPool-" + counter.incrementAndGet());
+                t.setDaemon(true);
+                return t;
+            }
+        });
+    }
+
+    private static ExecutorService createThreadPoolForDatabase() {
+        return Executors.newSingleThreadExecutor();
     }
 
     public static AndroidScheduler getInstance() {
         return INSTANCE;
+    }
+
+    public static Scheduler threadPoolForIO() {
+        return Schedulers.executor(mIOPool);
     }
 
     public static Scheduler threadPoolForDatabase() {

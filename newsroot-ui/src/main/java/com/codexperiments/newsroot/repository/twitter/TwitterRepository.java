@@ -6,14 +6,11 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
-import rx.util.BufferClosing;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Application;
 import android.database.Cursor;
-import android.util.Pair;
 
-import com.codexperiments.newsroot.common.RxUtil;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
@@ -29,6 +26,7 @@ import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.rx.ObservablePage;
 
 public class TwitterRepository {
     private static final int DEFAULT_PAGE_SIZE = 20;
@@ -59,7 +57,7 @@ public class TwitterRepository {
         mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
     }
 
-    public Pair<Observable<News>, Observable<BufferClosing>> findLatestTweets(Timeline pTimeline) {
+    public ObservablePage<? extends News> findLatestTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
@@ -71,14 +69,14 @@ public class TwitterRepository {
         // return Pair.create(Observable.concat(lTweetsFromCache, lTweetsFromNetwork.first), lTweetsFromNetwork.second);
     }
 
-    public Pair<Observable<News>, Observable<BufferClosing>> findOlderTweets(Timeline pTimeline) {
+    public ObservablePage<? extends News> findOlderTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // return lResult;
         return findTweetsFromServer(new TimeGap(/* pTimeline.getOldestBound() */-1, -1));
     }
 
-    public Pair<Observable<News>, Observable<BufferClosing>> findTweetsInGap(final TimeGap pTimeGap) {
+    public ObservablePage<? extends News> findTweetsInGap(final TimeGap pTimeGap) {
         return findTweetsFromServer(pTimeGap);
     }
 
@@ -120,7 +118,7 @@ public class TwitterRepository {
         });
     }
 
-    private Pair<Observable<News>, Observable<BufferClosing>> findTweetsFromServer(final TimeGap pTimeGap) {
+    private ObservablePage<? extends News> findTweetsFromServer(final TimeGap pTimeGap) {
         final Action1<List<Tweet>> updateTimeline = new Action1<List<Tweet>>() {
             public void call(List<Tweet> pTweets) {
                 if (pTweets.size() == 0) {
@@ -139,12 +137,8 @@ public class TwitterRepository {
             }
         };
 
-        Pair<Observable<Tweet>, Observable<BufferClosing>> lTweetPair = mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
-        Observable<Tweet> lCommitedTweets = mDatabase.doInTransaction(lTweetPair.first,
-                                                                      lTweetPair.second,
-                                                                      createTweet,
-                                                                      updateTimeline);
-        return new Pair<Observable<News>, Observable<BufferClosing>>(RxUtil.downcast(lCommitedTweets, News.class),
-                                                                     lTweetPair.second);
+        ObservablePage<Tweet> lTweets = mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
+        Observable<Tweet> lCommitedTweets = mDatabase.doInTransaction(lTweets, createTweet, updateTimeline);
+        return ObservablePage.create(lCommitedTweets, lTweets);
     }
 }

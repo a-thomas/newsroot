@@ -2,30 +2,38 @@ package com.codexperiments.newsroot.test;
 
 import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
+import org.mockito.InOrder;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.Stubber;
 import org.simpleframework.http.Query;
 
-import rx.Observable;
 import rx.Observer;
 import rx.util.BufferClosing;
 import android.app.Application;
 import android.test.ActivityInstrumentationTestCase2;
-import android.util.Pair;
+import android.util.Log;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
@@ -36,8 +44,11 @@ import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
+import com.codexperiments.rx.ObservablePage;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+    public static final int DEFAULT_TIMEOUT_MS = 1000000;
+
     private Application mApplication;
     private TwitterDatabase mDatabase;
     private MockBackend.Config mServerConfig;
@@ -262,44 +273,93 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     // {
     // }
 
-    public void testFindNewTweets_nonEmptyTimeline_withResults() throws IOException, TwitterAccessException {
-        // Setup
-        @SuppressWarnings("unchecked")
-        Observer<News> observer = Mockito.mock(Observer.class);
-        mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
-        mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
-        // TODO Data
-        Timeline lTimeline = new Timeline(1, 349497246842241000l, 349443896905965600l);
-        // Record
-        when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_02-1.json")
-                                                                                    .thenReturn("twitter/ctx_tweet_02-2.json")
-                                                                                    .thenReturn("twitter/ctx_tweet_02-3.json");
-        // when(mTwitterManager.query(argThat(any(TwitterQuery.class)))).thenReturn(createParser("twitter/tweets_03.json"));
-        // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
-        // Run
-        // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-        Pair<Observable<News>, Observable<BufferClosing>> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-        assertThat(lTweets, notNullValue());
-        lTweets.first.subscribe(observer);
-        // final AtomicInteger i = new AtomicInteger();
-        // lTweets.first.subscribe(new Observer<News>() {
-        // public void onNext(News pArgs) {
-        // Log.e(String.valueOf(i.incrementAndGet()), pArgs.toString());
-        // }
-        //
-        // @Override
-        // public void onError(Throwable pE) {
-        // Log.e("A", pE.toString());
-        // }
-        //
-        // @Override
-        // public void onCompleted() {
-        // Log.e("A", "3");
-        // }
-        // });
+    @SuppressWarnings("unchecked")
+    public void testFindNewTweets_nonEmptyTimeline_withResults()
+        throws IOException, TwitterAccessException, InterruptedException, Exception
+    {
+        for (int i = 0; i < 10; ++i) {
+            Log.e(getClass().getSimpleName(), "ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù");
+            // CountDownLatch lTestFinished = new CountDownLatch(5); // Number of data pages + end of stream event.
+            // Setup
+            final Observer<News> lTweetObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
+            final Observer<BufferClosing> lPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
+            mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
+            mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
+            // TODO Data
+            Timeline lTimeline = new Timeline(1, 349497246842241000l, 349443896905965600l);
 
-        Mockito.verify(observer, times(59)).onNext(argThat(any(News.class)));
-        Mockito.verify(observer, never()).onError(argThat(any(Throwable.class)));
-        Mockito.verify(observer, times(1)).onCompleted();
+            // Record
+            // countDown(lTestFinished).when(lPageObserver).onNext(argThat(any(BufferClosing.class)));
+            // countDown(lTestFinished).when(lPageObserver).onCompleted();
+            // countDown(lTestFinished).when(lTweetObserver).onCompleted();
+
+            when(mServerConfig.getResponseAsset(argThat(any(Query.class)), anyString())).thenReturn("twitter/ctx_tweet_02-1.json")
+                                                                                        .thenReturn("twitter/ctx_tweet_02-2.json")
+                                                                                        .thenReturn("twitter/ctx_tweet_02-3.json");
+            // when(mTwitterManager.query(argThat(any(TwitterQuery.class)))).thenReturn(createParser("twitter/tweets_03.json"));
+            // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
+            // Run
+            // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+            ObservablePage<? extends News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+            assertThat(lTweets, notNullValue());
+            lTweets.controller().call().subscribe(new Observer<BufferClosing>() {
+                public void onCompleted() {
+                    lPageObserver.onCompleted();
+                }
+
+                @Override
+                public void onError(Throwable pE) {
+                    lPageObserver.onError(pE);
+                }
+
+                @Override
+                public void onNext(BufferClosing pArgs) {
+                    lPageObserver.onNext(pArgs);
+                }
+            });
+            lTweets.observable().subscribe(new Observer<News>() {
+                public void onCompleted() {
+                    lTweetObserver.onCompleted();
+                }
+
+                @Override
+                public void onError(Throwable pE) {
+                    lTweetObserver.onError(pE);
+                }
+
+                @Override
+                public void onNext(News pArgs) {
+                    lTweetObserver.onNext(pArgs);
+                }
+            });
+
+            // assertThat(lTestFinished.await(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS), equalTo(true));
+            InOrder lInOrder = Mockito.inOrder(lTweetObserver, lPageObserver);
+            lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
+            lInOrder.verify(lPageObserver).onNext(argThat(any(BufferClosing.class)));
+            lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
+            lInOrder.verify(lPageObserver).onNext(argThat(any(BufferClosing.class)));
+            lInOrder.verify(lTweetObserver, times(19)).onNext(argThat(any(Tweet.class)));
+            lInOrder.verify(lPageObserver).onCompleted();
+            lInOrder.verify(lTweetObserver).onCompleted();
+            lInOrder.verifyNoMoreInteractions();
+
+            Mockito.verify(lTweetObserver, never()).onError(argThat(any(Throwable.class)));
+
+            tearDown();
+            setUp();
+        }
+    }
+
+    public Stubber countDown(final CountDownLatch pCountDownLatch) {
+        return doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock pInvocation) throws Throwable {
+                // Assert is not sufficient to ensure the latch state (there is a race condition with countDown() instruction).
+                // But that should be well enough for a test case.
+                assertThat(pCountDownLatch.getCount(), greaterThan(0l));
+                pCountDownLatch.countDown();
+                return null;
+            }
+        });
     }
 }

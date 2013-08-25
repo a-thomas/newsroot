@@ -23,6 +23,7 @@ import org.mockito.stubbing.Answer;
 import org.mockito.stubbing.Stubber;
 import org.simpleframework.http.Query;
 
+import rx.Observable;
 import rx.Observer;
 import rx.util.BufferClosing;
 import android.app.Application;
@@ -44,7 +45,8 @@ import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
-import com.codexperiments.rx.ObservablePage;
+import com.codexperiments.robolabor.task.handler.Task;
+import com.codexperiments.robolabor.task.handler.TaskNotifier;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     public static final int DEFAULT_TIMEOUT_MS = 1000000;
@@ -300,7 +302,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
             // Run
             // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-            ObservablePage<? extends News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+            Observable<? extends News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
             assertThat(lTweets, notNullValue());
             lTweets.controller().call().subscribe(new Observer<BufferClosing>() {
                 public void onCompleted() {
@@ -317,7 +319,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
                     lPageObserver.onNext(pArgs);
                 }
             });
-            lTweets.observable().subscribe(new Observer<News>() {
+            lTweets.subscribe(new Observer<News>() {
                 public void onCompleted() {
                     lTweetObserver.onCompleted();
                 }
@@ -349,6 +351,28 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             tearDown();
             setUp();
         }
+
+        mTaskManager.when(new Task<Tweet>() {
+            public void onFail(Throwable pArg0) {
+            }
+
+            public void onFinish(Tweet pArg0) {
+            }
+
+            public Tweet onProcess(TaskNotifier pArg0) throws Exception {
+                return null;
+            }
+        }).then(new Task<Tweet>() {
+            public void onFail(Throwable pArg0) {
+            }
+
+            public void onFinish(Tweet pArg0) {
+            }
+
+            public Tweet onProcess(TaskNotifier pArg0) throws Exception {
+                return null;
+            }
+        });
     }
 
     public Stubber countDown(final CountDownLatch pCountDownLatch) {

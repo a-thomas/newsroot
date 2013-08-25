@@ -9,9 +9,7 @@ import java.util.TimeZone;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.subjects.PublishSubject;
 import rx.subscriptions.Subscriptions;
-import rx.util.BufferClosing;
 import rx.util.BufferClosings;
 import rx.util.functions.Func1;
 
@@ -20,7 +18,6 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager.QueryHandler;
-import com.codexperiments.rx.ObservablePage;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -39,9 +36,7 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public ObservablePage<Tweet> getHome(final TimeGap pTimeGap, final int pPageSize) {
-        final PublishSubject<BufferClosing> lController = PublishSubject.create();
-
+    public Observable<Tweet> getHome(final TimeGap pTimeGap, final int pPageSize) {
         final Observable<Tweet> lTweets = Observable.create(new Func1<Observer<Tweet>, Subscription>() {
             public Subscription call(final Observer<Tweet> pObserver) {
                 try {
@@ -97,7 +92,7 @@ public class TwitterAPI {
                 // });
             }
         });
-        return ObservablePage.create(lTweets, lController);
+        return lTweets;
     }
 
     private TimeGap parseTweets(TwitterQuery pQuery, Observer<Tweet> pObserver, JsonParser pParser)

@@ -17,8 +17,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.codexperiments.rx.ObservablePage;
-
 public abstract class Database extends SQLiteOpenHelper {
     private Application mApplication;
     private SQLiteDatabase mConnection;
@@ -50,46 +48,44 @@ public abstract class Database extends SQLiteOpenHelper {
         onCreate(getWritableDatabase());
     }
 
-    public <T> Observable<T> doInTransaction(final ObservablePage<T> pObservable,
+    public <T> Observable<T> doInTransaction(final Observable<T> pObservable,
                                              final Action1<T> pObservableAction,
                                              final Action1<List<T>> pObservableBatchAction)
     {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {
-                return pObservable.observable() //
-                                  .buffer(pObservable.controller())
-                                  .subscribe(new Observer<List<T>>() {
-                                      public void onNext(List<T> pValues) {
-                                          Log.e(getClass().getSimpleName(), "XXXXXXXXXXXXXXXX" + pValues.size());
-                                          mConnection.beginTransaction();
-                                          try {
-                                              for (T lValue : pValues) {
-                                                  pObservableAction.call(lValue);
-                                              }
-                                              pObservableBatchAction.call(pValues);
-                                              mConnection.setTransactionSuccessful();
-                                              mConnection.endTransaction();
+                return pObservable.buffer(pObservable.controller()).subscribe(new Observer<List<T>>() {
+                    public void onNext(List<T> pValues) {
+                        Log.e(getClass().getSimpleName(), "XXXXXXXXXXXXXXXX" + pValues.size());
+                        mConnection.beginTransaction();
+                        try {
+                            for (T lValue : pValues) {
+                                pObservableAction.call(lValue);
+                            }
+                            pObservableBatchAction.call(pValues);
+                            mConnection.setTransactionSuccessful();
+                            mConnection.endTransaction();
 
-                                              // Once data is committed, push data further into the pipeline.
-                                              for (T value : pValues) {
-                                                  pObserver.onNext(value);
-                                              }
-                                          } catch (SQLException eSQLException) {
-                                              mConnection.endTransaction();
-                                              pObserver.onError(eSQLException);
-                                              throw eSQLException;
-                                          }
-                                      }
+                            // Once data is committed, push data further into the pipeline.
+                            for (T value : pValues) {
+                                pObserver.onNext(value);
+                            }
+                        } catch (SQLException eSQLException) {
+                            mConnection.endTransaction();
+                            pObserver.onError(eSQLException);
+                            throw eSQLException;
+                        }
+                    }
 
-                                      public void onCompleted() {
-                                          Log.e(getClass().getSimpleName(), "YYYYYYYYYY");
-                                          pObserver.onCompleted();
-                                      }
+                    public void onCompleted() {
+                        Log.e(getClass().getSimpleName(), "YYYYYYYYYY");
+                        pObserver.onCompleted();
+                    }
 
-                                      public void onError(Throwable pException) {
-                                          pObserver.onError(pException);
-                                      }
-                                  });
+                    public void onError(Throwable pException) {
+                        pObserver.onError(pException);
+                    }
+                });
             }
         });
     }

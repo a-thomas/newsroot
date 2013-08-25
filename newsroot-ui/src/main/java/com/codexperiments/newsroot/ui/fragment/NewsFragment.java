@@ -3,6 +3,7 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.Observer;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.robolabor.task.TaskManager;
-import com.codexperiments.rx.ObservablePage;
 
 public class NewsFragment extends Fragment {
     private EventBus mEventBus;
@@ -93,9 +93,9 @@ public class NewsFragment extends Fragment {
     }
 
     public void refresh() {
-        final ObservablePage<? extends News> lTweets = mTwitterRepository.findLatestTweets(mTimeline);
+        final Observable<? extends News> lTweets = mTwitterRepository.findLatestTweets(mTimeline);
 
-        lTweets.observable().buffer(lTweets.controller()).subscribe(new Observer<List<News>>() {
+        lTweets.buffer(lTweets.controller()).subscribe(new Observer<List<News>>() {
             public void onNext(List<News> pNews) {
                 mTweets.addAll(pNews);
                 mUIListAdapter.notifyDataSetChanged();

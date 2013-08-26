@@ -10,7 +10,6 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
-import rx.util.BufferClosings;
 import rx.util.functions.Func1;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
@@ -23,8 +22,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class TwitterAPI {
-    private static final int SAFETY_COUNTER = 10;
-
     private TwitterManager mTwitterManager;
     private String mHost;
     private SimpleDateFormat mDateFormat;
@@ -36,66 +33,43 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public Observable<Tweet> getHome(final TimeGap pTimeGap, final int pPageSize) {
-        final Observable<Tweet> lTweets = Observable.create(new Func1<Observer<Tweet>, Subscription>() {
-            public Subscription call(final Observer<Tweet> pObserver) {
-                try {
-                    TimeGap lRemainingGap = pTimeGap;
-                    int lSafetyCounter = 0;
-                    // Retrieve a new page of data until we receive an empty or partial page (which means there is no more
-                    // data). The safety counter is just here to avoid a possible infinite loop.
-                    while ((lRemainingGap != null) && (++lSafetyCounter < SAFETY_COUNTER)) {
-                        TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(lRemainingGap).withPageSize(pPageSize);
-
-                        lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
-                            public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-                                return parseTweets(pQuery, pObserver, pParser);
-                            }
-                        });
-                        lController.onNext(BufferClosings.create());
-                    }
-
-                    lController.onCompleted();
-                    pObserver.onCompleted();
-                } catch (TwitterAccessException eTwitterAccessException) {
-                    lController.onError(eTwitterAccessException);
-                    pObserver.onError(eTwitterAccessException);
-                }
+    public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageSize) {
+        return Observable.create(new Func1<Observer<Observable<Tweet>>, Subscription>() {
+            public Subscription call(final Observer<Observable<Tweet>> pObserver) {
+                pObserver.onNext(getTweets(pObserver, pTimeGap, pPageSize));
                 return Subscriptions.empty();
-                // return AndroidScheduler.threadPoolForIO().schedule(new Action0() {
-                // public void call() {
-                // try {
-                // TimeGap lRemainingGap = pTimeGap;
-                // int lSafetyCounter = 0;
-                // // Retrieve a new page of data until we receive an empty or partial page (which means there is no more
-                // // data). The safety counter is just here to avoid a possible infinite loop.
-                // while ((lRemainingGap != null) && (++lSafetyCounter < SAFETY_COUNTER)) {
-                // TwitterQuery lQuery = TwitterQuery.queryHome(mHost)
-                // .withTimeGap(lRemainingGap)
-                // .withPageSize(pPageSize);
-                //
-                // lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
-                // public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-                // return parseTweets(pQuery, pObserver, pParser);
-                // }
-                // });
-                // lController.onNext(BufferClosings.create());
-                // }
-                //
-                // lController.onCompleted();
-                // pObserver.onCompleted();
-                // } catch (TwitterAccessException eTwitterAccessException) {
-                // lController.onError(eTwitterAccessException);
-                // pObserver.onError(eTwitterAccessException);
-                // }
-                // }
-                // });
             }
         });
-        return lTweets;
     }
 
-    private TimeGap parseTweets(TwitterQuery pQuery, Observer<Tweet> pObserver, JsonParser pParser)
+    public Observable<Tweet> getTweets(final Observer<Observable<Tweet>> pPagingObserver,
+                                       final TimeGap pTimeGap,
+                                       final int pPageSize)
+    {
+        return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
+            public Subscription call(final Observer<Tweet> pObserver) {
+                TimeGap lRemainingGap = null;
+                try {
+                    TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
+                    lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
+                        public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
+                            return parseTweets(pObserver, pTimeGap, pPageSize, pParser);
+                        }
+                    });
+                } catch (TwitterAccessException eTwitterAccessException) {
+                    pObserver.onError(eTwitterAccessException);
+                }
+
+                // Retrieve next page.
+                if (lRemainingGap != null) {
+                    pPagingObserver.onNext(getTweets(pPagingObserver, pTimeGap, pPageSize));
+                }
+                return Subscriptions.empty();
+            }
+        }).cache();
+    }
+
+    private TimeGap parseTweets(Observer<Tweet> pObserver, TimeGap pTimeGap, int pPageSize, JsonParser pParser)
         throws JsonParseException, IOException
     {
         if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
@@ -121,8 +95,8 @@ public class TwitterAPI {
             }
         }
 
-        if ((lTweetCount > 0) && (lTweetCount >= pQuery.getPageSize())) {
-            return new TimeGap(lEarliestBound, pQuery.getTimeGap().getOldestBound());
+        if ((lTweetCount > 0) && (lTweetCount >= pPageSize)) {
+            return new TimeGap(lEarliestBound, pTimeGap.getOldestBound());
         } else {
             return null;
         }

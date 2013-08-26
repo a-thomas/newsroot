@@ -18,13 +18,13 @@ public class TwitterQuery {
         mSeparator = '?';
     }
 
-    public int getPageSize() {
-        return mPageSize;
-    }
-
-    public TimeGap getTimeGap() {
-        return mTimeGap;
-    }
+    // public int getPageSize() {
+    // return mPageSize;
+    // }
+    //
+    // public TimeGap getTimeGap() {
+    // return mTimeGap;
+    // }
 
     public TwitterQuery withPageSize(int pPageSize) {
         mPageSize = pPageSize;

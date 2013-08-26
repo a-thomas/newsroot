@@ -27,7 +27,8 @@ import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
 import com.codexperiments.robolabor.task.TaskManager;
 
-public class TwitterRepository {
+public class TwitterRepository
+{
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     private EventBus mEventBus;
@@ -38,13 +39,13 @@ public class TwitterRepository {
     private TimeGapDAO mTimeGapDAO;
     private ViewTimelineDAO mViewTimelineDAO;
 
+
     public TwitterRepository(Application pApplication,
                              EventBus pEventBus,
                              TaskManager pTaskManager,
                              TwitterManager pTwitterManager,
                              TwitterAPI pTwitterAPI,
-                             TwitterDatabase pDatabase)
-    {
+                             TwitterDatabase pDatabase) {
         super();
         mEventBus = pEventBus;
         mEventBus.registerListener(this);
@@ -56,7 +57,7 @@ public class TwitterRepository {
         mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
     }
 
-    public Observable<? extends News> findLatestTweets(Timeline pTimeline) {
+    public Observable<Observable<Tweet>> findLatestTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
@@ -64,18 +65,20 @@ public class TwitterRepository {
         // return lResult;
         // Observable<News> lTweetsFromCache = findTweetsFromCache(new TimeGap());
         return findTweetsFromServer(new TimeGap(-1, -1));
-        // return Pair.create(Observable.concat(lTweetsFromNetwork.first, lTweetsFromCache), lTweetsFromNetwork.second);
-        // return Pair.create(Observable.concat(lTweetsFromCache, lTweetsFromNetwork.first), lTweetsFromNetwork.second);
+        // return Pair.create(Observable.concat(lTweetsFromNetwork.first, lTweetsFromCache),
+        // lTweetsFromNetwork.second);
+        // return Pair.create(Observable.concat(lTweetsFromCache, lTweetsFromNetwork.first),
+        // lTweetsFromNetwork.second);
     }
 
-    public Observable<? extends News> findOlderTweets(Timeline pTimeline) {
+    public Observable<Observable<Tweet>> findOlderTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // return lResult;
         return findTweetsFromServer(new TimeGap(/* pTimeline.getOldestBound() */-1, -1));
     }
 
-    public Observable<? extends News> findTweetsInGap(final TimeGap pTimeGap) {
+    public Observable<Observable<Tweet>> findTweetsInGap(final TimeGap pTimeGap) {
         return findTweetsFromServer(pTimeGap);
     }
 
@@ -83,17 +86,15 @@ public class TwitterRepository {
         return Observable.create(new Func1<Observer<News>, Subscription>() {
             public Subscription call(final Observer<News> pObserver) {
                 try {
-                    Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values())
-                                                    .selectAll(DB_TWITTER.VIEW_TIMELINE)
-                                                    .from(DB_TWITTER.VIEW_TIMELINE)
-                                                    .limit(DEFAULT_PAGE_SIZE);
+                    Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values()).selectAll(DB_TWITTER.VIEW_TIMELINE)
+                                    .from(DB_TWITTER.VIEW_TIMELINE).limit(DEFAULT_PAGE_SIZE);
                     if (pTimeGap.isFutureGap()) {
                         lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound());
                     } else if (pTimeGap.isPastGap()) {
                         lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
                     } else if (!pTimeGap.isInitialGap()) {
                         lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound())
-                              .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
+                                        .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
                     }
 
                     lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
@@ -117,27 +118,31 @@ public class TwitterRepository {
         });
     }
 
-    private Observable<? extends News> findTweetsFromServer(final TimeGap pTimeGap) {
-        final Action1<List<Tweet>> updateTimeline = new Action1<List<Tweet>>() {
-            public void call(List<Tweet> pTweets) {
-                if (pTweets.size() == 0) {
-                    if (!pTimeGap.isFutureGap()) {
-                        mTimeGapDAO.delete(pTimeGap);
+    private Observable<Observable<Tweet>> findTweetsFromServer(final TimeGap pTimeGap) {
+        Observable<Observable<Tweet>> lPagedTweets = mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
+        lPagedTweets.subscribe(new Action1<Observable<Tweet>>() {
+            public void call(Observable<Tweet> pTweets) {
+                Action1<Tweet> saveTweet = new Action1<Tweet>() {
+                    public void call(Tweet pTweet) {
+                        mTweetDAO.create(pTweet);
                     }
-                } else if (!pTimeGap.isInitialGap() && !pTimeGap.isPastGap() && !pTimeGap.isFutureGap()) {
-                    TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
-                    mTimeGapDAO.update(lRemainingTimeGap);
-                }
-            }
-        };
-        final Action1<Tweet> createTweet = new Action1<Tweet>() {
-            public void call(Tweet pTweet) {
-                mTweetDAO.create(pTweet);
-            }
-        };
+                };
 
-        Observable<Tweet> lTweets = mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
-        Observable<Tweet> lCommitedTweets = mDatabase.doInTransaction(lTweets, createTweet, updateTimeline);
-        return lCommitedTweets;
+                Action1<List<Tweet>> updateTimeline = new Action1<List<Tweet>>() {
+                    public void call(List<Tweet> pTweets) {
+                        if (pTweets.size() == 0) {
+                            if (!pTimeGap.isFutureGap()) {
+                                mTimeGapDAO.delete(pTimeGap);
+                            }
+                        } else if (!pTimeGap.isInitialGap() && !pTimeGap.isPastGap() && !pTimeGap.isFutureGap()) {
+                            TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
+                            mTimeGapDAO.update(lRemainingTimeGap);
+                        }
+                    }
+                };
+
+                mDatabase.doInTransaction(pTweets, saveTweet, updateTimeline);
+            }});
+        return lPagedTweets;
     }
 }

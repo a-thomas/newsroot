@@ -42,7 +42,7 @@ public class TwitterAPI {
         });
     }
 
-    public Observable<Tweet> getTweets(final Observer<Observable<Tweet>> pPagingObserver,
+    public Observable<Tweet> getTweets(final Observer<Observable<Tweet>> pPagedObserver,
                                        final TimeGap pTimeGap,
                                        final int pPageSize)
     {
@@ -62,7 +62,7 @@ public class TwitterAPI {
 
                 // Retrieve next page.
                 if (lRemainingGap != null) {
-                    pPagingObserver.onNext(getTweets(pPagingObserver, pTimeGap, pPageSize));
+                    pPagedObserver.onNext(getTweets(pPagedObserver, pTimeGap, pPageSize));
                 }
                 return Subscriptions.empty();
             }

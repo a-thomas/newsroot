@@ -54,61 +54,38 @@ public abstract class Database extends SQLiteOpenHelper {
     {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {
-                return pObservable.buffer(pObservable.controller()).subscribe(new Observer<List<T>>() {
+                return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Observer<List<T>>() {
                     public void onNext(List<T> pValues) {
-                        Log.e(getClass().getSimpleName(), "XXXXXXXXXXXXXXXX" + pValues.size());
-                        mConnection.beginTransaction();
-                        try {
-                            for (T lValue : pValues) {
-                                pObservableAction.call(lValue);
-                            }
-                            pObservableBatchAction.call(pValues);
-                            mConnection.setTransactionSuccessful();
-                            mConnection.endTransaction();
+                      mConnection.beginTransaction();
+                      try {
+                          for (T lValue : pValues) {
+                              pObservableAction.call(lValue);
+                          }
+                          pObservableBatchAction.call(pValues);
+                          mConnection.setTransactionSuccessful();
+                          mConnection.endTransaction();
 
-                            // Once data is committed, push data further into the pipeline.
-                            for (T value : pValues) {
-                                pObserver.onNext(value);
-                            }
-                        } catch (SQLException eSQLException) {
-                            mConnection.endTransaction();
-                            pObserver.onError(eSQLException);
-                            throw eSQLException;
-                        }
+                          // Once data is committed, push data further into the pipeline.
+                          for (T value : pValues) {
+                              pObserver.onNext(value);
+                          }
+                      } catch (SQLException eSQLException) {
+                          mConnection.endTransaction();
+                          pObserver.onError(eSQLException);
+                          throw eSQLException;
+                      }
                     }
-
+                
                     public void onCompleted() {
-                        Log.e(getClass().getSimpleName(), "YYYYYYYYYY");
                         pObserver.onCompleted();
                     }
 
-                    public void onError(Throwable pException) {
-                        pObserver.onError(pException);
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
                     }
                 });
-            }
-        });
+            }});
     }
-
-    // public <TResult> void executeInTransaction(Callable<TResult> pCallable) throws Exception {
-    // mConnection.beginTransaction();
-    // try {
-    // pCallable.call();
-    // mConnection.setTransactionSuccessful();
-    // } finally {
-    // mConnection.endTransaction();
-    // }
-    // }
-    //
-    // public void executeInTransaction(Runnable pRunnable) throws Exception {
-    // mConnection.beginTransaction();
-    // try {
-    // pRunnable.run();
-    // mConnection.setTransactionSuccessful();
-    // } finally {
-    // mConnection.endTransaction();
-    // }
-    // }
 
     public void executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mApplication);

@@ -57,7 +57,7 @@ public class TwitterRepository
         mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
     }
 
-    public Observable<Observable<Tweet>> findLatestTweets(Timeline pTimeline) {
+    public Observable<Observable<News>> findLatestTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // lResult = findTweetsInGap(new TimeGap(-1, pTimeline.getEarliestBound()));
@@ -71,19 +71,19 @@ public class TwitterRepository
         // lTweetsFromNetwork.second);
     }
 
-    public Observable<Observable<Tweet>> findOlderTweets(Timeline pTimeline) {
+    public Observable<Observable<News>> findOlderTweets(Timeline pTimeline) {
         // List<News> lResult = findTweets(new TimeGap(pTimeline.getOldestBound(), -1));
         // pTimeline.appendOldItems(lResult);
         // return lResult;
-        return findTweetsFromServer(new TimeGap(/* pTimeline.getOldestBound() */-1, -1));
+        return findTweetsFromRepository(new TimeGap(/* pTimeline.getOldestBound() */-1, -1));
     }
 
     public Observable<Observable<Tweet>> findTweetsInGap(final TimeGap pTimeGap) {
         return findTweetsFromServer(pTimeGap);
     }
 
-    private Observable<News> findTweetsFromRepository(final TimeGap pTimeGap) {
-        return Observable.create(new Func1<Observer<News>, Subscription>() {
+    private Observable<Observable<News>> findTweetsFromRepository(final TimeGap pTimeGap) {
+        return Observable.just(Observable.create(new Func1<Observer<News>, Subscription>() {
             public Subscription call(final Observer<News> pObserver) {
                 try {
                     Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values()).selectAll(DB_TWITTER.VIEW_TIMELINE)
@@ -115,34 +115,78 @@ public class TwitterRepository
                 }
                 return Subscriptions.empty();
             }
-        });
+        }).cache());
     }
 
-    private Observable<Observable<Tweet>> findTweetsFromServer(final TimeGap pTimeGap) {
-        Observable<Observable<Tweet>> lPagedTweets = mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE);
-        lPagedTweets.subscribe(new Action1<Observable<Tweet>>() {
-            public void call(Observable<Tweet> pTweets) {
-                Action1<Tweet> saveTweet = new Action1<Tweet>() {
+    private Observable<Observable<News>> findTweetsFromServer(final TimeGap pTimeGap) {
+        return append(mTwitterAPI.getHome(pTimeGap, DEFAULT_PAGE_SIZE).map(new Func1<Observable<Tweet>, Observable<Tweet>>() {
+            public Observable<Tweet> call(Observable<Tweet> pTweets) {
+//                Action1<Tweet> saveTweet = new Action1<Tweet>() {
+//                    public void call(Tweet pTweet) {
+//                        mTweetDAO.create(pTweet);
+//                    }
+//                };
+
+//                Action1<List<? extends News>> updateTimeline = new Action1<List<Tweet>>() {
+//                    public void call(List<Tweet> pTweets) {
+//                        if (pTweets.size() == 0) {
+//                            if (!pTimeGap.isFutureGap()) {
+//                                mTimeGapDAO.delete(pTimeGap);
+//                            }
+//                        } else if (!pTimeGap.isInitialGap() && !pTimeGap.isPastGap() && !pTimeGap.isFutureGap()) {
+//                            TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
+//                            mTimeGapDAO.update(lRemainingTimeGap);
+//                        }
+//                    }
+//                };
+                return mDatabase.doInTransaction(pTweets, new Action1<Tweet>() {
                     public void call(Tweet pTweet) {
                         mTweetDAO.create(pTweet);
                     }
-                };
+                }, null);
+            }}), null/*(News) new TimeGap(-1, -1)*/);
+    }
 
-                Action1<List<Tweet>> updateTimeline = new Action1<List<Tweet>>() {
-                    public void call(List<Tweet> pTweets) {
-                        if (pTweets.size() == 0) {
-                            if (!pTimeGap.isFutureGap()) {
-                                mTimeGapDAO.delete(pTimeGap);
-                            }
-                        } else if (!pTimeGap.isInitialGap() && !pTimeGap.isPastGap() && !pTimeGap.isFutureGap()) {
-                            TimeGap lRemainingTimeGap = pTimeGap.substract(pTweets, DEFAULT_PAGE_SIZE);
-                            mTimeGapDAO.update(lRemainingTimeGap);
-                        }
+
+    private <R, T extends R> Observable<R> downcastAndAppend(final Observable<T> pObservable, final R pAppendedItem) {
+        return Observable.create(new Func1<Observer<R>, Subscription>() {
+            public Subscription call(final Observer<R> pObserver) {
+                return pObservable.subscribe(new Observer<T>() {
+                    public void onNext(T pValue) {
+                        pObserver.onNext((R) pValue);
                     }
-                };
 
-                mDatabase.doInTransaction(pTweets, saveTweet, updateTimeline);
-            }});
-        return lPagedTweets;
+                    public void onCompleted() {
+                        pObserver.onNext(pAppendedItem);
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                });
+            }
+        });
+    }
+
+    private <T> Observable<T> append(final Observable<T> pObservable, final T pAppendedItem) {
+        return Observable.create(new Func1<Observer<T>, Subscription>() {
+            public Subscription call(final Observer<T> pObserver) {
+                return pObservable.subscribe(new Observer<T>() {
+                    public void onNext(T pValue) {
+                        pObserver.onNext(pValue);
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onNext(pAppendedItem);
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                });
+            }
+        });
     }
 }

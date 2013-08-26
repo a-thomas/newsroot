@@ -64,6 +64,19 @@ public class TimeGap implements News {
         }
     }
 
+    public TimeGap substractEarlyBound(Tweet pTweet, int pPageSize) {
+        long lOldestTweetId = pTweet.getId();
+        if (lOldestTweetId != mOldestBound) {
+            if ((lOldestTweetId < mEarliestBound) && (lOldestTweetId > mOldestBound)) {
+                return new TimeGap((lOldestTweetId < mEarliestBound) ? lOldestTweetId : mEarliestBound, mOldestBound);
+            } else {
+                return this;
+            }
+        } else {
+            return null;
+        }
+    }
+
     public long getId() {
         return mId;
     }

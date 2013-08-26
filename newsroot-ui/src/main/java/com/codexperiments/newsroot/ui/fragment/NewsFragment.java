@@ -1,10 +1,6 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import rx.Observable;
-import rx.Observer;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
@@ -28,7 +23,7 @@ public class NewsFragment extends Fragment {
     private TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
-    private List<News> mTweets;
+    // private List<News> mTweets;
     private boolean mHasMore; // TODO
 
     private NewsAdapter mUIListAdapter;
@@ -50,16 +45,20 @@ public class NewsFragment extends Fragment {
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
         mTimeline = new Timeline();
-        mTweets = new ArrayList<News>(); // TODO Get from prefs.
+        // mTweets = new ArrayList<News>(); // TODO Get from prefs.
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
-        mUIListAdapter = new NewsAdapter(pLayoutInflater, mTweets, mHasMore, new NewsAdapter.Callback() {
-            @Override
+        Observable<Observable<News>> lMoreNews = mTwitterRepository.findOlderNews(mTimeline);
+        mUIListAdapter = new NewsAdapter(pLayoutInflater, lMoreNews, mHasMore, new NewsAdapter.Callback() {
             public void onLoadMore() {
                 loadMoreTweets();
             }
+
+            public void onLoadMoreError(Throwable pThrowable) {
+            }
         });
+
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
@@ -93,24 +92,24 @@ public class NewsFragment extends Fragment {
     }
 
     public void refresh() {
-        final Observable<? extends News> lTweets = mTwitterRepository.findLatestTweets(mTimeline);
-
-        lTweets.buffer(lTweets.controller()).subscribe(new Observer<List<News>>() {
-            public void onNext(List<News> pNews) {
-                mTweets.addAll(pNews);
-                mUIListAdapter.notifyDataSetChanged();
-            }
-
-            public void onCompleted() {
-                mUIDialog.dismiss();
-            }
-
-            public void onError(Throwable pThrowable) {
-                mUIDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        });
+        // final Observable<? extends News> lTweets = mTwitterRepository.findLatestNews(mTimeline);
+        //
+        // lTweets.buffer(lTweets.controller()).subscribe(new Observer<List<News>>() {
+        // public void onNext(List<News> pNews) {
+        // mTweets.addAll(pNews);
+        // mUIListAdapter.notifyDataSetChanged();
+        // }
+        //
+        // public void onCompleted() {
+        // mUIDialog.dismiss();
+        // }
+        //
+        // public void onError(Throwable pThrowable) {
+        // mUIDialog.dismiss();
+        // Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+        // pThrowable.printStackTrace();
+        // }
+        // });
 
         // mTaskManager.execute(new TaskAdapter<List<News>>() {
         // TwitterRepository lTwitterRepository = mTwitterRepository;

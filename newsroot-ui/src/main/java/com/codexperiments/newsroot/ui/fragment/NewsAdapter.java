@@ -1,7 +1,10 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+import rx.Observer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,27 +13,62 @@ import android.widget.BaseAdapter;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.domain.twitter.News;
 
-public class NewsAdapter extends BaseAdapter
-{
-    private Callback mCallback;
-    private LayoutInflater mLayoutInflater;
+public class NewsAdapter extends BaseAdapter {
+    private static final int DEFAULT_LIST_SIZE = 100;
 
+    private LayoutInflater mLayoutInflater;
+    private Callback mCallback;
+
+    // private Observable<Observable<News>> mNewsObservable;
     private List<News> mTweets;
     private boolean mHasMore;
-    private int mLastPosition = 0;
+    private int mLastPosition;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, List<News> pTweets, boolean pHasMore, Callback pCallback)
+    public NewsAdapter(LayoutInflater pLayoutInflater,
+                       Observable<Observable<News>> pMoreNewsObservable,
+                       boolean pHasMore,
+                       Callback pCallback)
     {
         super();
-        mCallback = pCallback;
         mLayoutInflater = pLayoutInflater;
-        mTweets = pTweets;
+        mCallback = pCallback;
+
+        mTweets = new ArrayList<News>(DEFAULT_LIST_SIZE);
         mHasMore = pHasMore;
+        mLastPosition = 0;
+
+        subscribeMore(pMoreNewsObservable);
+    }
+
+    protected void subscribeMore(Observable<Observable<News>> pMoreNewsObservable) {
+        pMoreNewsObservable.subscribe(new Observer<Observable<News>>() {
+            public void onNext(Observable<News> pNews) {
+                pNews.subscribe(new Observer<News>() {
+                    public void onNext(News pNews) {
+                        mTweets.add(pNews);
+                    }
+
+                    public void onCompleted() {
+                        notifyDataSetChanged();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        mCallback.onLoadMoreError(pThrowable);
+                    }
+                });
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+                mCallback.onLoadMoreError(pThrowable);
+            }
+        });
     }
 
     @Override
-    public View getView(int pPosition, View pConvertView, ViewGroup pParent)
-    {
+    public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
         if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) && (mHasMore)) {
             mCallback.onLoadMore();
             mLastPosition = pPosition;
@@ -48,31 +86,28 @@ public class NewsAdapter extends BaseAdapter
     }
 
     @Override
-    public long getItemId(int pPosition)
-    {
+    public long getItemId(int pPosition) {
         return pPosition;
     }
 
     @Override
-    public Object getItem(int pPosition)
-    {
+    public Object getItem(int pPosition) {
         return mTweets.get(pPosition);
     }
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         return mTweets.size();
     }
 
-    public void notifyDataSetChanged(List<News> pTweets)
-    {
+    public void notifyDataSetChanged(List<News> pTweets) {
         mTweets = pTweets;
         super.notifyDataSetChanged();
     }
 
-    public interface Callback
-    {
+    public interface Callback {
         void onLoadMore();
+
+        void onLoadMoreError(Throwable pThrowable);
     }
 }

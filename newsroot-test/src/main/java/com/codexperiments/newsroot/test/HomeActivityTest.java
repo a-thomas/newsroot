@@ -302,7 +302,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
             // Run
             // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-            Observable<? extends News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
+            Observable<? extends News> lTweets = mTwitterRepository.findLatestNews(lTimeline);
             assertThat(lTweets, notNullValue());
             lTweets.controller().call().subscribe(new Observer<BufferClosing>() {
                 public void onCompleted() {

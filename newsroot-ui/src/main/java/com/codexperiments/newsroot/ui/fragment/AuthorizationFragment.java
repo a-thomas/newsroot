@@ -150,7 +150,7 @@ public class AuthorizationFragment extends Fragment {
     }
 
     private void requestAuthorizationTwitter() {
-        mTaskManager.execute(new TaskAdapter<TwitterAuthorizationCallback>() {
+        mTaskManager.execute(new TaskAdapter<Void, Void, TwitterAuthorizationCallback>() {
             TwitterManager lTwitterManager = mTwitterManager;
 
             @Override
@@ -159,7 +159,7 @@ public class AuthorizationFragment extends Fragment {
             }
 
             @Override
-            public TwitterAuthorizationCallback onProcess(TaskNotifier pNotifier) throws Exception {
+            public TwitterAuthorizationCallback onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
                 return lTwitterManager.requestAuthorization();
             }
 
@@ -179,7 +179,7 @@ public class AuthorizationFragment extends Fragment {
     }
 
     public void confirmAuthorization(final Uri pUri) {
-        mTaskManager.execute(new TaskAdapter<Void>() {
+        mTaskManager.execute(new TaskAdapter<Void, Void, Void>() {
             TwitterManager lTweetManager = mTwitterManager;
 
             @Override
@@ -188,7 +188,7 @@ public class AuthorizationFragment extends Fragment {
             }
 
             @Override
-            public Void onProcess(TaskNotifier pNotifier) throws Exception {
+            public Void onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
                 lTweetManager.confirmAuthorization(pUri);
                 return null;
             }

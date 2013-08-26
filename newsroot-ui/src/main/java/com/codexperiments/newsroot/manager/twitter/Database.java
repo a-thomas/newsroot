@@ -48,6 +48,10 @@ public abstract class Database extends SQLiteOpenHelper {
         onCreate(getWritableDatabase());
     }
 
+    public <T> Observable<T> doInTransaction(final Observable<T> pObservable, final Action1<T> pObservableAction) {
+        return doInTransaction(pObservable, pObservableAction, null);
+    }
+
     public <T> Observable<T> doInTransaction(final Observable<T> pObservable,
                                              final Action1<T> pObservableAction,
                                              final Action1<List<T>> pObservableBatchAction)
@@ -56,26 +60,28 @@ public abstract class Database extends SQLiteOpenHelper {
             public Subscription call(final Observer<T> pObserver) {
                 return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Observer<List<T>>() {
                     public void onNext(List<T> pValues) {
-                      mConnection.beginTransaction();
-                      try {
-                          for (T lValue : pValues) {
-                              pObservableAction.call(lValue);
-                          }
-                          pObservableBatchAction.call(pValues);
-                          mConnection.setTransactionSuccessful();
-                          mConnection.endTransaction();
+                        mConnection.beginTransaction();
+                        try {
+                            for (T lValue : pValues) {
+                                pObservableAction.call(lValue);
+                            }
+                            if (pObservableBatchAction != null) {
+                                pObservableBatchAction.call(pValues);
+                            }
+                            mConnection.setTransactionSuccessful();
+                            mConnection.endTransaction();
 
-                          // Once data is committed, push data further into the pipeline.
-                          for (T value : pValues) {
-                              pObserver.onNext(value);
-                          }
-                      } catch (SQLException eSQLException) {
-                          mConnection.endTransaction();
-                          pObserver.onError(eSQLException);
-                          throw eSQLException;
-                      }
+                            // Once data is committed, push data further into the pipeline.
+                            for (T value : pValues) {
+                                pObserver.onNext(value);
+                            }
+                        } catch (SQLException eSQLException) {
+                            mConnection.endTransaction();
+                            pObserver.onError(eSQLException);
+                            throw eSQLException;
+                        }
                     }
-                
+
                     public void onCompleted() {
                         pObserver.onCompleted();
                     }
@@ -84,7 +90,54 @@ public abstract class Database extends SQLiteOpenHelper {
                         pObserver.onError(pThrowable);
                     }
                 });
-            }});
+            }
+        });
+    }
+
+    public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
+        return Observable.create(new Func1<Observer<T>, Subscription>() {
+            public Subscription call(final Observer<T> pObserver) {
+                return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Action1<List<T>>() {
+                    public void call(List<T> pValues) {
+                        try {
+                            mConnection.beginTransaction();
+
+                            // Once transaction is started, push data further into the pipeline.
+                            for (T value : pValues) {
+                                pObserver.onNext(value);
+                            }
+                        } catch (SQLException eSQLException) {
+                            mConnection.endTransaction();
+                            pObserver.onError(eSQLException);
+                            throw eSQLException;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public <T> Observable<T> endTransaction(final Observable<T> pObservable) {
+        return Observable.create(new Func1<Observer<T>, Subscription>() {
+            public Subscription call(final Observer<T> pObserver) {
+                return pObservable./* buffer(Integer.MAX_VALUE). */subscribe(new Action1<List<T>>() {
+                    public void call(List<T> pValues) {
+                        try {
+                            mConnection.setTransactionSuccessful();
+                            mConnection.endTransaction();
+
+                            // Once data is committed, push data further into the pipeline.
+                            for (T value : pValues) {
+                                pObserver.onNext(value);
+                            }
+                        } catch (SQLException eSQLException) {
+                            mConnection.endTransaction();
+                            pObserver.onError(eSQLException);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     public void executeAssetScript(String pAssetPath) throws IOException {

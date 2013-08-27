@@ -33,17 +33,18 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageSize) {
+    public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {
         return Observable.create(new Func1<Observer<Observable<Tweet>>, Subscription>() {
             public Subscription call(final Observer<Observable<Tweet>> pObserver) {
-                pObserver.onNext(getTweets(pObserver, pTimeGap, pPageSize));
+                pObserver.onNext(getTweetPage(pObserver, pTimeGap,pPageCount, pPageSize));
                 return Subscriptions.empty();
             }
         });
     }
 
-    public Observable<Tweet> getTweets(final Observer<Observable<Tweet>> pPagedObserver,
+    public Observable<Tweet> getTweetPage(final Observer<Observable<Tweet>> pPagedObserver,
                                        final TimeGap pTimeGap,
+                                       final int pPageCount,
                                        final int pPageSize)
     {
         return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
@@ -61,8 +62,8 @@ public class TwitterAPI {
                 }
 
                 // Retrieve next page.
-                if (lRemainingGap != null) {
-                    pPagedObserver.onNext(getTweets(pPagedObserver, pTimeGap, pPageSize));
+                if (lRemainingGap != null && pPageCount > 1) {
+                    pPagedObserver.onNext(getTweetPage(pPagedObserver, pTimeGap, pPageCount - 1, pPageSize));
                 }
                 return Subscriptions.empty();
             }

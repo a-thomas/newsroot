@@ -49,10 +49,12 @@ public class NewsFragment extends Fragment {
         mHasMore = true;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
+        
         Observable<Observable<News>> lMoreNews = mTwitterRepository.findOlderNews(mTimeline);
-        mUIListAdapter = new NewsAdapter(pLayoutInflater, lMoreNews, mHasMore, new NewsAdapter.Callback() {
+        Observable<Observable<News>> lRefreshNews = mTwitterRepository.findOlderNews(mTimeline);
+        mUIListAdapter = new NewsAdapter(pLayoutInflater, lRefreshNews, lMoreNews, mHasMore, new NewsAdapter.Callback() {
             public void onLoadMore() {
-                loadMoreTweets();
+//                loadMoreTweets();
             }
 
             public void onLoadMoreError(Throwable pThrowable) {

@@ -19,13 +19,15 @@ public class NewsAdapter extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
     private Callback mCallback;
 
-    // private Observable<Observable<News>> mNewsObservable;
+    private Observable<Observable<News>> mRefreshObservable;
+    private Observable<Observable<News>> mMoreObservable;
     private List<News> mTweets;
     private boolean mHasMore;
     private int mLastPosition;
 
     public NewsAdapter(LayoutInflater pLayoutInflater,
-                       Observable<Observable<News>> pMoreNewsObservable,
+                       Observable<Observable<News>> pRefreshObservable,
+                       Observable<Observable<News>> pMoreObservable,
                        boolean pHasMore,
                        Callback pCallback)
     {
@@ -37,11 +39,12 @@ public class NewsAdapter extends BaseAdapter {
         mHasMore = pHasMore;
         mLastPosition = 0;
 
-        subscribeMore(pMoreNewsObservable);
+        mRefreshObservable = pRefreshObservable;
+        mMoreObservable = pMoreObservable;
     }
-
-    protected void subscribeMore(Observable<Observable<News>> pMoreNewsObservable) {
-        pMoreNewsObservable.subscribe(new Observer<Observable<News>>() {
+//
+    protected void subscribeMore() {
+        mMoreObservable.subscribe(new Observer<Observable<News>>() {
             public void onNext(Observable<News> pNews) {
                 pNews.subscribe(new Observer<News>() {
                     public void onNext(News pNews) {
@@ -70,7 +73,8 @@ public class NewsAdapter extends BaseAdapter {
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
         if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) && (mHasMore)) {
-            mCallback.onLoadMore();
+            //mCallback.onLoadMore();
+            subscribeMore();
             mLastPosition = pPosition;
         }
 

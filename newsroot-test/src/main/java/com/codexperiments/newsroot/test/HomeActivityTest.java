@@ -280,11 +280,11 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         throws IOException, TwitterAccessException, InterruptedException, Exception
     {
         for (int i = 0; i < 10; ++i) {
-            Log.e(getClass().getSimpleName(), "ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù");
+            Log.e(getClass().getSimpleName(), "ùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùùù");
             // CountDownLatch lTestFinished = new CountDownLatch(5); // Number of data pages + end of stream event.
             // Setup
+            final Observer<Observable<News>> lTweetPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
             final Observer<News> lTweetObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
-            final Observer<BufferClosing> lPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
             mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
             mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
             // TODO Data
@@ -302,41 +302,37 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             // when(mTwitterAPI.getHome(argThat(any(TimeGap.class)), 20)).thenReturn(null);
             // Run
             // List<News> lTweets = mTwitterRepository.findLatestTweets(lTimeline);
-            Observable<? extends News> lTweets = mTwitterRepository.findLatestNews(lTimeline);
-            assertThat(lTweets, notNullValue());
-            lTweets.controller().call().subscribe(new Observer<BufferClosing>() {
-                public void onCompleted() {
-                    lPageObserver.onCompleted();
+            Observable<Observable<News>> lNews = mTwitterRepository.findLatestNews(lTimeline);
+            assertThat(lNews, notNullValue());
+            lNews.subscribe(new Observer<Observable<News>>() {
+                public void onNext(final Observable<News> pNewsPage) {
+                    lTweetPageObserver.onNext(pNewsPage);
+                    pNewsPage.subscribe(new Observer<News>() {
+                        public void onNext(News pNews) {
+                            lTweetObserver.onNext(pNews);
+                        }
+                        
+                        public void onCompleted() {
+                            lTweetObserver.onCompleted();
+                        }
+
+                        public void onError(Throwable pThrowable) {
+                            lTweetObserver.onError(pThrowable);
+                        }
+                    });
                 }
 
-                @Override
-                public void onError(Throwable pE) {
-                    lPageObserver.onError(pE);
-                }
-
-                @Override
-                public void onNext(BufferClosing pArgs) {
-                    lPageObserver.onNext(pArgs);
-                }
-            });
-            lTweets.subscribe(new Observer<News>() {
                 public void onCompleted() {
                     lTweetObserver.onCompleted();
                 }
 
-                @Override
                 public void onError(Throwable pE) {
                     lTweetObserver.onError(pE);
-                }
-
-                @Override
-                public void onNext(News pArgs) {
-                    lTweetObserver.onNext(pArgs);
                 }
             });
 
             // assertThat(lTestFinished.await(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS), equalTo(true));
-            InOrder lInOrder = Mockito.inOrder(lTweetObserver, lPageObserver);
+            InOrder lInOrder = Mockito.inOrder(lTweetObserver, lTweetObserver);
             lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
             lInOrder.verify(lPageObserver).onNext(argThat(any(BufferClosing.class)));
             lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));

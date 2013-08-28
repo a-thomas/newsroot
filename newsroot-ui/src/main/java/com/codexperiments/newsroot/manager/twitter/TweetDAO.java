@@ -34,12 +34,12 @@ public class TweetDAO {
             lInsert = Insert.on(DB_TWITTER.TWT_TWEET);
             mInsertHolder.set(lInsert);
         }
-        pTweet.setId(lInsert.value(COL_TWT_TWEET.TWT_ID, pTweet.getId())
-                            .value(COL_TWT_TWEET.TWT_NAME, pTweet.getName())
-                            .value(COL_TWT_TWEET.TWT_SCREEN_NAME, pTweet.getScreenName())
-                            .value(COL_TWT_TWEET.TWT_TEXT, pTweet.getText())
-                            .value(COL_TWT_TWEET.TWT_CREATED_AT, pTweet.getCreatedAt())
-                            .execute(mDatabase.getWritableDatabase()));
+        lInsert.value(COL_TWT_TWEET.TWT_ID, pTweet.getId())
+               .value(COL_TWT_TWEET.TWT_NAME, pTweet.getName())
+               .value(COL_TWT_TWEET.TWT_SCREEN_NAME, pTweet.getScreenName())
+               .value(COL_TWT_TWEET.TWT_TEXT, pTweet.getText())
+               .value(COL_TWT_TWEET.TWT_CREATED_AT, pTweet.getCreatedAt())
+               .execute(mDatabase.getWritableDatabase());
     }
 
     public void update(Tweet pTweet) {

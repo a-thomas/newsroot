@@ -106,6 +106,7 @@ public abstract class Database extends SQLiteOpenHelper {
                             for (T value : pValues) {
                                 pObserver.onNext(value);
                             }
+                            pObserver.onCompleted();
                         } catch (SQLException eSQLException) {
                             mConnection.endTransaction();
                             pObserver.onError(eSQLException);
@@ -120,7 +121,7 @@ public abstract class Database extends SQLiteOpenHelper {
     public <T> Observable<T> endTransaction(final Observable<T> pObservable) {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {
-                return pObservable./* buffer(Integer.MAX_VALUE). */subscribe(new Action1<List<T>>() {
+                return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Action1<List<T>>() {
                     public void call(List<T> pValues) {
                         try {
                             mConnection.setTransactionSuccessful();
@@ -130,6 +131,7 @@ public abstract class Database extends SQLiteOpenHelper {
                             for (T value : pValues) {
                                 pObserver.onNext(value);
                             }
+                            pObserver.onCompleted();
                         } catch (SQLException eSQLException) {
                             mConnection.endTransaction();
                             pObserver.onError(eSQLException);

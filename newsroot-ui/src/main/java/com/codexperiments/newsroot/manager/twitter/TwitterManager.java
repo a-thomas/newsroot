@@ -6,9 +6,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
@@ -23,7 +20,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -42,22 +38,9 @@ public class TwitterManager {
     private JsonFactory mJSONFactory;
     private OAuthConsumer mConsumer;
     private OAuthProvider mProvider;
-    private Set<TweetListener> mListeners;
 
-    public interface TweetListener {
-        void onNewsLoaded(List<News> pItems);
-    }
-
-    public void register(TweetListener pTweetListener) {
-        mListeners.add(pTweetListener);
-    }
-
-    public void unregister(TweetListener pTweetListener) {
-        mListeners.remove(pTweetListener);
-    }
-
-    // private String mId;
-    // private String mScreenName;
+    private String mId;
+    private String mScreenName;
     private boolean mAuthorized;
 
     public TwitterManager(Application pApplication, EventBus pEventBus, Config pConfig) {
@@ -67,10 +50,7 @@ public class TwitterManager {
         mEventBus = pEventBus;
         mEventBus.registerListener(this);
         mJSONFactory = new JsonFactory();
-        mListeners = new HashSet<TwitterManager.TweetListener>();
 
-        // mId = mPreferences.getString(PREF_USER_ID, null);
-        // mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
         checkAuthorization();
     }
 
@@ -81,6 +61,8 @@ public class TwitterManager {
                                              mConfig.getHost() + "oauth/authorize");
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (mAuthorized) {
+            mId = mPreferences.getString(PREF_USER_ID, null);
+            mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);
             String lToken = mPreferences.getString(PREF_USER_TOKEN, null);
             String lSecret = mPreferences.getString(PREF_USER_SECRET, null);
             mConsumer.setTokenWithSecret(lToken, lSecret);
@@ -130,6 +112,14 @@ public class TwitterManager {
         } catch (Exception eTwitterException) {
             throw TwitterAuthorizationFailedException.from(eTwitterException);
         }
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public String getScreenName() {
+        return mScreenName;
     }
 
     public boolean isAuthorized() {

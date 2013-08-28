@@ -57,7 +57,7 @@ public abstract class BaseApplication extends Application {
         registerService(new AndroidEventBus());
         registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
             @Override
-            public boolean keepResultOnHold(Task<?> pTask) {
+            public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
                 // if (pTask) {
                 return true;
                 // }

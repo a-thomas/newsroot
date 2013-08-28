@@ -64,17 +64,13 @@ public class TimeGap implements News {
         }
     }
 
-    public TimeGap substractEarlyBound(Tweet pTweet, int pPageSize) {
-        long lOldestTweetId = pTweet.getId();
-        if (lOldestTweetId != mOldestBound) {
-            if ((lOldestTweetId < mEarliestBound) && (lOldestTweetId > mOldestBound)) {
-                return new TimeGap((lOldestTweetId < mEarliestBound) ? lOldestTweetId : mEarliestBound, mOldestBound);
-            } else {
-                return this;
-            }
-        } else {
-            return null;
+    public TimeGap substractEarlyBound(Tweet pTweet) {
+        long lOldestTweetId = pTweet.getTimelineId();
+        if ((lOldestTweetId != -1l) && (lOldestTweetId > mOldestBound)) {
+            long lEarliestBound = (lOldestTweetId < mEarliestBound || mEarliestBound == -1l) ? lOldestTweetId : mEarliestBound;
+            return new TimeGap(lEarliestBound, mOldestBound);
         }
+        return null;
     }
 
     public long getId() {

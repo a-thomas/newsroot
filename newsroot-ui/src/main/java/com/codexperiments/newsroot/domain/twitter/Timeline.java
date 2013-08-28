@@ -3,23 +3,27 @@ package com.codexperiments.newsroot.domain.twitter;
 public class Timeline {
     private long mId;
 
-    // private long mEarliestId;
-    // private long mOldestId;
+    private String mUsername;
+    private long mEarliestId;
+    private long mOldestId;
+    private boolean mHasMore;
+
     // private List<News> mItems;
 
-    public Timeline() {
+    public Timeline(String pUsername) {
         super();
         mId = -1;
-        // mEarliestId = -1;
-        // mOldestId = -1;
+        mUsername = pUsername;
+        mEarliestId = -1;
+        mOldestId = -1;
         // mItems = new ArrayList<News>();
     }
 
     public Timeline(long pId, long pEarliestId, long pOldestId) {
         super();
         mId = pId;
-        // mEarliestId = pEarliestId;
-        // mOldestId = pOldestId;
+        mEarliestId = pEarliestId;
+        mOldestId = pOldestId;
         // mItems = new ArrayList<News>();
     }
 
@@ -27,8 +31,20 @@ public class Timeline {
         return mId;
     }
 
-    public void setId(long pId) {
-        mId = pId;
+    public String getUsername() {
+        return mUsername;
+    }
+
+    public long getEarliestBound() {
+        return mEarliestId;
+    }
+
+    public long getOldestBound() {
+        return mOldestId;
+    }
+
+    public boolean hasMore() {
+        return mHasMore;
     }
 
     // public List<News> getItems() {

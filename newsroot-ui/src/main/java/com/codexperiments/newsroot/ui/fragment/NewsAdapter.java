@@ -3,8 +3,6 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +17,11 @@ public class NewsAdapter extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
     private Callback mCallback;
 
-    private Observable<Observable<News>> mRefreshObservable;
-    private Observable<Observable<News>> mMoreObservable;
     private List<News> mTweets;
     private boolean mHasMore;
     private int mLastPosition;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater,
-                       Observable<Observable<News>> pRefreshObservable,
-                       Observable<Observable<News>> pMoreObservable,
-                       boolean pHasMore,
-                       Callback pCallback)
-    {
+    public NewsAdapter(LayoutInflater pLayoutInflater, boolean pHasMore, Callback pCallback) {
         super();
         mLayoutInflater = pLayoutInflater;
         mCallback = pCallback;
@@ -38,43 +29,12 @@ public class NewsAdapter extends BaseAdapter {
         mTweets = new ArrayList<News>(DEFAULT_LIST_SIZE);
         mHasMore = pHasMore;
         mLastPosition = 0;
-
-        mRefreshObservable = pRefreshObservable;
-        mMoreObservable = pMoreObservable;
-    }
-//
-    protected void subscribeMore() {
-        mMoreObservable.subscribe(new Observer<Observable<News>>() {
-            public void onNext(Observable<News> pNews) {
-                pNews.subscribe(new Observer<News>() {
-                    public void onNext(News pNews) {
-                        mTweets.add(pNews);
-                    }
-
-                    public void onCompleted() {
-                        notifyDataSetChanged();
-                    }
-
-                    public void onError(Throwable pThrowable) {
-                        mCallback.onLoadMoreError(pThrowable);
-                    }
-                });
-            }
-
-            public void onCompleted() {
-            }
-
-            public void onError(Throwable pThrowable) {
-                mCallback.onLoadMoreError(pThrowable);
-            }
-        });
     }
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
         if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) && (mHasMore)) {
-            //mCallback.onLoadMore();
-            subscribeMore();
+            mCallback.onMore();
             mLastPosition = pPosition;
         }
 
@@ -110,8 +70,8 @@ public class NewsAdapter extends BaseAdapter {
     }
 
     public interface Callback {
-        void onLoadMore();
+        void onRefresh();
 
-        void onLoadMoreError(Throwable pThrowable);
+        void onMore();
     }
 }

@@ -36,16 +36,16 @@ public class TwitterAPI {
     public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {
         return Observable.create(new Func1<Observer<Observable<Tweet>>, Subscription>() {
             public Subscription call(final Observer<Observable<Tweet>> pObserver) {
-                pObserver.onNext(getTweetPage(pObserver, pTimeGap,pPageCount, pPageSize));
+                pObserver.onNext(getTweetPage(pObserver, pTimeGap, pPageCount, pPageSize));
                 return Subscriptions.empty();
             }
         });
     }
 
     public Observable<Tweet> getTweetPage(final Observer<Observable<Tweet>> pPagedObserver,
-                                       final TimeGap pTimeGap,
-                                       final int pPageCount,
-                                       final int pPageSize)
+                                          final TimeGap pTimeGap,
+                                          final int pPageCount,
+                                          final int pPageSize)
     {
         return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
             public Subscription call(final Observer<Tweet> pObserver) {
@@ -57,13 +57,17 @@ public class TwitterAPI {
                             return parseTweets(pObserver, pTimeGap, pPageSize, pParser);
                         }
                     });
+                    pObserver.onCompleted();
+
+                    // Retrieve next page.
+                    if (lRemainingGap != null && pPageCount > 1) {
+                        pPagedObserver.onNext(getTweetPage(pPagedObserver, lRemainingGap, pPageCount - 1, pPageSize));
+                    } else {
+                        pPagedObserver.onCompleted();
+                    }
                 } catch (TwitterAccessException eTwitterAccessException) {
                     pObserver.onError(eTwitterAccessException);
-                }
-
-                // Retrieve next page.
-                if (lRemainingGap != null && pPageCount > 1) {
-                    pPagedObserver.onNext(getTweetPage(pPagedObserver, pTimeGap, pPageCount - 1, pPageSize));
+                    pPagedObserver.onError(eTwitterAccessException);
                 }
                 return Subscriptions.empty();
             }
@@ -106,7 +110,7 @@ public class TwitterAPI {
     private Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         String lField = "";
-        Tweet lStatus = new Tweet();
+        Tweet lTweet = new Tweet();
 
         while (!lFinished) {
             switch (pParser.nextToken()) {
@@ -115,7 +119,7 @@ public class TwitterAPI {
                 break;
             case START_OBJECT:
                 if ("user".equals(lField)) {
-                    parseUser(lStatus, pParser);
+                    parseUser(lTweet, pParser);
                 } else {
                     skipObject(pParser);
                 }
@@ -130,16 +134,16 @@ public class TwitterAPI {
                 break;
             default:
                 if ("id".equals(lField)) {
-                    lStatus.setId(pParser.getLongValue());
+                    lTweet.setId(pParser.getLongValue());
                 } else if ("created_at".equals(lField)) {
-                    lStatus.setCreatedAt(getDate(pParser.getText()));
+                    lTweet.setCreatedAt(getDate(pParser.getText()));
                 } else if ("text".equals(lField)) {
-                    lStatus.setText(pParser.getText());
+                    lTweet.setText(pParser.getText());
                 }
                 break;
             }
         }
-        return lStatus;
+        return lTweet;
     }
 
     private Tweet parseUser(Tweet pStatus, JsonParser pParser) throws JsonParseException, IOException {

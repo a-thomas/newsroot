@@ -38,7 +38,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
             @Override
             public void onClick(View pV) {
                 NewsFragment lNewsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
-                lNewsFragment.refresh();
+                lNewsFragment.refreshTweets();
             }
         });
 
@@ -135,6 +135,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
     }
 
     private void showHome() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.activity_content, NewsFragment.home()).commit();
+        NewsFragment lNewsFragment = NewsFragment.forUser(mTweetManager.getScreenName());
+        getSupportFragmentManager().beginTransaction().replace(R.id.activity_content, lNewsFragment).commit();
     }
 }

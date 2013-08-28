@@ -16,6 +16,7 @@ public class Timeline {
         mUsername = pUsername;
         mEarliestId = -1;
         mOldestId = -1;
+        mHasMore = true;
         // mItems = new ArrayList<News>();
     }
 
@@ -24,6 +25,7 @@ public class Timeline {
         mId = pId;
         mEarliestId = pEarliestId;
         mOldestId = pOldestId;
+        mHasMore = true;
         // mItems = new ArrayList<News>();
     }
 

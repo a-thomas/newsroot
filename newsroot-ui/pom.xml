@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>com.netflix.rxjava</groupId>
 			<artifactId>rxjava-core</artifactId>
-			<version>0.10.1-SNAPSHOT</version>
+			<version>0.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>oauth.signpost</groupId>

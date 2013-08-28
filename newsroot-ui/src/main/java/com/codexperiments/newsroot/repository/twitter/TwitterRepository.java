@@ -77,7 +77,7 @@ public class TwitterRepository {
 
     public Observable<Observable<News>> findOlderNews(final Timeline pTimeline) {
         if (pTimeline.hasMore()) {
-            return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 1, DEFAULT_PAGE_SIZE);
+            return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3, DEFAULT_PAGE_SIZE);
         } else {
             return Observable.empty();
         }

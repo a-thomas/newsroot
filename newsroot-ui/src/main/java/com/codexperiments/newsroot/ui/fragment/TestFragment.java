@@ -1,12 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import rx.Observable;
-import rx.concurrency.Schedulers;
-import rx.util.functions.Action0;
-import rx.util.functions.Action1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,20 +57,20 @@ public class TestFragment extends Fragment {
         }
         super.onStart();
 
-        Observable.from("toto", "titi", "tutu", "tete", "tata", "tyty").subscribe(new Action1<String>() {
-            public void call(String pT1) {
-                Log.e("wtf", "==" + pT1);
-            }
-        }, new Action1<Exception>() {
-            public void call(Exception pT1) {
-                Log.e("wtf", "error");
-            }
-        }, new Action0() {
-            public void call() {
-                Log.e("wtf", "completed");
-            }
-        }, Schedulers.newThread());
-        Log.e("continue", "continue");
+        // Observable.from("toto", "titi", "tutu", "tete", "tata", "tyty").subscribe(new Action1<String>() {
+        // public void call(String pT1) {
+        // Log.e("wtf", "==" + pT1);
+        // }
+        // }, new Action1<Exception>() {
+        // public void call(Exception pT1) {
+        // Log.e("wtf", "error");
+        // }
+        // }, new Action0() {
+        // public void call() {
+        // Log.e("wtf", "completed");
+        // }
+        // }, Schedulers.newThread());
+        // Log.e("continue", "continue");
     }
 
     @Override

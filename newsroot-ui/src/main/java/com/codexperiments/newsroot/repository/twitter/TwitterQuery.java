@@ -3,13 +3,15 @@ package com.codexperiments.newsroot.repository.twitter;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 
 public class TwitterQuery {
+    public static final String URL_HOME = "1.1/statuses/home_timeline.json";
+
     private StringBuilder mQuery;
     private char mSeparator;
     private int mPageSize;
     private TimeGap mTimeGap;
 
-    public static TwitterQuery queryHome(String pHost) {
-        return new TwitterQuery(pHost, "1.1/statuses/home_timeline.json");
+    public static TwitterQuery query(String pHost, String pUrl) {
+        return new TwitterQuery(pHost, pUrl);
     }
 
     private TwitterQuery(String pHost, String pQuery) {

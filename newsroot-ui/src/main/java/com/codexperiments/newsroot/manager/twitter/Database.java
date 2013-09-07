@@ -98,6 +98,19 @@ public abstract class Database extends SQLiteOpenHelper {
         });
     }
 
+    public <T> void apply(final Observable<T> pObservable) {
+        pObservable.subscribe(new Observer<T>() {
+            public void onNext(T pT) {
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+            }
+        });
+    }
+
     public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {

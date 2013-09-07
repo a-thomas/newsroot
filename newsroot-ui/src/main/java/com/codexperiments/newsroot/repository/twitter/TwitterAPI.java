@@ -3,6 +3,8 @@ package com.codexperiments.newsroot.repository.twitter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -15,6 +17,7 @@ import rx.util.functions.Func1;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager.QueryHandler;
@@ -35,66 +38,52 @@ public class TwitterAPI {
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public Observable<Observable<Tweet>> getHome(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {
-        return Observable.create(new Func1<Observer<Observable<Tweet>>, Subscription>() {
-            public Subscription call(final Observer<Observable<Tweet>> pObserver) {
-                pObserver.onNext(getTweetPage(pObserver, pTimeGap, pPageCount, pPageSize));
-                return Subscriptions.empty();
-            }
-        });
+    public Observable<TweetPage> findHomeTweets(TimeGap pTimeGap, int pPageCount, int pPageSize) {
+        return findTweets(TwitterQuery.URL_HOME, pTimeGap, pPageSize, pPageCount);
     }
 
-    public Observable<Tweet> getTweetPage(final Observer<Observable<Tweet>> pPagedObserver,
-                                          final TimeGap pTimeGap,
-                                          final int pPageCount,
-                                          final int pPageSize)
+    private Observable<TweetPage> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageSize, final int pPageCount)
     {
-        return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
-            public Subscription call(final Observer<Tweet> pObserver) {
+        return Observable.create(new Func1<Observer<TweetPage>, Subscription>() {
+            public Subscription call(final Observer<TweetPage> pObserver) {
                 AndroidScheduler.threadPoolForIO().schedule(new Action0() {
                     public void call() {
-                        TimeGap lRemainingGap = null;
                         try {
-                            TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
-                            lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
-                                public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-                                    return parseTweets(pObserver, pTimeGap, pPageSize, pParser);
-                                }
-                            });
-                            pObserver.onCompleted();
-
-                            // Retrieve next page.
-                            if (lRemainingGap != null && pPageCount > 1) {
-                                pPagedObserver.onNext(getTweetPage(pPagedObserver, lRemainingGap, pPageCount - 1, pPageSize));
-                            } else {
-                                pPagedObserver.onCompleted();
+                            TimeGap lRemainingTimeGap = pTimeGap;
+                            int lPageCount = pPageCount;
+                            while ((lRemainingTimeGap != null) && (lPageCount-- > 0)) {
+                                TweetPage lTweetPage = findTweetPage(pUrl, pTimeGap, pPageSize);
+                                pObserver.onNext(lTweetPage);
+                                lRemainingTimeGap = lTweetPage.remainingGap();
                             }
                         } catch (TwitterAccessException eTwitterAccessException) {
                             pObserver.onError(eTwitterAccessException);
-                            pPagedObserver.onError(eTwitterAccessException);
                         }
                     }
                 });
                 return Subscriptions.empty();
             }
-        }).cache();
+        });
     }
 
-    private TimeGap parseTweets(Observer<Tweet> pObserver, TimeGap pTimeGap, int pPageSize, JsonParser pParser)
-        throws JsonParseException, IOException
-    {
-        if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
+    private TweetPage findTweetPage(String pUrl, final TimeGap pTimeGap, final int pPageSize) throws TwitterAccessException {
+        TwitterQuery lQuery = TwitterQuery.query(mHost, pUrl).withTimeGap(pTimeGap).withPageSize(pPageSize);
+        return mTwitterManager.query(lQuery, new QueryHandler<TweetPage>() {
+            public TweetPage parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
+                return parseTweetPage(pTimeGap, pPageSize, pParser);
+            }
+        });
+    }
 
-        int lTweetCount = 0;
-        long lEarliestBound = 0;
+    private TweetPage parseTweetPage(TimeGap pTimeGap, int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
+        if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
+        List<Tweet> lTweets = new ArrayList<Tweet>(pPageSize);
+
         boolean lFinished = false;
         while (!lFinished) {
             switch (pParser.nextToken()) {
             case START_OBJECT:
-                ++lTweetCount;
-                Tweet lTweet = parseTweet(pParser);
-                lEarliestBound = lTweet.getTimelineId();
-                pObserver.onNext(lTweet);
+                lTweets.add(parseTweet(pParser));
                 break;
             case END_ARRAY:
                 lFinished = true;
@@ -105,12 +94,7 @@ public class TwitterAPI {
                 break;
             }
         }
-
-        if ((lTweetCount > 0) && (lTweetCount >= pPageSize)) {
-            return new TimeGap(lEarliestBound, pTimeGap.getOldestBound());
-        } else {
-            return null;
-        }
+        return new TweetPage(lTweets, pTimeGap, pPageSize);
     }
 
     private Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {

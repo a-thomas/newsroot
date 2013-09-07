@@ -19,9 +19,11 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
+import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.google.common.collect.Iterables;
 
 public class NewsFragment extends Fragment {
     private static final String BUNDLE_SCREEN_NAME = "screenName";
@@ -105,21 +107,10 @@ public class NewsFragment extends Fragment {
     public void refreshTweets() {
         mTwitterRepository.findLatestNews(mTimeline)
                           .observeOn(AndroidScheduler.getInstance())
-                          .subscribe(new Observer<Observable<News>>() {
-                              public void onNext(Observable<News> pObservable) {
-                                  pObservable.subscribe(new Observer<News>() {
-                                      public void onNext(News pNews) {
-                                          mTweets.add(pNews);
-                                      }
-
-                                      public void onCompleted() {
-                                          mUIListAdapter.notifyDataSetChanged(mTweets);
-                                      }
-
-                                      public void onError(Throwable pThrowable) {
-                                          // Already forwarded to outer subscription.
-                                      }
-                                  });
+                          .subscribe(new Observer<TweetPage>() {
+                              public void onNext(TweetPage pTweetPage) {
+                                  Iterables.addAll(mTweets, pTweetPage);
+                                  mUIListAdapter.notifyDataSetChanged(mTweets);
                               }
 
                               public void onCompleted() {
@@ -138,30 +129,18 @@ public class NewsFragment extends Fragment {
         if (!mLoadingMore) {
             mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
 
-            Observable<Observable<News>> lTweetPages;
+            Observable<TweetPage> lTweetPages;
             if (mFromCache) lTweetPages = mTwitterRepository.findOlderNewsFromCache(mTimeline);
             else lTweetPages = mTwitterRepository.findOlderNews(mTimeline);
 
             mLoadingMore = true;
             lTweetPages.observeOn(AndroidScheduler.getInstance()) //
-                       .subscribe(new Observer<Observable<News>>() {
+                       .subscribe(new Observer<TweetPage>() {
                            int lRemainingTweet = TwitterRepository.DEFAULT_PAGE_SIZE;
 
-                           public void onNext(Observable<News> pObservable) {
-                               pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<News>() {
-                                   public void onNext(News pNews) {
-                                       mTweets.add(pNews);
-                                       --lRemainingTweet;
-                                   }
-
-                                   public void onCompleted() {
-                                       mUIListAdapter.notifyDataSetChanged(mTweets);
-                                   }
-
-                                   public void onError(Throwable pThrowable) {
-                                       // Already forwarded to outer subscription.
-                                   }
-                               });
+                           public void onNext(TweetPage pTweetPage) {
+                               Iterables.addAll(mTweets, pTweetPage);
+                               mUIListAdapter.notifyDataSetChanged(mTweets);
                            }
 
                            public void onCompleted() {

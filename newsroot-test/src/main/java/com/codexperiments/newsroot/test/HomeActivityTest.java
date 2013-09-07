@@ -14,7 +14,6 @@ import static org.mockito.Mockito.withSettings;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.simpleframework.http.Query;
 
@@ -26,10 +25,8 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
@@ -112,8 +109,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     {
         // Setup
         final CountDownLatch lFinished = new CountDownLatch(3);
-        final Observer<Observable<News>> lTweetPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
-        final Observer<News> lTweetObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
+        final Observer<TweetPage> lTweetPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
         mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
         mDatabase.executeAssetScript("twitter/ctx_timeline.sql", getInstrumentation().getContext());
         final Timeline lTimeline = new Timeline(1, -1l, -1l);
@@ -124,31 +120,16 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
                                                                                     .thenReturn("twitter/ctx_tweet_02-3.json");
         // Run
         // Observable<Observable<News>> lNews = mTwitterRepository.downloadLatestNews(lTimeline);
-        Observable<Observable<News>> lNews = mTwitterRepository.findOlderNews(lTimeline);
+        Observable<TweetPage> lNews = mTwitterRepository.findOlderNews(lTimeline);
         assertThat(lNews, notNullValue());
-        mockObserver(lNews, lTweetPageObserver, lTweetObserver, lFinished);
+        mockSubscribe(lNews, lTweetPageObserver, lFinished);
 
         lFinished.await();
-        InOrder lInOrder = Mockito.inOrder(lTweetObserver);
-        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
-        lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
-        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
-        lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
-        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
-        lInOrder.verify(lTweetObserver, times(19)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
-        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
-        // lInOrder.verify(lTweetPageObserver).onCompleted();
-
-        Mockito.verify(lTweetPageObserver, times(3)).onNext(argThat(any(Observable.class)));
+        Mockito.verify(lTweetPageObserver, times(3)).onNext(argThat(any(TweetPage.class)));
         Mockito.verify(lTweetPageObserver).onCompleted();
-        Mockito.verify(lTweetObserver, never()).onError(argThat(any(Throwable.class)));
+        Mockito.verify(lTweetPageObserver, never()).onError(argThat(any(Throwable.class)));
 
-        Mockito.verifyNoMoreInteractions(lTweetPageObserver, lTweetObserver);
+        Mockito.verifyNoMoreInteractions(lTweetPageObserver, lTweetPageObserver);
         tearDown();
         setUp();
     }
@@ -169,33 +150,18 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         };
     }
 
-    public <T> Subscription mockObserver(final Observable<Observable<T>> pObservable,
-                                         final Observer<Observable<T>> pObserver,
-                                         final Observer<T> pInnerObserver,
-                                         final CountDownLatch pTestEnded)
+    public <T> Subscription mockSubscribe(final Observable<T> pObservable,
+                                          final Observer<T> pObserver,
+                                          final CountDownLatch pTestEnded)
     {
-        return pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<Observable<T>>() {
-            public void onNext(Observable<T> pPageValue) {
+        return pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<T>() {
+            public void onNext(T pPageValue) {
                 pObserver.onNext(pPageValue);
-                pPageValue.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<T>() {
-                    public void onNext(T pValue) {
-                        pInnerObserver.onNext(pValue);
-                    }
-
-                    public void onCompleted() {
-                        pInnerObserver.onCompleted();
-                        pTestEnded.countDown();
-                    }
-
-                    public void onError(Throwable pThrowable) {
-                        pInnerObserver.onError(pThrowable);
-                    }
-                });
             }
 
             public void onCompleted() {
                 pObserver.onCompleted();
-                // pTestEnded.countDown();
+                pTestEnded.countDown();
             }
 
             public void onError(Throwable pThrowable) {

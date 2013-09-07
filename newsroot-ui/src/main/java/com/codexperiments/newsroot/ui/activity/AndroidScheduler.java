@@ -34,7 +34,7 @@ import android.os.Looper;
  * Executes work on the Swing UI thread. This scheduler should only be used with actions that execute quickly.
  */
 public final class AndroidScheduler extends Scheduler {
-    private static final AndroidScheduler sInstance = new AndroidScheduler();
+    private static final AndroidScheduler sInstance = new AndroidScheduler(new Handler(Looper.getMainLooper()));
     private static final ExecutorService sIOPool;
     private static final ExecutorService sDatabasePool;
 
@@ -58,7 +58,15 @@ public final class AndroidScheduler extends Scheduler {
     }
 
     private static ExecutorService createThreadPoolForDatabase() {
-        return Executors.newSingleThreadExecutor();
+        return Executors.newSingleThreadExecutor(new ThreadFactory() {
+            private final AtomicLong counter = new AtomicLong();
+
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r, "RxDatabaseThreadPool-" + counter.incrementAndGet());
+                t.setDaemon(true);
+                return t;
+            }
+        });
     }
 
     public static AndroidScheduler getInstance() {
@@ -73,8 +81,8 @@ public final class AndroidScheduler extends Scheduler {
         return Schedulers.executor(sDatabasePool);
     }
 
-    private AndroidScheduler() {
-        uiHandler = new Handler(Looper.getMainLooper());
+    private AndroidScheduler(Handler handler) {
+        uiHandler = handler;
     }
 
     @Override
@@ -163,5 +171,9 @@ public final class AndroidScheduler extends Scheduler {
             throw new IllegalArgumentException(String.format("The swing timer only accepts non-negative delays up to %d milliseconds.",
                                                              Integer.MAX_VALUE));
         }
+    }
+
+    public static Scheduler currentThread() {
+        return new AndroidScheduler(new Handler());
     }
 }

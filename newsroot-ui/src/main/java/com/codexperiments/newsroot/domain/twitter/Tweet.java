@@ -1,7 +1,10 @@
 package com.codexperiments.newsroot.domain.twitter;
 
 public class Tweet implements News {
+    static int iiii = 0;
+
     private long mId;
+    private int ii;
     // @DatabaseField(columnName = "TWT_TML_ID", canBeNull = false)
     // private long mTimelineId;
     private String mName;
@@ -11,6 +14,7 @@ public class Tweet implements News {
 
     public Tweet() {
         super();
+        ii = iiii++;
         mId = -1;
     }
 
@@ -57,5 +61,10 @@ public class Tweet implements News {
 
     public void setCreatedAt(long pCreatedAt) {
         mCreatedAt = pCreatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Tweet [mId=" + mId + ", mName=" + ii + "]";
     }
 }

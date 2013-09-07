@@ -10,6 +10,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
+import rx.util.functions.Action0;
 import rx.util.functions.Func1;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
@@ -17,6 +18,7 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager.QueryHandler;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -49,26 +51,30 @@ public class TwitterAPI {
     {
         return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
             public Subscription call(final Observer<Tweet> pObserver) {
-                TimeGap lRemainingGap = null;
-                try {
-                    TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
-                    lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
-                        public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
-                            return parseTweets(pObserver, pTimeGap, pPageSize, pParser);
-                        }
-                    });
-                    pObserver.onCompleted();
+                AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+                    public void call() {
+                        TimeGap lRemainingGap = null;
+                        try {
+                            TwitterQuery lQuery = TwitterQuery.queryHome(mHost).withTimeGap(pTimeGap).withPageSize(pPageSize);
+                            lRemainingGap = mTwitterManager.query(lQuery, new QueryHandler<TimeGap>() {
+                                public TimeGap parse(TwitterQuery pQuery, JsonParser pParser) throws Exception {
+                                    return parseTweets(pObserver, pTimeGap, pPageSize, pParser);
+                                }
+                            });
+                            pObserver.onCompleted();
 
-                    // Retrieve next page.
-                    if (lRemainingGap != null && pPageCount > 1) {
-                        pPagedObserver.onNext(getTweetPage(pPagedObserver, lRemainingGap, pPageCount - 1, pPageSize));
-                    } else {
-                        pPagedObserver.onCompleted();
+                            // Retrieve next page.
+                            if (lRemainingGap != null && pPageCount > 1) {
+                                pPagedObserver.onNext(getTweetPage(pPagedObserver, lRemainingGap, pPageCount - 1, pPageSize));
+                            } else {
+                                pPagedObserver.onCompleted();
+                            }
+                        } catch (TwitterAccessException eTwitterAccessException) {
+                            pObserver.onError(eTwitterAccessException);
+                            pPagedObserver.onError(eTwitterAccessException);
+                        }
                     }
-                } catch (TwitterAccessException eTwitterAccessException) {
-                    pObserver.onError(eTwitterAccessException);
-                    pPagedObserver.onError(eTwitterAccessException);
-                }
+                });
                 return Subscriptions.empty();
             }
         }).cache();

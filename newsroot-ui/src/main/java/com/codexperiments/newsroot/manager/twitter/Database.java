@@ -17,6 +17,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+
 public abstract class Database extends SQLiteOpenHelper {
     private Application mApplication;
     private SQLiteDatabase mConnection;
@@ -58,38 +60,40 @@ public abstract class Database extends SQLiteOpenHelper {
     {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {
-                return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Observer<List<T>>() {
-                    public void onNext(List<T> pValues) {
-                        mConnection.beginTransaction();
-                        try {
-                            for (T lValue : pValues) {
-                                pObservableAction.call(lValue);
-                            }
-                            if (pObservableBatchAction != null) {
-                                pObservableBatchAction.call(pValues);
-                            }
-                            mConnection.setTransactionSuccessful();
-                            mConnection.endTransaction();
+                return pObservable.buffer(Integer.MAX_VALUE)
+                                  .observeOn(AndroidScheduler.threadPoolForDatabase())
+                                  .subscribe(new Observer<List<T>>() {
+                                      public void onNext(List<T> pValues) {
+                                          mConnection.beginTransaction();
+                                          try {
+                                              for (T lValue : pValues) {
+                                                  pObservableAction.call(lValue);
+                                              }
+                                              if (pObservableBatchAction != null) {
+                                                  pObservableBatchAction.call(pValues);
+                                              }
+                                              mConnection.setTransactionSuccessful();
+                                              mConnection.endTransaction();
 
-                            // Once data is committed, push data further into the pipeline.
-                            for (T value : pValues) {
-                                pObserver.onNext(value);
-                            }
-                        } catch (SQLException eSQLException) {
-                            mConnection.endTransaction();
-                            pObserver.onError(eSQLException);
-                            throw eSQLException;
-                        }
-                    }
+                                              // Once data is committed, push data further into the pipeline.
+                                              for (T value : pValues) {
+                                                  pObserver.onNext(value);
+                                              }
+                                          } catch (SQLException eSQLException) {
+                                              mConnection.endTransaction();
+                                              pObserver.onError(eSQLException);
+                                              throw eSQLException;
+                                          }
+                                      }
 
-                    public void onCompleted() {
-                        pObserver.onCompleted();
-                    }
+                                      public void onCompleted() {
+                                          pObserver.onCompleted();
+                                      }
 
-                    public void onError(Throwable pThrowable) {
-                        pObserver.onError(pThrowable);
-                    }
-                });
+                                      public void onError(Throwable pThrowable) {
+                                          pObserver.onError(pThrowable);
+                                      }
+                                  });
             }
         });
     }
@@ -97,23 +101,25 @@ public abstract class Database extends SQLiteOpenHelper {
     public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
         return Observable.create(new Func1<Observer<T>, Subscription>() {
             public Subscription call(final Observer<T> pObserver) {
-                return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Action1<List<T>>() {
-                    public void call(List<T> pValues) {
-                        try {
-                            mConnection.beginTransaction();
+                return pObservable.buffer(Integer.MAX_VALUE)
+                                  .observeOn(AndroidScheduler.threadPoolForDatabase())
+                                  .subscribe(new Action1<List<T>>() {
+                                      public void call(List<T> pValues) {
+                                          try {
+                                              mConnection.beginTransaction();
 
-                            // Once transaction is started, push data further into the pipeline.
-                            for (T value : pValues) {
-                                pObserver.onNext(value);
-                            }
-                            pObserver.onCompleted();
-                        } catch (SQLException eSQLException) {
-                            mConnection.endTransaction();
-                            pObserver.onError(eSQLException);
-                            throw eSQLException;
-                        }
-                    }
-                });
+                                              // Once transaction is started, push data further into the pipeline.
+                                              for (T value : pValues) {
+                                                  pObserver.onNext(value);
+                                              }
+                                              pObserver.onCompleted();
+                                          } catch (SQLException eSQLException) {
+                                              mConnection.endTransaction();
+                                              pObserver.onError(eSQLException);
+                                              throw eSQLException;
+                                          }
+                                      }
+                                  });
             }
         });
     }

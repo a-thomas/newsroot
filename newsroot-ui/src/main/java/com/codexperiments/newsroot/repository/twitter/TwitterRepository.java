@@ -7,6 +7,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
+import rx.util.functions.Action0;
 import rx.util.functions.Func1;
 import android.app.Application;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.COL_VIEW_TIME
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class TwitterRepository {
@@ -57,6 +59,8 @@ public class TwitterRepository {
         mTweetDAO = new TweetDAO(mDatabase);
         mTimeGapDAO = new TimeGapDAO(mDatabase);
         mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
+
+        mDatabase.recreate();
     }
 
     public Timeline findTimeline(String pUsername) {
@@ -90,39 +94,55 @@ public class TwitterRepository {
     private Observable<Observable<News>> findTweetsFromRepository(final TimeGap pTimeGap) {
         return Observable.just(Observable.create(new Func1<Observer<News>, Subscription>() {
             public Subscription call(final Observer<News> pObserver) {
-                try {
-                    Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values())
-                                                    .selectAll(DB_TWITTER.VIEW_TIMELINE)
-                                                    .from(DB_TWITTER.VIEW_TIMELINE)
-                                                    .limit(DEFAULT_PAGE_SIZE);
-                    if (pTimeGap.isFutureGap()) {
-                        lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound());
-                    } else if (pTimeGap.isPastGap()) {
-                        lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
-                    } else if (!pTimeGap.isInitialGap()) {
-                        lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound())
-                              .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
-                    }
-
-                    lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
-                        public void handleRow(ResultHandler.Row pRow, Cursor pCursor) {
-                            switch (mViewTimelineDAO.getKind(pRow)) {
-                            case TWEET:
-                                pObserver.onNext(mViewTimelineDAO.getTweet(pRow));
-                                break;
-                            case TIMEGAP:
-                                pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
-                                break;
+                AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
+                    public void call() {
+                        try {
+                            Query<DB_TWITTER> lQuery = Query.on(DB_TWITTER.values())
+                                                            .selectAll(DB_TWITTER.VIEW_TIMELINE)
+                                                            .from(DB_TWITTER.VIEW_TIMELINE)
+                                                            .limit(DEFAULT_PAGE_SIZE);
+                            if (pTimeGap.isFutureGap()) {
+                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound());
+                            } else if (pTimeGap.isPastGap()) {
+                                lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
+                            } else if (!pTimeGap.isInitialGap()) {
+                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound())
+                                      .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
                             }
+
+                            lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
+                                public void handleRow(ResultHandler.Row pRow, Cursor pCursor) {
+                                    switch (mViewTimelineDAO.getKind(pRow)) {
+                                    case TWEET:
+                                        pObserver.onNext(mViewTimelineDAO.getTweet(pRow));
+                                        break;
+                                    case TIMEGAP:
+                                        pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
+                                        break;
+                                    }
+                                }
+                            });
+                            pObserver.onCompleted();
+                        } catch (Exception eException) {
+                            pObserver.onError(eException);
                         }
-                    });
-                    pObserver.onCompleted();
-                } catch (Exception eException) {
-                    pObserver.onError(eException);
-                }
+                    }
+                });
                 return Subscriptions.empty();
             }
         }).cache());
+        // .buffer(Integer.MAX_VALUE)
+        // .observeOn(AndroidScheduler.getInstance())
+        // .subscribe(new Observer<List<News>>() {
+        // public void onNext(List<News> pArg0) {
+        // }
+        //
+        // public void onCompleted() {
+        // }
+        //
+        // public void onError(Throwable pArg0) {
+        // }
+        // });
     }
 
     private Observable<Observable<News>> findTweetsFromServer(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {

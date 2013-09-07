@@ -20,6 +20,7 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class NewsFragment extends Fragment {
@@ -33,6 +34,7 @@ public class NewsFragment extends Fragment {
     private List<News> mTweets;
     private boolean mFromCache;
     private boolean mHasMore; // TODO
+    private boolean mLoadingMore;
 
     private NewsAdapter mUIListAdapter;
     private ListView mUIList;
@@ -57,6 +59,7 @@ public class NewsFragment extends Fragment {
         mTweets = new ArrayList<News>(); // TODO Get from prefs.
         mFromCache = true;
         mHasMore = true;
+        mLoadingMore = false;
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
         mUIListAdapter = new NewsAdapter(pLayoutInflater, mHasMore, new NewsAdapter.Callback() {
@@ -100,73 +103,80 @@ public class NewsFragment extends Fragment {
     }
 
     public void refreshTweets() {
-        mTwitterRepository.findLatestNews(mTimeline).subscribe(new Observer<Observable<News>>() {
-            public void onNext(Observable<News> pObservable) {
-                pObservable.subscribe(new Observer<News>() {
-                    public void onNext(News pNews) {
-                        mTweets.add(pNews);
-                    }
+        mTwitterRepository.findLatestNews(mTimeline)
+                          .observeOn(AndroidScheduler.getInstance())
+                          .subscribe(new Observer<Observable<News>>() {
+                              public void onNext(Observable<News> pObservable) {
+                                  pObservable.subscribe(new Observer<News>() {
+                                      public void onNext(News pNews) {
+                                          mTweets.add(pNews);
+                                      }
 
-                    public void onCompleted() {
-                        mUIListAdapter.notifyDataSetChanged(mTweets);
-                    }
+                                      public void onCompleted() {
+                                          mUIListAdapter.notifyDataSetChanged(mTweets);
+                                      }
 
-                    public void onError(Throwable pThrowable) {
-                        // Already forwarded to outer subscription.
-                    }
-                });
-            }
+                                      public void onError(Throwable pThrowable) {
+                                          // Already forwarded to outer subscription.
+                                      }
+                                  });
+                              }
 
-            public void onCompleted() {
-                // Nothing to do.
-            }
+                              public void onCompleted() {
+                                  // Nothing to do.
+                              }
 
-            public void onError(Throwable pThrowable) {
-                mUIDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        });
+                              public void onError(Throwable pThrowable) {
+                                  mUIDialog.dismiss();
+                                  Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+                                  pThrowable.printStackTrace();
+                              }
+                          });
     }
 
     private void moreTweets() {
-        mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
+        if (!mLoadingMore) {
+            mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
 
-        Observable<Observable<News>> lTweetPages;
-        if (mFromCache) lTweetPages = mTwitterRepository.findOlderNewsFromCache(mTimeline);
-        else lTweetPages = mTwitterRepository.findOlderNews(mTimeline);
+            Observable<Observable<News>> lTweetPages;
+            if (mFromCache) lTweetPages = mTwitterRepository.findOlderNewsFromCache(mTimeline);
+            else lTweetPages = mTwitterRepository.findOlderNews(mTimeline);
 
-        lTweetPages.subscribe(new Observer<Observable<News>>() {
-            int lRemainingTweet = TwitterRepository.DEFAULT_PAGE_SIZE;
+            mLoadingMore = true;
+            lTweetPages.observeOn(AndroidScheduler.getInstance()) //
+                       .subscribe(new Observer<Observable<News>>() {
+                           int lRemainingTweet = TwitterRepository.DEFAULT_PAGE_SIZE;
 
-            public void onNext(Observable<News> pObservable) {
-                pObservable.subscribe(new Observer<News>() {
-                    public void onNext(News pNews) {
-                        mTweets.add(pNews);
-                        --lRemainingTweet;
-                    }
+                           public void onNext(Observable<News> pObservable) {
+                               pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<News>() {
+                                   public void onNext(News pNews) {
+                                       mTweets.add(pNews);
+                                       --lRemainingTweet;
+                                   }
 
-                    public void onCompleted() {
-                        mUIListAdapter.notifyDataSetChanged(mTweets);
-                    }
+                                   public void onCompleted() {
+                                       mUIListAdapter.notifyDataSetChanged(mTweets);
+                                   }
 
-                    public void onError(Throwable pThrowable) {
-                        // Already forwarded to outer subscription.
-                    }
-                });
-            }
+                                   public void onError(Throwable pThrowable) {
+                                       // Already forwarded to outer subscription.
+                                   }
+                               });
+                           }
 
-            public void onCompleted() {
-                boolean lHasMore = (lRemainingTweet <= 0);
-                if (mFromCache) mFromCache = lHasMore;
-                else mHasMore = lHasMore;
-            }
+                           public void onCompleted() {
+                               boolean lHasMore = (lRemainingTweet <= 0);
+                               if (mFromCache) mFromCache = lHasMore;
+                               else mHasMore = lHasMore;
+                               mLoadingMore = false;
+                           }
 
-            public void onError(Throwable pThrowable) {
-                mUIDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        });
+                           public void onError(Throwable pThrowable) {
+                               mUIDialog.dismiss();
+                               Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+                               pThrowable.printStackTrace();
+                           }
+                       });
+        }
     }
 }

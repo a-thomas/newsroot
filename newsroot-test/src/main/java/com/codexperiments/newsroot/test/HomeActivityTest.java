@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import org.mockito.InOrder;
 import org.mockito.Mockito;
@@ -19,12 +20,14 @@ import org.simpleframework.http.Query;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Subscription;
 import android.app.Application;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.News;
+import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
@@ -33,6 +36,7 @@ import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.repository.twitter.TwitterAPI;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.test.server.MockBackend;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
@@ -107,6 +111,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         throws IOException, TwitterAccessException, InterruptedException, Exception
     {
         // Setup
+        final CountDownLatch lFinished = new CountDownLatch(3);
         final Observer<Observable<News>> lTweetPageObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
         final Observer<News> lTweetObserver = Mockito.mock(Observer.class, withSettings().verboseLogging());
         mDatabase.executeAssetScript("twitter/ctx_timeline_01.sql", getInstrumentation().getContext());
@@ -121,23 +126,29 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // Observable<Observable<News>> lNews = mTwitterRepository.downloadLatestNews(lTimeline);
         Observable<Observable<News>> lNews = mTwitterRepository.findOlderNews(lTimeline);
         assertThat(lNews, notNullValue());
-        lNews.subscribe(mockObserver(lTweetPageObserver, lTweetObserver));
+        mockObserver(lNews, lTweetPageObserver, lTweetObserver, lFinished);
 
-        InOrder lInOrder = Mockito.inOrder(lTweetPageObserver, lTweetObserver);
-        lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
+        lFinished.await();
+        InOrder lInOrder = Mockito.inOrder(lTweetObserver);
+        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
         lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver).onCompleted();
-        lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
+        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
+        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
+        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
         lInOrder.verify(lTweetObserver, times(20)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver).onCompleted();
-        lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
+        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
+        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
+        // lInOrder.verify(lTweetPageObserver).onNext(argThat(any(Observable.class)));
         lInOrder.verify(lTweetObserver, times(19)).onNext(argThat(any(Tweet.class)));
-        lInOrder.verify(lTweetObserver).onCompleted();
-        lInOrder.verify(lTweetPageObserver).onCompleted();
-        lInOrder.verifyNoMoreInteractions();
+        lInOrder.verify(lTweetObserver, times(1)).onNext(argThat(any(TimeGap.class)));
+        lInOrder.verify(lTweetObserver, times(1)).onCompleted();
+        // lInOrder.verify(lTweetPageObserver).onCompleted();
 
+        Mockito.verify(lTweetPageObserver, times(3)).onNext(argThat(any(Observable.class)));
+        Mockito.verify(lTweetPageObserver).onCompleted();
         Mockito.verify(lTweetObserver, never()).onError(argThat(any(Throwable.class)));
 
+        Mockito.verifyNoMoreInteractions(lTweetPageObserver, lTweetObserver);
         tearDown();
         setUp();
     }
@@ -158,17 +169,22 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         };
     }
 
-    public <T> Observer<Observable<T>> mockObserver(final Observer<Observable<T>> pObserver, final Observer<T> pInnerObserver) {
-        return new Observer<Observable<T>>() {
+    public <T> Subscription mockObserver(final Observable<Observable<T>> pObservable,
+                                         final Observer<Observable<T>> pObserver,
+                                         final Observer<T> pInnerObserver,
+                                         final CountDownLatch pTestEnded)
+    {
+        return pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<Observable<T>>() {
             public void onNext(Observable<T> pPageValue) {
                 pObserver.onNext(pPageValue);
-                pPageValue.subscribe(new Observer<T>() {
+                pPageValue.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<T>() {
                     public void onNext(T pValue) {
                         pInnerObserver.onNext(pValue);
                     }
 
                     public void onCompleted() {
                         pInnerObserver.onCompleted();
+                        pTestEnded.countDown();
                     }
 
                     public void onError(Throwable pThrowable) {
@@ -179,11 +195,12 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             public void onCompleted() {
                 pObserver.onCompleted();
+                // pTestEnded.countDown();
             }
 
             public void onError(Throwable pThrowable) {
                 pObserver.onError(pThrowable);
             }
-        };
+        });
     }
 }

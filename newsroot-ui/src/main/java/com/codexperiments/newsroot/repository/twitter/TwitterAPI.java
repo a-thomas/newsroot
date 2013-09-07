@@ -29,23 +29,24 @@ import com.fasterxml.jackson.core.JsonToken;
 public class TwitterAPI {
     private TwitterManager mTwitterManager;
     private String mHost;
+    private int mPageSize;
 
     private SimpleDateFormat mDateFormat;
 
     public TwitterAPI(TwitterManager pTwitterManager, String pHost) {
         mTwitterManager = pTwitterManager;
         mHost = pHost;
+        mPageSize = 20; // TODO
 
         mDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", Locale.US);
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public Observable<TweetPage> findHomeTweets(TimeGap pTimeGap, int pPageCount, int pPageSize) {
-        return findTweets(TwitterQuery.URL_HOME, pTimeGap, pPageSize, pPageCount);
+    public Observable<TweetPage> findHomeTweets(TimeGap pTimeGap, int pPageCount) {
+        return findTweets(TwitterQuery.URL_HOME, pTimeGap, pPageCount);
     }
 
-    private Observable<TweetPage> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageSize, final int pPageCount)
-    {
+    private Observable<TweetPage> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageCount) {
         return Observable.create(new OnSubscribeFunc<TweetPage>() {
             public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
                 AndroidScheduler.threadPoolForIO().schedule(new Action0() {
@@ -54,7 +55,7 @@ public class TwitterAPI {
                             TimeGap lRemainingTimeGap = pTimeGap;
                             int lPageCount = pPageCount;
                             while ((lRemainingTimeGap != null) && (lPageCount-- > 0)) {
-                                TweetPage lTweetPage = findTweetPage(pUrl, pTimeGap, pPageSize);
+                                TweetPage lTweetPage = findTweetPage(pUrl, pTimeGap, mPageSize);
                                 pObserver.onNext(lTweetPage);
                                 lRemainingTimeGap = lTweetPage.remainingGap();
                             }

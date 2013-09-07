@@ -34,7 +34,7 @@ import com.codexperiments.robolabor.task.TaskManager;
 
 public class TwitterRepository {
     private static final int DEFAULT_PAGE_COUNT = 5;
-    public static final int DEFAULT_PAGE_SIZE = 20;
+    public static final int DEFAULT_PAGE_SIZE = 20; // TODO
 
     private EventBus mEventBus;
     private TwitterAPI mTwitterAPI;
@@ -75,7 +75,7 @@ public class TwitterRepository {
     }
 
     public Observable<TweetPage> findLatestNews(Timeline pTimeline) {
-        return findTweetsFromServer(new TimeGap(-1, pTimeline.getEarliestBound()), DEFAULT_PAGE_COUNT, DEFAULT_PAGE_SIZE);
+        return findTweetsFromServer(new TimeGap(-1, pTimeline.getEarliestBound()), DEFAULT_PAGE_COUNT);
     }
 
     public Observable<TweetPage> findOlderNewsFromCache(final Timeline pTimeline) {
@@ -84,14 +84,14 @@ public class TwitterRepository {
 
     public Observable<TweetPage> findOlderNews(final Timeline pTimeline) {
         if (pTimeline.hasMore()) {
-            return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3, DEFAULT_PAGE_SIZE);
+            return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3);
         } else {
             return Observable.empty();
         }
     }
 
     public Observable<TweetPage> findNewsInGap(final TimeGap pTimeGap) {
-        return findTweetsFromServer(pTimeGap, DEFAULT_PAGE_COUNT, DEFAULT_PAGE_SIZE);
+        return findTweetsFromServer(pTimeGap, DEFAULT_PAGE_COUNT);
     }
 
     private Observable<TweetPage> findTweetsFromRepository(final TimeGap pTimeGap) {
@@ -139,8 +139,8 @@ public class TwitterRepository {
         });
     }
 
-    private Observable<TweetPage> findTweetsFromServer(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {
-        Observable<TweetPage> lTweetPage = mTwitterAPI.findHomeTweets(pTimeGap, pPageCount, pPageSize);
+    private Observable<TweetPage> findTweetsFromServer(final TimeGap pTimeGap, final int pPageSize) {
+        Observable<TweetPage> lTweetPage = mTwitterAPI.findHomeTweets(pTimeGap, pPageSize);
         lTweetPage.map(new Func1<TweetPage, TweetPage>() {
             public TweetPage call(TweetPage pTweetPage) {
                 Observable<Tweet> lTweets = mDatabase.beginTransaction(Observable.from(pTweetPage));

@@ -16,12 +16,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.netflix.rxjava</groupId>
-			<artifactId>rxjava-core</artifactId>
-			<version>0.11.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.codexperiments.newsroot</groupId>
 			<artifactId>newsroot-ui</artifactId>
 			<type>apk</type>
@@ -47,6 +41,10 @@
 		<dependency>
 			<groupId>com.google.dexmaker</groupId>
 			<artifactId>dexmaker-mockito</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.rxjava</groupId>
+			<artifactId>rxjava-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

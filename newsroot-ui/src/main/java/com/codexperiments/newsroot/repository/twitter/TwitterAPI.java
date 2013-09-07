@@ -9,11 +9,11 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
-import rx.util.functions.Func1;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
@@ -29,11 +29,13 @@ import com.fasterxml.jackson.core.JsonToken;
 public class TwitterAPI {
     private TwitterManager mTwitterManager;
     private String mHost;
+
     private SimpleDateFormat mDateFormat;
 
     public TwitterAPI(TwitterManager pTwitterManager, String pHost) {
         mTwitterManager = pTwitterManager;
         mHost = pHost;
+
         mDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", Locale.US);
         mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -44,8 +46,8 @@ public class TwitterAPI {
 
     private Observable<TweetPage> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageSize, final int pPageCount)
     {
-        return Observable.create(new Func1<Observer<TweetPage>, Subscription>() {
-            public Subscription call(final Observer<TweetPage> pObserver) {
+        return Observable.create(new OnSubscribeFunc<TweetPage>() {
+            public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
                 AndroidScheduler.threadPoolForIO().schedule(new Action0() {
                     public void call() {
                         try {

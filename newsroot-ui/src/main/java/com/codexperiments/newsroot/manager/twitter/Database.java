@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.util.List;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
 import rx.util.functions.Action1;
-import rx.util.functions.Func1;
 import android.app.Application;
 import android.content.Context;
 import android.database.SQLException;
@@ -58,8 +58,8 @@ public abstract class Database extends SQLiteOpenHelper {
                                              final Action1<T> pObservableAction,
                                              final Action1<List<T>> pObservableBatchAction)
     {
-        return Observable.create(new Func1<Observer<T>, Subscription>() {
-            public Subscription call(final Observer<T> pObserver) {
+        return Observable.create(new OnSubscribeFunc<T>() {
+            public Subscription onSubscribe(final Observer<? super T> pObserver) {
                 return pObservable.buffer(Integer.MAX_VALUE)
                                   .observeOn(AndroidScheduler.threadPoolForDatabase())
                                   .subscribe(new Observer<List<T>>() {
@@ -112,8 +112,8 @@ public abstract class Database extends SQLiteOpenHelper {
     }
 
     public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
-        return Observable.create(new Func1<Observer<T>, Subscription>() {
-            public Subscription call(final Observer<T> pObserver) {
+        return Observable.create(new OnSubscribeFunc<T>() {
+            public Subscription onSubscribe(final Observer<? super T> pObserver) {
                 return pObservable.buffer(Integer.MAX_VALUE)
                                   .observeOn(AndroidScheduler.threadPoolForDatabase())
                                   .subscribe(new Action1<List<T>>() {
@@ -138,8 +138,8 @@ public abstract class Database extends SQLiteOpenHelper {
     }
 
     public <T> Observable<T> endTransaction(final Observable<T> pObservable) {
-        return Observable.create(new Func1<Observer<T>, Subscription>() {
-            public Subscription call(final Observer<T> pObserver) {
+        return Observable.create(new OnSubscribeFunc<T>() {
+            public Subscription onSubscribe(final Observer<? super T> pObserver) {
                 return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Action1<List<T>>() {
                     public void call(List<T> pValues) {
                         try {

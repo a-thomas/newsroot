@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
@@ -94,8 +95,8 @@ public class TwitterRepository {
     }
 
     private Observable<TweetPage> findTweetsFromRepository(final TimeGap pTimeGap) {
-        return Observable.create(new Func1<Observer<TweetPage>, Subscription>() {
-            public Subscription call(final Observer<TweetPage> pObserver) {
+        return Observable.create(new OnSubscribeFunc<TweetPage>() {
+            public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
                 AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
                     public void call() {
                         try {
@@ -136,18 +137,6 @@ public class TwitterRepository {
                 return Subscriptions.empty();
             }
         });
-        // .buffer(Integer.MAX_VALUE)
-        // .observeOn(AndroidScheduler.getInstance())
-        // .subscribe(new Observer<List<News>>() {
-        // public void onNext(List<News> pArg0) {
-        // }
-        //
-        // public void onCompleted() {
-        // }
-        //
-        // public void onError(Throwable pArg0) {
-        // }
-        // });
     }
 
     private Observable<TweetPage> findTweetsFromServer(final TimeGap pTimeGap, final int pPageCount, final int pPageSize) {
@@ -164,8 +153,8 @@ public class TwitterRepository {
     }
 
     private Observable<Tweet> commitTweetPage(final Observable<Tweet> pTweets, final TweetPage pTweetPage) {
-        return Observable.create(new Func1<Observer<Tweet>, Subscription>() {
-            public Subscription call(final Observer<Tweet> pObserver) {
+        return Observable.create(new OnSubscribeFunc<Tweet>() {
+            public Subscription onSubscribe(final Observer<? super Tweet> pObserver) {
                 return pTweets.subscribe(new Observer<Tweet>() {
                     public void onNext(Tweet pTweet) {
                         mTweetDAO.create(pTweet);

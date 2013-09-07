@@ -86,7 +86,7 @@ public final class AndroidScheduler extends Scheduler {
     }
 
     @Override
-    public <T> Subscription schedule(final T state, final Func2<Scheduler, T, Subscription> action) {
+    public <T> Subscription schedule(final T state, final Func2<? super Scheduler, ? super T, ? extends Subscription> action) {
         final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
         uiHandler.post(new Runnable() {
             @Override
@@ -106,7 +106,11 @@ public final class AndroidScheduler extends Scheduler {
     }
 
     @Override
-    public <T> Subscription schedule(final T state, final Func2<Scheduler, T, Subscription> action, long dueTime, TimeUnit unit) {
+    public <T> Subscription schedule(final T state,
+                                     final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
+                                     long dueTime,
+                                     TimeUnit unit)
+    {
         final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
         long delay = unit.toMillis(dueTime);
         assertThatTheDelayIsValidForTheSwingTimer(delay);
@@ -135,9 +139,9 @@ public final class AndroidScheduler extends Scheduler {
 
     @Override
     public <T> Subscription schedulePeriodically(final T state,
-                                                 final Func2<Scheduler, T, Subscription> action,
+                                                 final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
                                                  long initialDelay,
-                                                 long c,
+                                                 long period,
                                                  TimeUnit unit)
     {
         final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();

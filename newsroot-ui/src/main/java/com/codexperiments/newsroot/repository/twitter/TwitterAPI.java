@@ -1,12 +1,12 @@
 package com.codexperiments.newsroot.repository.twitter;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
@@ -31,15 +31,14 @@ public class TwitterAPI {
     private String mHost;
     private int mPageSize;
 
-    private SimpleDateFormat mDateFormat;
+    private DateTimeFormatter mDateFormat;
 
     public TwitterAPI(TwitterManager pTwitterManager, String pHost) {
         mTwitterManager = pTwitterManager;
         mHost = pHost;
         mPageSize = 20; // TODO
 
-        mDateFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss z yyyy", Locale.US);
-        mDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        mDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss z yyyy").withZone(DateTimeZone.UTC);
     }
 
     public Observable<TweetPage> findHomeTweets(TimeGap pTimeGap, int pPageCount) {
@@ -213,8 +212,8 @@ public class TwitterAPI {
 
     private long getDate(String pDate) {
         try {
-            return mDateFormat.parse(pDate).getTime();
-        } catch (ParseException eParseException) {
+            return mDateFormat.parseDateTime(pDate).getMillis();
+        } catch (IllegalArgumentException eIllegalArgumentException) {
             // TODO
             return 0;
         }

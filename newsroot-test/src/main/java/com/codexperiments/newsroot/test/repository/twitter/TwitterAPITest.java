@@ -44,20 +44,18 @@ public class TwitterAPITest extends BackendTestCase {
     }
 
     public void testFindHomeTweets_noPage() throws Exception {
-        // Setup
+        // Setup.
         final int lPageCount = 5;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_empty.json");
-
-        // Run
+        // Run.
         subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
-
-        // Verify
+        // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
-
+        // Verify empty page received.
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
         Mockito.verify(mTweetPageObserver).onNext(lTweetPageArgs.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();
@@ -69,20 +67,18 @@ public class TwitterAPITest extends BackendTestCase {
     }
 
     public void testFindHomeTweets_onePage_moreAvailable() throws Exception {
-        // Setup
+        // Setup.
         final int lPageCount = 1;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json");
-
-        // Run
+        // Run.
         subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
-
-        // Verify
+        // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
-
+        // Verify page received.
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
         Mockito.verify(mTweetPageObserver).onNext(lTweetPageArgs.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();
@@ -94,18 +90,16 @@ public class TwitterAPITest extends BackendTestCase {
     }
 
     public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
-        // Setup
+        // Setup.
         final int lPageCount = 5;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-2.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-3.json");
-
-        // Run
+        // Run.
         subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
-
-        // Verify
+        // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
@@ -115,7 +109,7 @@ public class TwitterAPITest extends BackendTestCase {
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
-
+        // Verify pages received.
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
         Mockito.verify(mTweetPageObserver, times(3)).onNext(lTweetPageArgs.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();

@@ -1,9 +1,6 @@
 package com.codexperiments.newsroot.test.repository.twitter;
 
 import static com.codexperiments.newsroot.test.common.TestRx.subscribeAndWait;
-import static com.codexperiments.newsroot.test.data.TweetPageData.OLDEST_TweetPage_02_1;
-import static com.codexperiments.newsroot.test.data.TweetPageData.OLDEST_TweetPage_02_2;
-import static com.codexperiments.newsroot.test.data.TweetPageData.SIZE_TweetPage;
 import static com.codexperiments.newsroot.test.server.MockBackendMatchers.hasQueryParam;
 import static com.codexperiments.newsroot.test.server.MockBackendMatchers.hasUrl;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -30,6 +27,7 @@ import com.codexperiments.newsroot.repository.twitter.TwitterAPI;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.codexperiments.newsroot.test.common.BackendTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
+import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 
 public class TwitterAPITest extends BackendTestCase {
     private TwitterManager mTwitterManager;
@@ -41,23 +39,7 @@ public class TwitterAPITest extends BackendTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
-        mTwitterManager = new TwitterManager(getApplication(), null, new TwitterManager.Config() {
-            public String getHost() {
-                return "http://localhost:8378/";
-            }
-
-            public String getConsumerKey() {
-                return "3Ng9QGTB7EpZCHDOIT2jg";
-            }
-
-            public String getConsumerSecret() {
-                return "OolXzfWdSF6uMdgt2mvLNpDl4HOA1JNlN487LvDUA4";
-            }
-
-            public String getCallbackURL() {
-                return "oauth://newsroot-callback";
-            }
-        });
+        mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
         mTwitterAPI = new TwitterAPI(mTwitterManager, "http://localhost:8378/");
     }
 
@@ -73,7 +55,7 @@ public class TwitterAPITest extends BackendTestCase {
 
         // Verify
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
-                                                                   hasQueryParam("count", SIZE_TweetPage),
+                                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
 
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
@@ -98,7 +80,7 @@ public class TwitterAPITest extends BackendTestCase {
 
         // Verify
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
-                                                                   hasQueryParam("count", SIZE_TweetPage),
+                                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
 
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
@@ -125,14 +107,14 @@ public class TwitterAPITest extends BackendTestCase {
 
         // Verify
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
-                                                                   hasQueryParam("count", SIZE_TweetPage),
+                                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
-                                                                   hasQueryParam("count", SIZE_TweetPage),
-                                                                   hasQueryParam("max_id", OLDEST_TweetPage_02_1 - 1))));
+                                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                                   hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
-                                                                   hasQueryParam("count", SIZE_TweetPage),
-                                                                   hasQueryParam("max_id", OLDEST_TweetPage_02_2 - 1))));
+                                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                                   hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
 
         ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
         Mockito.verify(mTweetPageObserver, times(3)).onNext(lTweetPageArgs.capture());

@@ -81,7 +81,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         mEventBus = new AndroidEventBus();
         mTaskManager = new AndroidTaskManager(mApplication, new AndroidTaskManagerConfig(mApplication));
-        mTwitterManager = new TwitterManager(mApplication, mEventBus, new TwitterManager.Config() {
+        mTwitterManager = new TwitterManager(mApplication, new TwitterManager.Config() {
             public String getHost() {
                 return "http://localhost:8378/";
             }

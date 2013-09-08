@@ -12,16 +12,16 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 
 public class TweetPageData {
-    public static final int SIZE_TweetPage = 20;
+    public static final int PAGE_SIZE = 20;
 
-    public static final long EARLIEST_TweetPage_02_1 = 349497246842241000L;
-    public static final long OLDEST_TweetPage_02_1 = 349473806655565800L;
+    public static final long EARLIEST_02_1 = 349497246842241000L;
+    public static final long OLDEST_02_1 = 349473806655565800L;
 
-    public static final long EARLIEST_TweetPage_02_2 = 349471049735344100L;
-    public static final long OLDEST_TweetPage_02_2 = 349457499134504960L;
+    public static final long EARLIEST_02_2 = 349471049735344100L;
+    public static final long OLDEST_02_2 = 349457499134504960L;
 
-    public static final long EARLIEST_TweetPage_02_3 = 349452667745087500L;
-    public static final long OLDEST_TweetPage_02_3 = 349443896905965600L;
+    public static final long EARLIEST_02_3 = 349452667745087500L;
+    public static final long OLDEST_02_3 = 349443896905965600L;
 
     public static void checkTweetPage_empty(TweetPage pTweetPage, TimeGap pTimeGap) {
         List<Tweet> lTweets = pTweetPage.tweets();
@@ -37,10 +37,10 @@ public class TweetPageData {
         assertThat(pTweetPage.remainingGap(), equalTo(pTimeGap.substract(lTweets, 20)));
 
         Tweet lFirstTweet = pTweetPage.tweets().get(0);
-        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_TweetPage_02_1));
+        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_1));
 
         Tweet lLastTweet = pTweetPage.tweets().get(19);
-        assertThat(lLastTweet.getId(), equalTo(OLDEST_TweetPage_02_1));
+        assertThat(lLastTweet.getId(), equalTo(OLDEST_02_1));
     }
 
     public static void checkTweetPage_02_2(TweetPage pTweetPage, TimeGap pTimeGap) {
@@ -50,10 +50,10 @@ public class TweetPageData {
         assertThat(pTweetPage.remainingGap(), equalTo(pTimeGap.substract(lTweets, 20)));
 
         Tweet lFirstTweet = pTweetPage.tweets().get(0);
-        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_TweetPage_02_2));
+        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_2));
 
         Tweet lLastTweet = pTweetPage.tweets().get(19);
-        assertThat(lLastTweet.getId(), equalTo(OLDEST_TweetPage_02_2));
+        assertThat(lLastTweet.getId(), equalTo(OLDEST_02_2));
     }
 
     public static void checkTweetPage_02_3(TweetPage pTweetPage, TimeGap pTimeGap) {
@@ -63,8 +63,8 @@ public class TweetPageData {
         assertThat(pTweetPage.remainingGap(), nullValue());
 
         Tweet lFirstTweet = lTweets.get(0);
-        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_TweetPage_02_3));
+        assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_3));
         Tweet lLastTweet = lTweets.get(18);
-        assertThat(lLastTweet.getId(), equalTo(OLDEST_TweetPage_02_3));
+        assertThat(lLastTweet.getId(), equalTo(OLDEST_02_3));
     }
 }

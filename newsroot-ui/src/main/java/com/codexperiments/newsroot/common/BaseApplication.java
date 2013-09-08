@@ -64,7 +64,7 @@ public abstract class BaseApplication extends Application {
                 // return super.keepResultOnHold(pTask);
             }
         }));
-        registerService(new TwitterManager(this, getService(EventBus.class), new TwitterManager.Config() {
+        registerService(new TwitterManager(this, new TwitterManager.Config() {
             public String getHost() {
                 return "https://api.twitter.com/";
             }

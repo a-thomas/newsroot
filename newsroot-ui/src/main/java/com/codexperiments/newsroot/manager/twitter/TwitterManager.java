@@ -19,7 +19,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
-import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -42,7 +41,7 @@ public class TwitterManager {
     private String mScreenName;
     private boolean mAuthorized;
 
-    public TwitterManager(Application pApplication, EventBus pEventBus, Config pConfig) {
+    public TwitterManager(Application pApplication, Config pConfig) {
         super();
         mConfig = pConfig;
         mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);

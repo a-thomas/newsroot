@@ -125,7 +125,7 @@ public class NewsFragment extends Fragment {
             mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
 
             mLoadingMore = true;
-            mTwitterRepository.findOlderNewsFromCache(mTimeline)
+            mTwitterRepository.findOlderNewsFromServer(mTimeline)
                               .observeOn(AndroidScheduler.getInstance())
                               .subscribe(new Observer<TweetPage>() {
                                   public void onNext(TweetPage pTweetPage) {

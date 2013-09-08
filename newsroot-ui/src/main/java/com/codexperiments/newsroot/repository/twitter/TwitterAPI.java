@@ -54,10 +54,11 @@ public class TwitterAPI {
                             TimeGap lRemainingTimeGap = pTimeGap;
                             int lPageCount = pPageCount;
                             while ((lRemainingTimeGap != null) && (lPageCount-- > 0)) {
-                                TweetPage lTweetPage = findTweetPage(pUrl, pTimeGap, mPageSize);
+                                TweetPage lTweetPage = findTweetPage(pUrl, lRemainingTimeGap, mPageSize);
                                 pObserver.onNext(lTweetPage);
                                 lRemainingTimeGap = lTweetPage.remainingGap();
                             }
+                            pObserver.onCompleted();
                         } catch (TwitterAccessException eTwitterAccessException) {
                             pObserver.onError(eTwitterAccessException);
                         }

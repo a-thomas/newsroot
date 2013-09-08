@@ -75,19 +75,25 @@ public class TwitterRepository {
     }
 
     public Observable<TweetPage> findLatestNews(Timeline pTimeline) {
-        return findTweetsFromServer(new TimeGap(-1, pTimeline.getEarliestBound()), DEFAULT_PAGE_COUNT);
+        return findTweetsFromServer(new TimeGap(-1, pTimeline.earliestBound()), DEFAULT_PAGE_COUNT);
+    }
+
+    // public Observable<TweetPage> findOlderNews(final Timeline pTimeline) {
+    // if (pTimeline.fromCache()) {
+    // return findTweetsFromRepository(new TimeGap(pTimeline.getOldestBound(), -1));
+    // } else if (pTimeline.hasMore()) {
+    // return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3);
+    // } else {
+    // return Observable.empty();
+    // }
+    // }
+
+    public Observable<TweetPage> findOlderNewsFromServer(final Timeline pTimeline) {
+        return findTweetsFromServer(new TimeGap(pTimeline.oldestBound(), -1), 1);
     }
 
     public Observable<TweetPage> findOlderNewsFromCache(final Timeline pTimeline) {
-        return findTweetsFromRepository(new TimeGap(pTimeline.getOldestBound(), -1));
-    }
-
-    public Observable<TweetPage> findOlderNews(final Timeline pTimeline) {
-        if (pTimeline.hasMore()) {
-            return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3);
-        } else {
-            return Observable.empty();
-        }
+        return findTweetsFromRepository(new TimeGap(pTimeline.oldestBound(), -1));
     }
 
     public Observable<TweetPage> findNewsInGap(final TimeGap pTimeGap) {
@@ -127,8 +133,12 @@ public class TwitterRepository {
                                 }
                             });
 
-                            pObserver.onNext(new TweetPage(lTweets, pTimeGap, DEFAULT_PAGE_SIZE));
-                            pObserver.onCompleted();
+                            if (lTweets.size() > 0) {
+                                pObserver.onNext(new TweetPage(lTweets, pTimeGap, DEFAULT_PAGE_SIZE));
+                                pObserver.onCompleted();
+                            } else {
+                                findTweetsFromServer(pTimeGap, 1).subscribe(pObserver);
+                            }
                         } catch (Exception eException) {
                             pObserver.onError(eException);
                         }

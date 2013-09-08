@@ -34,7 +34,6 @@ public class TwitterManager {
 
     private Config mConfig;
     private SharedPreferences mPreferences;
-    private EventBus mEventBus;
     private JsonFactory mJSONFactory;
     private OAuthConsumer mConsumer;
     private OAuthProvider mProvider;
@@ -47,8 +46,6 @@ public class TwitterManager {
         super();
         mConfig = pConfig;
         mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);
-        mEventBus = pEventBus;
-        mEventBus.registerListener(this);
         mJSONFactory = new JsonFactory();
 
         checkAuthorization();

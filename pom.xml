@@ -68,6 +68,7 @@
 				<groupId>com.netflix.rxjava</groupId>
 				<artifactId>rxjava-core</artifactId>
 				<version>0.12.2</version>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>joda-time</groupId>

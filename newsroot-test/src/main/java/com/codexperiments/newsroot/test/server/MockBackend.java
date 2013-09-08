@@ -10,7 +10,6 @@ import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.simpleframework.http.Query;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import org.simpleframework.http.core.Container;
@@ -19,38 +18,36 @@ import org.simpleframework.transport.connect.SocketConnection;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.test.InstrumentationTestCase;
 import android.util.Log;
 
 public class MockBackend implements Container {
     private static final int PORT = 8378;
 
     private Context mContext;
-    private Config mConfig;
+    private Handler mHandler;
 
-    public MockBackend(Context pContext, Config pConfig) {
+    public MockBackend(Context pContext, Handler pHandler) {
         super();
         mContext = pContext;
-        mConfig = pConfig;
+        mHandler = pHandler;
     }
 
     @Override
-    public void handle(Request request, Response response) {
-        PrintStream body = null;
+    public void handle(Request pRequest, Response pResponse) {
+        PrintStream lBody = null;
         try {
-            Query lQuery = request.getQuery();
-            String lContent = request.getContent();
-
-            body = renderHeader(request, response);
-            if ("1".equals(lQuery.get("ping"))) {
-                body.println("1");
+            lBody = renderHeader(pRequest, pResponse);
+            if ("1".equals(pRequest.getQuery().get("ping"))) {
+                lBody.println("1");
             } else {
-                byte[] lResponse = readAssetToByte(mContext.getAssets(), mConfig.getResponseAsset(lQuery, lContent));
-                body.write(lResponse);
+                byte[] lResponse = readAssetToByte(mContext.getAssets(), mHandler.getResponseAsset(pRequest));
+                lBody.write(lResponse);
             }
         } catch (Exception pException) {
             pException.printStackTrace();
         } finally {
-            if (body != null) body.close();
+            if (lBody != null) lBody.close();
         }
     }
 
@@ -108,9 +105,13 @@ public class MockBackend implements Container {
         private org.simpleframework.transport.connect.Connection connection;
         private SocketAddress address;
 
-        public Server(Context pContext, Config pConfig) {
+        public Server(InstrumentationTestCase pInstrumentationTestCase, Handler pHandler) {
+            this(pInstrumentationTestCase.getInstrumentation().getContext(), pHandler);
+        }
+
+        public Server(Context pContext, Handler pHandler) {
             try {
-                container = new MockBackend(pContext, pConfig);
+                container = new MockBackend(pContext, pHandler);
                 server = new ContainerServer(container);
                 connection = new SocketConnection(server);
                 address = new InetSocketAddress(PORT);
@@ -139,7 +140,7 @@ public class MockBackend implements Container {
         }
     }
 
-    public interface Config {
-        String getResponseAsset(Query pQuery, String pContent);
+    public interface Handler {
+        String getResponseAsset(Request pRequest);
     }
 }

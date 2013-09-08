@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.domain.twitter.News;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 
 public class NewsAdapter extends BaseAdapter {
     private static final int DEFAULT_LIST_SIZE = 100;
@@ -17,23 +18,23 @@ public class NewsAdapter extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
     private Callback mCallback;
 
+    private Timeline mTimeline;
     private List<News> mTweets;
-    private boolean mHasMore;
     private int mLastPosition;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, boolean pHasMore, Callback pCallback) {
+    public NewsAdapter(LayoutInflater pLayoutInflater, Timeline pTimeline, Callback pCallback) {
         super();
         mLayoutInflater = pLayoutInflater;
         mCallback = pCallback;
 
+        mTimeline = pTimeline;
         mTweets = new ArrayList<News>(DEFAULT_LIST_SIZE);
-        mHasMore = pHasMore;
         mLastPosition = 0;
     }
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-        if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) && (mHasMore)) {
+        if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) /* && (mTimeline.hasMore()) */) {
             mCallback.onMore();
             mLastPosition = pPosition;
         }
@@ -64,10 +65,10 @@ public class NewsAdapter extends BaseAdapter {
         return mTweets.size();
     }
 
-    public void notifyDataSetChanged(List<News> pTweets) {
-        mTweets = pTweets;
-        super.notifyDataSetChanged();
-    }
+    // public void notifyDataSetChanged(List<News> pTweets) {
+    // mTweets = pTweets;
+    // super.notifyDataSetChanged();
+    // }
 
     public interface Callback {
         void onRefresh();

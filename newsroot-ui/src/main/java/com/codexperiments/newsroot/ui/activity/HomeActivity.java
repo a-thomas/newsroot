@@ -46,6 +46,8 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mButton2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View pV) {
+                NewsFragment lNewsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
+                lNewsFragment.moreTweets();
             }
         });
 

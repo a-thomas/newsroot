@@ -15,14 +15,7 @@ public class TweetPage implements Iterable<Tweet> {
         super();
         mTweets = pTweets;
         mTimeGap = pTimeGap;
-
-        int lTweetCount = pTweets.size();
-        if ((lTweetCount > 0) && (lTweetCount >= pPageSize)) {
-            long lEarliestBound = mTweets.get(lTweetCount - 1).getId();
-            mRemainingGap = new TimeGap(lEarliestBound, pTimeGap.getOldestBound());
-        } else {
-            mRemainingGap = null;
-        }
+        mRemainingGap = mTimeGap.substract(mTweets, pPageSize);
     }
 
     public TimeGap timeGap() {
@@ -31,6 +24,10 @@ public class TweetPage implements Iterable<Tweet> {
 
     public TimeGap remainingGap() {
         return mRemainingGap;
+    }
+
+    public List<Tweet> tweets() {
+        return mTweets;
     }
 
     @Override

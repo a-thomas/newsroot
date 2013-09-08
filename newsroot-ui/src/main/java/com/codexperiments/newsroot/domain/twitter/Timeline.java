@@ -8,16 +8,12 @@ public class Timeline {
     private long mOldestId;
     private boolean mHasMore;
 
-    // private List<News> mItems;
-
     public Timeline(String pUsername) {
         super();
         mId = -1;
         mUsername = pUsername;
         mEarliestId = -1;
         mOldestId = -1;
-        mHasMore = true;
-        // mItems = new ArrayList<News>();
     }
 
     public Timeline(long pId, long pEarliestId, long pOldestId) {
@@ -25,23 +21,21 @@ public class Timeline {
         mId = pId;
         mEarliestId = pEarliestId;
         mOldestId = pOldestId;
-        mHasMore = true;
-        // mItems = new ArrayList<News>();
     }
 
-    public long getId() {
+    public long id() {
         return mId;
     }
 
-    public String getUsername() {
+    public String username() {
         return mUsername;
     }
 
-    public long getEarliestBound() {
+    public long earliestBound() {
         return mEarliestId;
     }
 
-    public long getOldestBound() {
+    public long oldestBound() {
         return mOldestId;
     }
 
@@ -49,6 +43,11 @@ public class Timeline {
         return mHasMore;
     }
 
+    public void addTweets(TweetPage pTweetPage) {
+        TimeGap lRemainingGap = pTweetPage.remainingGap();
+        mOldestId = lRemainingGap.isPastGap() ? lRemainingGap.getEarliestBound() : mOldestId;
+        mEarliestId = lRemainingGap.isFutureGap() ? lRemainingGap.getOldestBound() : mEarliestId;
+    }
     // public List<News> getItems() {
     // return mItems;
     // }

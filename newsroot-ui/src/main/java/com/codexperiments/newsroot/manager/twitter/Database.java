@@ -161,11 +161,12 @@ public abstract class Database extends SQLiteOpenHelper {
         });
     }
 
-    public void executeAssetScript(String pAssetPath) throws IOException {
+    public Database executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mApplication);
+        return this;
     }
 
-    public void executeAssetScript(String pAssetPath, Context pContext) throws IOException {
+    public Database executeAssetScript(String pAssetPath, Context pContext) throws IOException {
         InputStream lAssetStream = null;
         mConnection.beginTransaction();
         try {
@@ -204,5 +205,6 @@ public abstract class Database extends SQLiteOpenHelper {
                 Log.e(Database.class.getSimpleName(), "Error while reading assets", eIOException);
             }
         }
+        return this;
     }
 }

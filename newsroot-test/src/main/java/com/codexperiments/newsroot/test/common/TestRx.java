@@ -12,7 +12,7 @@ public class TestRx {
         throws InterruptedException
     {
         final CountDownLatch lCompleted = new CountDownLatch(1);
-        pObservable.observeOn(AndroidScheduler.getInstance()).subscribe(new Observer<T>() {
+        pObservable.observeOn(AndroidScheduler.threadForUI()).subscribe(new Observer<T>() {
             public void onNext(T pPageValue) {
                 pObserver.onNext(pPageValue);
             }

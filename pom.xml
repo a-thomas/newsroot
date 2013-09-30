@@ -17,7 +17,7 @@
 		<android.version>4.1.1.4</android.version>
 		<android.platform>16</android.platform>
 		<maven.compiler.plugin>2.5.1</maven.compiler.plugin>
-		<maven.android.plugin>3.5.0</maven.android.plugin>
+		<maven.android.plugin>3.6.1</maven.android.plugin>
 	</properties>
 
 	<dependencyManagement>

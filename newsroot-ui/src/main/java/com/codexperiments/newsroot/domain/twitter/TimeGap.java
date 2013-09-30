@@ -4,9 +4,9 @@ import java.util.List;
 
 // TODO Make immutable
 public class TimeGap implements News {
-    private long mId;
-    private long mEarliestBound;
-    private long mOldestBound;
+    private/* final */long mId;
+    private/* final */long mEarliestBound;
+    private/* final */long mOldestBound;
 
     // private transient List<Tweet> mTweets;
 
@@ -14,19 +14,38 @@ public class TimeGap implements News {
         return new TimeGap(-1, -1);
     }
 
+    // public static TimeGap timeGap(List<Tweet> pTweets) {
+    // return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), pTweets.get(0).getId());
+    // }
+    public static TimeGap futureTimeGap(long pEarliestId) {
+        return new TimeGap(Long.MAX_VALUE, pEarliestId);
+    }
+
+    public static TimeGap pastTimeGap(long pOldestId) {
+        return new TimeGap(pOldestId, Long.MIN_VALUE);
+    }
+
+    public static TimeGap futureTimeGap(TimeRange pTimeRange) {
+        return (pTimeRange != null) ? new TimeGap(Long.MAX_VALUE, pTimeRange.earliestBound()) : TimeGap.initialTimeGap();
+    }
+
+    public static TimeGap pastTimeGap(TimeRange pTimeRange) {
+        return (pTimeRange != null) ? new TimeGap(pTimeRange.oldestBound(), Long.MIN_VALUE) : TimeGap.initialTimeGap();
+    }
+
     public static TimeGap futureTimeGap(List<Tweet> pTweets) {
-        return new TimeGap(-1, pTweets.get(0).getId());
+        return new TimeGap(Long.MAX_VALUE, pTweets.get(0).getId());
     }
 
     public static TimeGap pastTimeGap(List<Tweet> pTweets) {
-        return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), -1);
+        return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), Long.MIN_VALUE);
     }
 
     public TimeGap() {
         super();
         // mId = 0;
-        mEarliestBound = -1;
-        mOldestBound = -1;
+        mEarliestBound = Long.MAX_VALUE;
+        mOldestBound = Long.MIN_VALUE;
         // mTweets = null;
     }
 
@@ -46,25 +65,39 @@ public class TimeGap implements News {
         // mTweets = null;
     }
 
-    public TimeGap substract(List<Tweet> pTweets, int pPageSize) {
-        int lTweetCount = pTweets.size();
-        if (lTweetCount < pPageSize) {
-            return null;
-        } else {
-            if (isPastGap()) {
-                long lOldestTweetId = pTweets.get(lTweetCount - 1).getId();
-                if (isInitialGap()) {
-                    return new TimeGap(lOldestTweetId, mOldestBound);
-                } else if ((lOldestTweetId < mEarliestBound) && (lOldestTweetId > mOldestBound)) {
-                    return new TimeGap((lOldestTweetId < mEarliestBound) ? lOldestTweetId : mEarliestBound, mOldestBound);
-                } else {
-                    return this;
-                }
-            } else {
-                long lEarliestTweetId = pTweets.get(0).getId();
-                return new TimeGap(mEarliestBound, (lEarliestTweetId > mOldestBound) ? lEarliestTweetId : mOldestBound);
-            }
+    // public TimeGap add(List<Tweet> pTweets) {
+    // long lEarliestBound = pTweets.get(pTweets.size() - 1).getId();
+    // long lOldestBound = pTweets.get(0).getId();
+    //
+    // if (mEarliestBound > lEarliestBound) lEarliestBound = mEarliestBound;
+    // if (mOldestBound > lOldestBound) lOldestBound = mOldestBound;
+    // return new TimeGap(lEarliestBound, lOldestBound);
+    // }
+    //
+    // public TimeGap substract(TimeRange pTimeRange) {
+    // if (isPastGap()) {
+    // long lOldestTweetId = pTimeRange.oldestBound();
+    // if (isInitialGap()) {
+    // return new TimeGap(lOldestTweetId, mOldestBound);
+    // } else if ((lOldestTweetId < mEarliestBound) && (lOldestTweetId > mOldestBound)) {
+    // return new TimeGap((lOldestTweetId < mEarliestBound) ? lOldestTweetId : mEarliestBound, mOldestBound);
+    // } else {
+    // return this;
+    // }
+    // } else {
+    // long lEarliestTweetId = pTimeRange.earliestBound();
+    // return new TimeGap(mEarliestBound, (lEarliestTweetId > mOldestBound) ? lEarliestTweetId : mOldestBound);
+    // }
+    // }
+    public TimeGap remainingGap(TimeRange pTimeRange) {
+        long lRangeEarliestBound = pTimeRange.earliestBound();
+        long lRangeOldestBound = pTimeRange.oldestBound();
+
+        if ((lRangeEarliestBound > mEarliestBound) || (lRangeEarliestBound < mEarliestBound)) {
+            throw new IllegalArgumentException();
         }
+        if (lRangeOldestBound < mOldestBound) throw new IllegalArgumentException();
+        return (lRangeOldestBound > mOldestBound) ? new TimeGap(lRangeOldestBound, mOldestBound) : null;
     }
 
     public long getId() {
@@ -77,7 +110,7 @@ public class TimeGap implements News {
 
     @Override
     public long getTimelineId() {
-        return mOldestBound;
+        return mOldestBound + 1;
     }
 
     public void setEarliestBound(long pEarliestBound) {
@@ -93,19 +126,31 @@ public class TimeGap implements News {
     }
 
     public boolean isFutureGap() {
-        return mEarliestBound == -1;
+        return mEarliestBound == Long.MAX_VALUE;
     }
 
     public boolean isPastGap() {
-        return mOldestBound == -1;
+        return mOldestBound == Long.MIN_VALUE;
     }
 
-    public long getEarliestBound() {
+    public boolean isInnerGap() {
+        return (mEarliestBound != Long.MAX_VALUE) && (mOldestBound != Long.MIN_VALUE);
+    }
+
+    public long earliestBound() {
         return mEarliestBound;
     }
 
-    public long getOldestBound() {
+    public long oldestBound() {
         return mOldestBound;
+    }
+
+    public boolean greaterThan(TimeRange pTimeRange) {
+        return mOldestBound > pTimeRange.earliestBound();
+    }
+
+    public boolean lowerThan(TimeRange pTimeRange) {
+        return mEarliestBound < pTimeRange.oldestBound();
     }
 
     @Override

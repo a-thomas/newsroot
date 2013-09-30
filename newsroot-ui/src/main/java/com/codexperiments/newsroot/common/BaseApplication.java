@@ -7,16 +7,11 @@ import android.app.Activity;
 import android.app.Application;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
-import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
-import com.codexperiments.newsroot.repository.twitter.TwitterAPI;
-import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
-import com.codexperiments.robolabor.task.TaskManager;
-import com.codexperiments.robolabor.task.android.AndroidTaskManager;
-import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
-import com.codexperiments.robolabor.task.handler.Task;
+import com.codexperiments.newsroot.repository.twitter.TwitterDatabaseRepository;
+import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 
 public abstract class BaseApplication extends Application {
     private List<Object> mServices;
@@ -55,15 +50,15 @@ public abstract class BaseApplication extends Application {
 
         registerService(Platform.Factory.findCurrentPlatform(this));
         registerService(new AndroidEventBus());
-        registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
-            @Override
-            public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
-                // if (pTask) {
-                return true;
-                // }
-                // return super.keepResultOnHold(pTask);
-            }
-        }));
+        // registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
+        // @Override
+        // public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
+        // // if (pTask) {
+        // return true;
+        // // }
+        // // return super.keepResultOnHold(pTask);
+        // }
+        // }));
         registerService(new TwitterManager(this, new TwitterManager.Config() {
             public String getHost() {
                 return "https://api.twitter.com/";
@@ -81,13 +76,8 @@ public abstract class BaseApplication extends Application {
                 return "oauth://newsroot-callback";
             }
         }));
-        registerService(new TwitterAPI(getService(TwitterManager.class), "https://api.twitter.com/"));
-        registerService(new TwitterRepository(this,
-                                              getService(EventBus.class),
-                                              getService(TaskManager.class),
-                                              getService(TwitterManager.class),
-                                              getService(TwitterAPI.class),
-                                              lDatabase));
+        registerService(new TwitterRemoteRepository(getService(TwitterManager.class), "https://api.twitter.com/"));
+        registerService(new TwitterDatabaseRepository(this, lDatabase, getService(TwitterRemoteRepository.class)));
     }
 
     public void registerService(Object service) {

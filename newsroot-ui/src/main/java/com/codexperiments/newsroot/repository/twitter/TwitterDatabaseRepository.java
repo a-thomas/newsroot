@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
@@ -11,11 +12,9 @@ import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
-import rx.util.functions.Func1;
 import android.app.Application;
 import android.database.Cursor;
 
-import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
@@ -27,38 +26,25 @@ import com.codexperiments.newsroot.manager.twitter.TweetDAO;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.COL_VIEW_TIMELINE;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase.DB_TWITTER;
-import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.manager.twitter.ViewTimelineDAO;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
-import com.codexperiments.robolabor.task.TaskManager;
 
-public class CopyOfTwitterRepository {
-    private static final int DEFAULT_PAGE_COUNT = 5;
-    public static final int DEFAULT_PAGE_SIZE = 20; // TODO
-
-    private EventBus mEventBus;
-    private TwitterAPI mTwitterAPI;
-
-    private Map<String, Timeline> mFollowing;
+public class TwitterDatabaseRepository implements TwitterRepository {
+    private TwitterRepository mRepository;
     private TwitterDatabase mDatabase;
+    private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
+    private Map<String, Timeline> mFollowing;
+
     private TweetDAO mTweetDAO;
     private TimeGapDAO mTimeGapDAO;
     private ViewTimelineDAO mViewTimelineDAO;
 
-    public CopyOfTwitterRepository(Application pApplication,
-                             EventBus pEventBus,
-                             TaskManager pTaskManager,
-                             TwitterManager pTwitterManager,
-                             TwitterAPI pTwitterAPI,
-                             TwitterDatabase pDatabase)
-    {
+    public TwitterDatabaseRepository(Application pApplication, TwitterDatabase pDatabase, TwitterRepository pRepository) {
         super();
-        mEventBus = pEventBus;
-        mEventBus.registerListener(this);
-        mTwitterAPI = pTwitterAPI;
-
-        mFollowing = new HashMap<String, Timeline>();
         mDatabase = pDatabase;
+        mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
+        mFollowing = new HashMap<String, Timeline>();
+
         mTweetDAO = new TweetDAO(mDatabase);
         mTimeGapDAO = new TimeGapDAO(mDatabase);
         mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
@@ -66,6 +52,7 @@ public class CopyOfTwitterRepository {
         mDatabase.recreate();
     }
 
+    @Override
     public Timeline findTimeline(String pUsername) {
         Timeline lTimeline = mFollowing.get(pUsername);
         if (lTimeline != null) {
@@ -74,33 +61,26 @@ public class CopyOfTwitterRepository {
         return lTimeline;
     }
 
-    public Observable<TweetPage> findLatestNews(Timeline pTimeline) {
-        return findTweetsFromServer(new TimeGap(-1, pTimeline.earliestBound()), DEFAULT_PAGE_COUNT);
+    @Override
+    public Observable<TweetPage> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
+        Boolean lHasMore = mHasMore.get(pTimeline);
+        if (lHasMore) {
+            lHasMore = Boolean.TRUE;
+            mHasMore.put(pTimeline, lHasMore);
+        }
+
+        if (pTimeGap.isPastGap() && lHasMore == Boolean.TRUE) {
+            return findCachedTweets(pTimeline, pTimeGap, pPageCount, pPageSize);
+        } else {
+            return cacheTweetPages(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize));
+        }
     }
 
-    // public Observable<TweetPage> findOlderNews(final Timeline pTimeline) {
-    // if (pTimeline.fromCache()) {
-    // return findTweetsFromRepository(new TimeGap(pTimeline.getOldestBound(), -1));
-    // } else if (pTimeline.hasMore()) {
-    // return findTweetsFromServer(new TimeGap(pTimeline.getOldestBound(), -1), 3);
-    // } else {
-    // return Observable.empty();
-    // }
-    // }
-
-    public Observable<TweetPage> findOlderNewsFromServer(final Timeline pTimeline) {
-        return findTweetsFromServer(new TimeGap(pTimeline.oldestBound(), -1), 1);
-    }
-
-    public Observable<TweetPage> findOlderNewsFromCache(final Timeline pTimeline) {
-        return findTweetsFromRepository(new TimeGap(pTimeline.oldestBound(), -1));
-    }
-
-    public Observable<TweetPage> findNewsInGap(final TimeGap pTimeGap) {
-        return findTweetsFromServer(pTimeGap, DEFAULT_PAGE_COUNT);
-    }
-
-    private Observable<TweetPage> findTweetsFromRepository(final TimeGap pTimeGap) {
+    private Observable<TweetPage> findCachedTweets(final Timeline pTimeline,
+                                                   final TimeGap pTimeGap,
+                                                   final int pPageCount,
+                                                   final int pPageSize)
+    {
         return Observable.create(new OnSubscribeFunc<TweetPage>() {
             public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
                 AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
@@ -111,12 +91,12 @@ public class CopyOfTwitterRepository {
                                                             .from(DB_TWITTER.VIEW_TIMELINE)
                                                             .limit(DEFAULT_PAGE_SIZE);
                             if (pTimeGap.isFutureGap()) {
-                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound());
+                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound());
                             } else if (pTimeGap.isPastGap()) {
-                                lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
+                                lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
                             } else if (!pTimeGap.isInitialGap()) {
-                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getOldestBound())
-                                      .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.getEarliestBound());
+                                lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound())
+                                      .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
                             }
 
                             final List<Tweet> lTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
@@ -137,7 +117,12 @@ public class CopyOfTwitterRepository {
                                 pObserver.onNext(new TweetPage(lTweets, pTimeGap, DEFAULT_PAGE_SIZE));
                                 pObserver.onCompleted();
                             } else {
-                                findTweetsFromServer(pTimeGap, 1).subscribe(pObserver);
+                                mHasMore.put(pTimeline, Boolean.FALSE);
+                                Observable<TweetPage> lTweetPages = mRepository.findTweets(pTimeline,
+                                                                                           pTimeGap,
+                                                                                           pPageCount,
+                                                                                           pPageSize);
+                                cacheTweetPages(lTweetPages).subscribe(pObserver);
                             }
                         } catch (Exception eException) {
                             pObserver.onError(eException);
@@ -149,42 +134,43 @@ public class CopyOfTwitterRepository {
         });
     }
 
-    private Observable<TweetPage> findTweetsFromServer(final TimeGap pTimeGap, final int pPageSize) {
-        Observable<TweetPage> lTweetPage = mTwitterAPI.findHomeTweets(pTimeGap, pPageSize);
-        lTweetPage.map(new Func1<TweetPage, TweetPage>() {
-            public TweetPage call(TweetPage pTweetPage) {
-                Observable<Tweet> lTweets = mDatabase.beginTransaction(Observable.from(pTweetPage));
-                lTweets = commitTweetPage(lTweets, pTweetPage);
-                lTweets = mDatabase.endTransaction(lTweets);
-                return pTweetPage.apply(lTweets);
-            }
-        });
-        return lTweetPage;
-    }
+    private Observable<TweetPage> cacheTweetPages(Observable<TweetPage> pTweetPages) {
+        final Observable<TweetPage> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
 
-    private Observable<Tweet> commitTweetPage(final Observable<Tweet> pTweets, final TweetPage pTweetPage) {
-        return Observable.create(new OnSubscribeFunc<Tweet>() {
-            public Subscription onSubscribe(final Observer<? super Tweet> pObserver) {
-                return pTweets.subscribe(new Observer<Tweet>() {
-                    public void onNext(Tweet pTweet) {
-                        mTweetDAO.create(pTweet);
-                        pObserver.onNext(pTweet);
+        final Observable<TweetPage> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPage>() {
+            public Subscription onSubscribe(final Observer<? super TweetPage> pPageObserver) {
+                return lTweetPagesTransaction.subscribe(new Observer<TweetPage>() {
+                    public void onNext(final TweetPage pTweetPage) {
+                        Observable.from(pTweetPage).subscribe(new Observer<Tweet>() {
+                            public void onNext(Tweet pTweet) {
+                                mTweetDAO.create(pTweet);
+                            }
+
+                            public void onCompleted() {
+                                TimeGap lRemainingTimeGap = pTweetPage.remainingGap();
+                                if (lRemainingTimeGap != null) {
+                                    mTimeGapDAO.create(lRemainingTimeGap);
+                                }
+                                mTimeGapDAO.delete(pTweetPage.timeGap());
+                                pPageObserver.onNext(pTweetPage);
+                            }
+
+                            public void onError(Throwable pThrowable) {
+                                pPageObserver.onError(pThrowable);
+                            }
+                        });
                     }
 
                     public void onCompleted() {
-                        TimeGap lRemainingTimeGap = pTweetPage.remainingGap();
-                        if (lRemainingTimeGap != null) {
-                            mTimeGapDAO.create(lRemainingTimeGap);
-                        }
-                        mTimeGapDAO.delete(pTweetPage.timeGap());
-                        pObserver.onCompleted();
+                        pPageObserver.onCompleted();
                     }
 
                     public void onError(Throwable pThrowable) {
-                        pObserver.onError(pThrowable);
+                        pPageObserver.onError(pThrowable);
                     }
                 });
             }
         });
+        return mDatabase.endTransaction(lCachedTweetPages);
     }
 }

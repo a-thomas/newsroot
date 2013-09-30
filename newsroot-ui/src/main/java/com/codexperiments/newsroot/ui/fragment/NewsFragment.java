@@ -51,7 +51,7 @@ public class NewsFragment extends Fragment {
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
-        mTimeline = new Timeline(getArguments().getString(ARG_SCREEN_NAME));
+        mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
         // mTweets = new ArrayList<News>(); // TODO Get from prefs.
         // mFromCache = true;
         // mHasMore = true;
@@ -99,11 +99,11 @@ public class NewsFragment extends Fragment {
     }
 
     public void refreshTweets() {
-        mTwitterRepository.findLatestNews(mTimeline)
-                          .observeOn(AndroidScheduler.getInstance())
+        mTwitterRepository.findTweets(mTimeline, mTimeline.futureGap(), 5, 20)
+                          .observeOn(AndroidScheduler.threadForUI())
                           .subscribe(new Observer<TweetPage>() {
                               public void onNext(TweetPage pTweetPage) {
-                                  mTimeline.addTweets(pTweetPage);
+                                  // mTimeline.addTweets(pTweetPage);
                                   mUIListAdapter.notifyDataSetChanged();
                               }
 
@@ -125,11 +125,11 @@ public class NewsFragment extends Fragment {
             mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
 
             mLoadingMore = true;
-            mTwitterRepository.findOlderNewsFromServer(mTimeline)
-                              .observeOn(AndroidScheduler.getInstance())
+            mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
+                              .observeOn(AndroidScheduler.threadForUI())
                               .subscribe(new Observer<TweetPage>() {
                                   public void onNext(TweetPage pTweetPage) {
-                                      mTimeline.addTweets(pTweetPage);
+                                      // mTimeline.addTweets(pTweetPage);
                                       mUIListAdapter.notifyDataSetChanged();
                                   }
 

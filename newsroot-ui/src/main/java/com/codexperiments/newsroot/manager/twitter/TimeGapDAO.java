@@ -31,8 +31,8 @@ public class TimeGapDAO {
             lInsert = Insert.on(DB_TWITTER.TMG_TIMEGAP);
             mInsertHolder.set(lInsert);
         }
-        pTimeGap.setId(lInsert.value(COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID, pTimeGap.getEarliestBound())
-                              .value(COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID, pTimeGap.getOldestBound())
+        pTimeGap.setId(lInsert.value(COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID, pTimeGap.earliestBound())
+                              .value(COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID, pTimeGap.oldestBound())
                               .execute(mDatabase.getWritableDatabase()));
     }
 
@@ -42,8 +42,8 @@ public class TimeGapDAO {
             lUpdate = Update.on(DB_TWITTER.TMG_TIMEGAP).whereEquals(COL_TMG_TIMEGAP.TMG_ID, pTimeGap.getId());
             mUpdateHolder.set(lUpdate);
         }
-        lUpdate.set(COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID, pTimeGap.getEarliestBound())
-               .set(COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID, pTimeGap.getOldestBound())
+        lUpdate.set(COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID, pTimeGap.earliestBound())
+               .set(COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID, pTimeGap.oldestBound())
                .execute(mDatabase.getWritableDatabase());
     }
 

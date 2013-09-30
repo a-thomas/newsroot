@@ -53,7 +53,7 @@ public class NewsItem extends RelativeLayout
             mUINewsCreatedAt.setText(String.valueOf(lTweet.getCreatedAt()));
         } else if (pNews instanceof TimeGap) {
             TimeGap lTimeGap = (TimeGap) pNews;
-            mUINewsName.setText(lTimeGap.getEarliestBound() + "==" + lTimeGap.getOldestBound());
+            mUINewsName.setText(lTimeGap.earliestBound() + "==" + lTimeGap.oldestBound());
         }
     }
 }

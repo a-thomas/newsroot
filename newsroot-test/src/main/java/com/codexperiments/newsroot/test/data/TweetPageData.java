@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 
@@ -34,7 +35,7 @@ public class TweetPageData {
         List<Tweet> lTweets = pTweetPage.tweets();
         assertThat(lTweets, hasSize(20));
         assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), equalTo(pTimeGap.substract(lTweets, 20)));
+        assertThat(pTweetPage.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
         Tweet lFirstTweet = pTweetPage.tweets().get(0);
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_1));
@@ -47,7 +48,7 @@ public class TweetPageData {
         List<Tweet> lTweets = pTweetPage.tweets();
         assertThat(lTweets, hasSize(20));
         assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), equalTo(pTimeGap.substract(lTweets, 20)));
+        assertThat(pTweetPage.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
         Tweet lFirstTweet = pTweetPage.tweets().get(0);
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_2));
@@ -66,5 +67,9 @@ public class TweetPageData {
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_3));
         Tweet lLastTweet = lTweets.get(18);
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_3));
+    }
+
+    private static final TimeGap remainingGap(List<Tweet> pTweets, TimeGap pTimeGap) {
+        return pTweets.size() >= PAGE_SIZE ? pTimeGap.remainingGap(TimeRange.from(pTweets)) : null;
     }
 }

@@ -19,8 +19,6 @@ import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationCallback;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.TaskManager;
-import com.codexperiments.robolabor.task.handler.TaskNotifier;
-import com.codexperiments.robolabor.task.util.TaskAdapter;
 
 public class AuthorizationFragment extends Fragment {
     private static final String BUNDLE_REDIRECTION = "redirection";
@@ -150,60 +148,60 @@ public class AuthorizationFragment extends Fragment {
     }
 
     private void requestAuthorizationTwitter() {
-        mTaskManager.execute(new TaskAdapter<Void, Void, TwitterAuthorizationCallback>() {
-            TwitterManager lTwitterManager = mTwitterManager;
-
-            @Override
-            public void onStart(boolean pIsRestored) {
-                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
-            }
-
-            @Override
-            public TwitterAuthorizationCallback onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
-                return lTwitterManager.requestAuthorization();
-            }
-
-            @Override
-            public void onFinish(TwitterAuthorizationCallback pRedirection) {
-                mRedirection = pRedirection;
-                mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
-                // Dialog will get dismissed when page is loaded.
-            }
-
-            @Override
-            public void onFail(Throwable pException) {
-                mUIDialog.dismiss();
-                mEventBus.dispatch(new UnauthorizedEvent(pException));
-            }
-        });
+        // mTaskManager.execute(new TaskAdapter<Void, Void, TwitterAuthorizationCallback>() {
+        // TwitterManager lTwitterManager = mTwitterManager;
+        //
+        // @Override
+        // public void onStart(boolean pIsRestored) {
+        // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
+        // }
+        //
+        // @Override
+        // public TwitterAuthorizationCallback onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
+        // return lTwitterManager.requestAuthorization();
+        // }
+        //
+        // @Override
+        // public void onFinish(TwitterAuthorizationCallback pRedirection) {
+        // mRedirection = pRedirection;
+        // mUIWebView.loadUrl(mRedirection.getAuthorizationUrl());
+        // // Dialog will get dismissed when page is loaded.
+        // }
+        //
+        // @Override
+        // public void onFail(Throwable pException) {
+        // mUIDialog.dismiss();
+        // mEventBus.dispatch(new UnauthorizedEvent(pException));
+        // }
+        // });
     }
 
     public void confirmAuthorization(final Uri pUri) {
-        mTaskManager.execute(new TaskAdapter<Void, Void, Void>() {
-            TwitterManager lTweetManager = mTwitterManager;
-
-            @Override
-            public void onStart(boolean pIsRestored) {
-                mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
-            }
-
-            @Override
-            public Void onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
-                lTweetManager.confirmAuthorization(pUri);
-                return null;
-            }
-
-            @Override
-            public void onFinish(Void pEmpty) {
-                mUIDialog.dismiss();
-                mEventBus.dispatch(new AuthorizedEvent());
-            }
-
-            @Override
-            public void onFail(Throwable pException) {
-                mUIDialog.dismiss();
-                mEventBus.dispatch(new UnauthorizedEvent(pException));
-            }
-        });
+        // mTaskManager.execute(new TaskAdapter<Void, Void, Void>() {
+        // TwitterManager lTweetManager = mTwitterManager;
+        //
+        // @Override
+        // public void onStart(boolean pIsRestored) {
+        // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving data ...", true);
+        // }
+        //
+        // @Override
+        // public Void onProcess(Void pEmpty, TaskNotifier<Void> pNotifier) throws Exception {
+        // lTweetManager.confirmAuthorization(pUri);
+        // return null;
+        // }
+        //
+        // @Override
+        // public void onFinish(Void pEmpty) {
+        // mUIDialog.dismiss();
+        // mEventBus.dispatch(new AuthorizedEvent());
+        // }
+        //
+        // @Override
+        // public void onFail(Throwable pException) {
+        // mUIDialog.dismiss();
+        // mEventBus.dispatch(new UnauthorizedEvent(pException));
+        // }
+        // });
     }
 }

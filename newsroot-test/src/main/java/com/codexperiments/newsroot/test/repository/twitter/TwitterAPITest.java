@@ -23,7 +23,7 @@ import rx.Observer;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.repository.twitter.TwitterAPI;
+import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.codexperiments.newsroot.test.common.BackendTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
@@ -31,7 +31,7 @@ import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 
 public class TwitterAPITest extends BackendTestCase {
     private TwitterManager mTwitterManager;
-    private TwitterAPI mTwitterAPI;
+    private TwitterRemoteRepository mTwitterAPI;
     private Observer<TweetPage> mTweetPageObserver;
 
     @Override
@@ -40,17 +40,18 @@ public class TwitterAPITest extends BackendTestCase {
         super.setUp();
         mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
         mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
-        mTwitterAPI = new TwitterAPI(mTwitterManager, "http://localhost:8378/");
+        mTwitterAPI = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");
     }
 
     public void testFindHomeTweets_noPage() throws Exception {
         // Setup.
         final int lPageCount = 5;
+        final int lPageSize = 20;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_empty.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
+        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -69,11 +70,12 @@ public class TwitterAPITest extends BackendTestCase {
     public void testFindHomeTweets_onePage_moreAvailable() throws Exception {
         // Setup.
         final int lPageCount = 1;
+        final int lPageSize = 20;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
+        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -92,13 +94,14 @@ public class TwitterAPITest extends BackendTestCase {
     public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
         // Setup.
         final int lPageCount = 5;
+        final int lPageSize = 20;
         final TimeGap lTimeGap = new TimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-2.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-3.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findHomeTweets(lTimeGap, lPageCount), mTweetPageObserver);
+        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),

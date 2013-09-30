@@ -34,7 +34,7 @@ import android.os.Looper;
  * Executes work on the Swing UI thread. This scheduler should only be used with actions that execute quickly.
  */
 public final class AndroidScheduler extends Scheduler {
-    private static final AndroidScheduler sInstance = new AndroidScheduler(new Handler(Looper.getMainLooper()));
+    private static final AndroidScheduler sUIThread = new AndroidScheduler(new Handler(Looper.getMainLooper()));
     private static final ExecutorService sIOPool;
     private static final ExecutorService sDatabasePool;
 
@@ -69,8 +69,8 @@ public final class AndroidScheduler extends Scheduler {
         });
     }
 
-    public static AndroidScheduler getInstance() {
-        return sInstance;
+    public static AndroidScheduler threadForUI() {
+        return sUIThread;
     }
 
     public static Scheduler threadPoolForIO() {

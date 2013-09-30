@@ -3,23 +3,30 @@ package com.codexperiments.newsroot.domain.twitter;
 import java.util.Iterator;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-
 public class TweetPage implements Iterable<Tweet> {
     private final List<Tweet> mTweets;
-    private final TimeGap mTimeGap;
+
+    private final TimeRange mTimeRange;
+    private final TimeGap mInitialGap;
     private final TimeGap mRemainingGap;
+    private final boolean mIsFull;
 
     public TweetPage(List<Tweet> pTweets, TimeGap pTimeGap, int pPageSize) {
         super();
         mTweets = pTweets;
-        mTimeGap = pTimeGap;
-        mRemainingGap = mTimeGap.substract(mTweets, pPageSize);
+        mIsFull = pTweets.size() >= pPageSize;
+
+        mTimeRange = TimeRange.from(pTweets);
+        mInitialGap = pTimeGap;
+        mRemainingGap = mIsFull ? mInitialGap.remainingGap(mTimeRange) : null;
     }
 
     public TimeGap timeGap() {
-        return mTimeGap;
+        return mInitialGap;
+    }
+
+    public TimeRange timeRange() {
+        return mTimeRange;
     }
 
     public TimeGap remainingGap() {
@@ -35,17 +42,18 @@ public class TweetPage implements Iterable<Tweet> {
         return mTweets.iterator();
     }
 
-    public TweetPage apply(final Observable<Tweet> pObservable) {
-        pObservable.subscribe(new Observer<Tweet>() {
-            public void onNext(Tweet pTweet) {
-            }
-
-            public void onCompleted() {
-            }
-
-            public void onError(Throwable pThrowable) {
-            }
-        });
-        return this;
-    }
+    // public <T> void apply(final Observer<? super TweetPage> pPagedObserver, final Observable<T> pObservable) {
+    // pObservable.subscribe(new Observer<T>() {
+    // public void onNext(T pT) {
+    // }
+    //
+    // public void onCompleted() {
+    // pPagedObserver.onNext(TweetPage.this);
+    // }
+    //
+    // public void onError(Throwable pThrowable) {
+    // pPagedObserver.onError(pThrowable);
+    // }
+    // });
+    // }
 }

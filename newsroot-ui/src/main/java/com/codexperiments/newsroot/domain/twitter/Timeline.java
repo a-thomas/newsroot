@@ -4,50 +4,72 @@ public class Timeline {
     private long mId;
 
     private String mUsername;
-    private long mEarliestId;
-    private long mOldestId;
-    private boolean mHasMore;
+
+    private TimeRange mTimeRange;
+
+    // private long mEarliestId;
+    // private long mOldestId;
+
+    // private boolean mHasMore;
 
     public Timeline(String pUsername) {
         super();
         mId = -1;
         mUsername = pUsername;
-        mEarliestId = -1;
-        mOldestId = -1;
+        mTimeRange = null;
+        // mEarliestId = -1;
+        // mOldestId = -1;
     }
 
     public Timeline(long pId, long pEarliestId, long pOldestId) {
         super();
         mId = pId;
-        mEarliestId = pEarliestId;
-        mOldestId = pOldestId;
+        mTimeRange = new TimeRange(pEarliestId, pOldestId);
+        // mEarliestId = pEarliestId;
+        // mOldestId = pOldestId;
     }
 
     public long id() {
         return mId;
     }
 
-    public String username() {
-        return mUsername;
+    public TimeGap futureGap() {
+        return TimeGap.futureTimeGap(mTimeRange);
     }
 
-    public long earliestBound() {
-        return mEarliestId;
+    public TimeGap pastGap() {
+        return TimeGap.pastTimeGap(mTimeRange);
     }
 
-    public long oldestBound() {
-        return mOldestId;
-    }
-
-    public boolean hasMore() {
-        return mHasMore;
-    }
-
-    public void addTweets(TweetPage pTweetPage) {
-        TimeGap lRemainingGap = pTweetPage.remainingGap();
-        mOldestId = lRemainingGap.isPastGap() ? lRemainingGap.getEarliestBound() : mOldestId;
-        mEarliestId = lRemainingGap.isFutureGap() ? lRemainingGap.getOldestBound() : mEarliestId;
-    }
+    // public String username() {
+    // return mUsername;
+    // }
+    //
+    // public long earliestBound() {
+    // return mEarliestId;
+    // }
+    //
+    // public long oldestBound() {
+    // return mOldestId;
+    // }
+    //
+    // public boolean hasMore() {
+    // return mHasMore;
+    // }
+    //
+    // public TimeGap futureGap() {
+    // return new TimeGap(-1, mEarliestId);
+    // }
+    //
+    // public TimeGap pastGap() {
+    // return new TimeGap(mOldestId, -1);
+    // }
+    //
+    // public void addTweets(TweetPage pTweetPage) {
+    // TimeGap lRemainingGap = pTweetPage.remainingGap();
+    // mOldestId = lRemainingGap.isPastGap() ? lRemainingGap.getEarliestBound() : mOldestId;
+    // mEarliestId = lRemainingGap.isFutureGap() ? lRemainingGap.getOldestBound() : mEarliestId;
+    // }
     // public List<News> getItems() {
     // return mItems;
     // }

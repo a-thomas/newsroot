@@ -16,6 +16,7 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterAccessException;
@@ -26,14 +27,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class TwitterAPI {
+public class TwitterRemoteRepository implements TwitterRepository {
     private TwitterManager mTwitterManager;
     private String mHost;
     private int mPageSize;
 
     private DateTimeFormatter mDateFormat;
 
-    public TwitterAPI(TwitterManager pTwitterManager, String pHost) {
+    public TwitterRemoteRepository(TwitterManager pTwitterManager, String pHost) {
         mTwitterManager = pTwitterManager;
         mHost = pHost;
         mPageSize = 20; // TODO
@@ -41,7 +42,13 @@ public class TwitterAPI {
         mDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss z yyyy").withZone(DateTimeZone.UTC);
     }
 
-    public Observable<TweetPage> findHomeTweets(TimeGap pTimeGap, int pPageCount) {
+    @Override
+    public Timeline findTimeline(String pUsername) {
+        return null;
+    }
+
+    @Override
+    public Observable<TweetPage> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
         return findTweets(TwitterQuery.URL_HOME, pTimeGap, pPageCount);
     }
 
@@ -58,6 +65,12 @@ public class TwitterAPI {
                                 pObserver.onNext(lTweetPage);
                                 lRemainingTimeGap = lTweetPage.remainingGap();
                             }
+
+                            // if (!lRemainingTimeGap.isPastGap() && lRemainingTimeGap != null) {
+                            // pObserver.onNext(new TweetPage(Lists.newArrayList(lRemainingTimeGap),
+                            // lRemainingTimeGap,
+                            // mPageSize));
+                            // }
                             pObserver.onCompleted();
                         } catch (TwitterAccessException eTwitterAccessException) {
                             pObserver.onError(eTwitterAccessException);

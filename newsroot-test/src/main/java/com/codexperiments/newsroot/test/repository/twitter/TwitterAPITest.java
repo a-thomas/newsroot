@@ -23,8 +23,8 @@ import rx.Observer;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
+import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 import com.codexperiments.newsroot.test.common.BackendTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
 import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
@@ -47,7 +47,7 @@ public class TwitterAPITest extends BackendTestCase {
         // Setup.
         final int lPageCount = 5;
         final int lPageSize = 20;
-        final TimeGap lTimeGap = new TimeGap();
+        final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_empty.json");
         // Run.
@@ -67,11 +67,11 @@ public class TwitterAPITest extends BackendTestCase {
         Mockito.verifyNoMoreInteractions(getServer(), mTweetPageObserver);
     }
 
-    public void testFindHomeTweets_onePage_moreAvailable() throws Exception {
+    public void testFindHomeTweets_singlePage_moreAvailable() throws Exception {
         // Setup.
-        final int lPageCount = 1;
-        final int lPageSize = 20;
-        final TimeGap lTimeGap = new TimeGap();
+        final int lPageCount = 1; // Single page
+        final int lPageSize = 20; // More page available since returned page will be full.
+        final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json");
         // Run.
@@ -93,9 +93,9 @@ public class TwitterAPITest extends BackendTestCase {
 
     public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
         // Setup.
-        final int lPageCount = 5;
-        final int lPageSize = 20;
-        final TimeGap lTimeGap = new TimeGap();
+        final int lPageCount = 5; // Several pages. Not all will be returned.
+        final int lPageSize = 20; // No more page available since last returned page will not be full.
+        final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-2.json")

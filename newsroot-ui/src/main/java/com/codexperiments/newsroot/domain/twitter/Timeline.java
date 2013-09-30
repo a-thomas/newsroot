@@ -21,13 +21,13 @@ public class Timeline {
         // mOldestId = -1;
     }
 
-    public Timeline(long pId, long pEarliestId, long pOldestId) {
-        super();
-        mId = pId;
-        mTimeRange = new TimeRange(pEarliestId, pOldestId);
-        // mEarliestId = pEarliestId;
-        // mOldestId = pOldestId;
-    }
+    // public Timeline(long pId, long pEarliestId, long pOldestId) {
+    // super();
+    // mId = pId;
+    // mTimeRange = new TimeRange(pEarliestId, pOldestId);
+    // // mEarliestId = pEarliestId;
+    // // mOldestId = pOldestId;
+    // }
 
     public long id() {
         return mId;

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.common;
+package com.codexperiments.newsroot.common.structure;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.codexperiments.newsroot.common.Page;
 
 /**
  * PageIndex uses a Red-Black tree to store pages. It provides O(log(n)) complexity on retrieval and insertion operations.
@@ -79,7 +81,7 @@ public class PageIndex<TItem> {
     }
 
     public void insert(Page<TItem> pPage) {
-        int lKey = pPage.lowerBound();
+        long lKey = pPage.lowerBound();
         Node lX = mRoot;
         Node lY = NIL;
 
@@ -325,7 +327,7 @@ public class PageIndex<TItem> {
      */
     private class Node {
         private boolean mColor;
-        private int mKey;
+        private long mKey;
         private int mStartIndex;
         private Page<TItem> mPage;
 
@@ -346,7 +348,7 @@ public class PageIndex<TItem> {
             mSuccessor = this;
         }
 
-        protected Node(int pKey, boolean pColor, Node pParent, Page<TItem> pPage) {
+        protected Node(long pKey, boolean pColor, Node pParent, Page<TItem> pPage) {
             super();
             mColor = pColor;
             mKey = pKey;

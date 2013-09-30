@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch;
 
 import rx.Observable;
 import rx.Observer;
+import android.util.Log;
 
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 
@@ -23,7 +24,9 @@ public class TestRx {
             }
 
             public void onError(Throwable pThrowable) {
+                Log.e(getClass().getSimpleName(), "Error in Observable;", pThrowable);
                 pObserver.onError(pThrowable);
+                lCompleted.countDown();
             }
         });
         lCompleted.await();

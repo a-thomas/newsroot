@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test;
+package com.codexperiments.newsroot.test.common.structure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import android.util.Log;
 
 import com.codexperiments.newsroot.common.Page;
-import com.codexperiments.newsroot.common.PageIndex;
+import com.codexperiments.newsroot.common.structure.PageIndex;
 
 public class PageIndexTest extends TestCase {
     // public final void testSomething() {
@@ -256,8 +256,8 @@ public class PageIndexTest extends TestCase {
     }
 
     private static class MyPage implements Page<Integer> {
-        private int mLowerBound;
-        private int mUpperBound;
+        private long mLowerBound;
+        private long mUpperBound;
         private int mSize;
         private List<Integer> mItems;
 
@@ -270,17 +270,17 @@ public class PageIndexTest extends TestCase {
             mItems = new ArrayList<Integer>(pSize);
             if (pSize > 0) {
                 for (int i = 0; i < pSize - 1; ++i) {
-                    mItems.add(Integer.valueOf(mLowerBound + i));
+                    mItems.add(Integer.valueOf((int) mLowerBound + i));
                 }
-                mItems.add(mUpperBound);
+                mItems.add(Integer.valueOf((int) mUpperBound));
             }
         }
 
-        public int lowerBound() {
+        public long lowerBound() {
             return mLowerBound;
         }
 
-        public int upperBound() {
+        public long upperBound() {
             return mUpperBound;
         }
 

@@ -3,21 +3,26 @@ package com.codexperiments.newsroot.domain.twitter;
 import java.util.List;
 
 public class TimeRange {
+    private static final TimeRange EMPTY_TIMERANGE = new TimeRange();
+
     private long mEarliestBound;
     private long mOldestBound;
 
     public static TimeRange from(List<Tweet> pTweets) {
-        // TODO Assert get(0) > get(n-1)
-        return new TimeRange(pTweets.get(0).getId(), pTweets.get(pTweets.size() - 1).getId());
+        if (pTweets.size() > 0) {
+            return new TimeRange(pTweets.get(0).getId(), pTweets.get(pTweets.size() - 1).getId());
+        } else {
+            return EMPTY_TIMERANGE;
+        }
     }
 
-    public TimeRange() {
+    private TimeRange() {
         super();
         mEarliestBound = Long.MAX_VALUE;
         mOldestBound = Long.MIN_VALUE;
     }
 
-    public TimeRange(long pEarliestBound, long pOldestBound) {
+    private TimeRange(long pEarliestBound, long pOldestBound) {
         super();
         mEarliestBound = pEarliestBound;
         mOldestBound = pOldestBound;
@@ -49,6 +54,11 @@ public class TimeRange {
         result = prime * result + (int) (mEarliestBound ^ (mEarliestBound >>> 32));
         result = prime * result + (int) (mOldestBound ^ (mOldestBound >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "TimeRange [mEarliestBound=" + mEarliestBound + ", mOldestBound=" + mOldestBound + "]";
     }
 
     public static TimeRange union(TimeRange pTimeRange1, TimeRange pTimeRange2) {

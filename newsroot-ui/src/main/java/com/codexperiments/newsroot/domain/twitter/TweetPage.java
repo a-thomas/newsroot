@@ -3,7 +3,9 @@ package com.codexperiments.newsroot.domain.twitter;
 import java.util.Iterator;
 import java.util.List;
 
-public class TweetPage implements Iterable<Tweet> {
+import com.codexperiments.newsroot.common.Page;
+
+public class TweetPage implements Page<Tweet> {
     private final List<Tweet> mTweets;
 
     private final TimeRange mTimeRange;
@@ -35,6 +37,26 @@ public class TweetPage implements Iterable<Tweet> {
 
     public List<Tweet> tweets() {
         return mTweets;
+    }
+
+    @Override
+    public long lowerBound() {
+        return mTimeRange.oldestBound();
+    }
+
+    @Override
+    public long upperBound() {
+        return mTimeRange.earliestBound();
+    }
+
+    @Override
+    public Tweet get(int pIndex) {
+        return mTweets.get(pIndex);
+    }
+
+    @Override
+    public int size() {
+        return mTweets.size();
     }
 
     @Override

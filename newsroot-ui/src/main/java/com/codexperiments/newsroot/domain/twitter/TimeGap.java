@@ -11,7 +11,7 @@ public class TimeGap implements News {
     // private transient List<Tweet> mTweets;
 
     public static TimeGap initialTimeGap() {
-        return new TimeGap(-1, -1);
+        return new TimeGap();
     }
 
     // public static TimeGap timeGap(List<Tweet> pTweets) {
@@ -41,7 +41,7 @@ public class TimeGap implements News {
         return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), Long.MIN_VALUE);
     }
 
-    public TimeGap() {
+    private TimeGap() {
         super();
         // mId = 0;
         mEarliestBound = Long.MAX_VALUE;
@@ -49,7 +49,7 @@ public class TimeGap implements News {
         // mTweets = null;
     }
 
-    public TimeGap(long pEarliestBound, long pOldestBound) {
+    private TimeGap(long pEarliestBound, long pOldestBound) {
         super();
         // mId = 0;
         mEarliestBound = pEarliestBound;
@@ -57,7 +57,7 @@ public class TimeGap implements News {
         // mTweets = null;
     }
 
-    protected TimeGap(long pId, long pEarliestBound, long pOldestBound) {
+    private TimeGap(long pId, long pEarliestBound, long pOldestBound) {
         super();
         mId = pId;
         mEarliestBound = pEarliestBound;
@@ -93,10 +93,9 @@ public class TimeGap implements News {
         long lRangeEarliestBound = pTimeRange.earliestBound();
         long lRangeOldestBound = pTimeRange.oldestBound();
 
-        if ((lRangeEarliestBound > mEarliestBound) || (lRangeEarliestBound < mEarliestBound)) {
+        if ((lRangeOldestBound < mOldestBound) || (lRangeEarliestBound > mEarliestBound)) {
             throw new IllegalArgumentException();
         }
-        if (lRangeOldestBound < mOldestBound) throw new IllegalArgumentException();
         return (lRangeOldestBound > mOldestBound) ? new TimeGap(lRangeOldestBound, mOldestBound) : null;
     }
 
@@ -171,5 +170,10 @@ public class TimeGap implements News {
         result = prime * result + (int) (mEarliestBound ^ (mEarliestBound >>> 32));
         result = prime * result + (int) (mOldestBound ^ (mOldestBound >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "TimeGap [mId=" + mId + ", mEarliestBound=" + mEarliestBound + ", mOldestBound=" + mOldestBound + "]";
     }
 }

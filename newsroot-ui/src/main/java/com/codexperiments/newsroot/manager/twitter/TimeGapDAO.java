@@ -18,7 +18,7 @@ public class TimeGapDAO {
     }
 
     public TimeGap get(Row pRow) {
-        TimeGap lTimeGap = new TimeGap();
+        TimeGap lTimeGap = TimeGap.initialTimeGap();
         lTimeGap.setId(pRow.getLong(DB_TWITTER.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_ID));
         lTimeGap.setEarliestBound(pRow.getLong(DB_TWITTER.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID));
         lTimeGap.setOldestBound(pRow.getLong(DB_TWITTER.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID));

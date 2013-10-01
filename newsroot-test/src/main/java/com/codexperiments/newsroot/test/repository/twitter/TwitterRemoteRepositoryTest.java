@@ -29,9 +29,9 @@ import com.codexperiments.newsroot.test.common.BackendTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
 import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 
-public class TwitterAPITest extends BackendTestCase {
+public class TwitterRemoteRepositoryTest extends BackendTestCase {
     private TwitterManager mTwitterManager;
-    private TwitterRemoteRepository mTwitterAPI;
+    private TwitterRemoteRepository mTwitterRepository;
     private Observer<TweetPageResponse> mTweetPageObserver;
 
     @Override
@@ -40,7 +40,7 @@ public class TwitterAPITest extends BackendTestCase {
         super.setUp();
         mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
         mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
-        mTwitterAPI = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");
+        mTwitterRepository = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");
     }
 
     public void testFindHomeTweets_noPage() throws Exception {
@@ -51,7 +51,7 @@ public class TwitterAPITest extends BackendTestCase {
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_empty.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTwitterRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -75,7 +75,7 @@ public class TwitterAPITest extends BackendTestCase {
 
         when(getServer().getResponseAsset(argThat(any(Request.class)))).thenReturn("twitter/ctx_tweet_02-1.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTwitterRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -101,7 +101,7 @@ public class TwitterAPITest extends BackendTestCase {
                                                                        .thenReturn("twitter/ctx_tweet_02-2.json")
                                                                        .thenReturn("twitter/ctx_tweet_02-3.json");
         // Run.
-        subscribeAndWait(mTwitterAPI.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTwitterRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         Mockito.verify(getServer()).getResponseAsset(argThat(allOf(hasUrl(TwitterQuery.URL_HOME),
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),

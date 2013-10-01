@@ -66,12 +66,6 @@ public class TwitterRemoteRepository implements TwitterRepository {
                                 pObserver.onNext(lTweetPageResponse);
                                 lTimeGap = lTweetPageResponse.remainingGap();
                             }
-
-                            // if (!lRemainingTimeGap.isPastGap() && lRemainingTimeGap != null) {
-                            // pObserver.onNext(new TweetPage(Lists.newArrayList(lRemainingTimeGap),
-                            // lRemainingTimeGap,
-                            // mPageSize));
-                            // }
                             pObserver.onCompleted();
                         } catch (TwitterAccessException eTwitterAccessException) {
                             pObserver.onError(eTwitterAccessException);

@@ -8,10 +8,10 @@ public class TweetPageResponse {
     private final TimeGap mInitialGap;
     private final TimeGap mRemainingGap;
 
-    public TweetPageResponse(TweetPage pTweetPage, TimeGap pTimeGap) {
+    public TweetPageResponse(TweetPage pTweetPage, TimeGap pInitialTimeGap) {
         super();
         mTweetPage = pTweetPage;
-        mInitialGap = pTimeGap;
+        mInitialGap = pInitialTimeGap;
         mRemainingGap = mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
     }
 

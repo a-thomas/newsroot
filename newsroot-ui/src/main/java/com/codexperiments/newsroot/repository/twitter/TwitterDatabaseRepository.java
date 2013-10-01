@@ -62,7 +62,7 @@ public class TwitterDatabaseRepository implements TwitterRepository {
     }
 
     @Override
-    public Observable<TweetPage> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
+    public Observable<TweetPageResponse> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
         Boolean lHasMore = mHasMore.get(pTimeline);
         if (lHasMore) {
             lHasMore = Boolean.TRUE;
@@ -76,13 +76,13 @@ public class TwitterDatabaseRepository implements TwitterRepository {
         }
     }
 
-    private Observable<TweetPage> findCachedTweets(final Timeline pTimeline,
-                                                   final TimeGap pTimeGap,
-                                                   final int pPageCount,
-                                                   final int pPageSize)
+    private Observable<TweetPageResponse> findCachedTweets(final Timeline pTimeline,
+                                                           final TimeGap pTimeGap,
+                                                           final int pPageCount,
+                                                           final int pPageSize)
     {
-        return Observable.create(new OnSubscribeFunc<TweetPage>() {
-            public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
                 AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
                     public void call() {
                         try {
@@ -114,15 +114,12 @@ public class TwitterDatabaseRepository implements TwitterRepository {
                             });
 
                             if (lTweets.size() > 0) {
-                                pObserver.onNext(new TweetPage(lTweets, pTimeGap, DEFAULT_PAGE_SIZE));
+                                TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
+                                pObserver.onNext(new TweetPageResponse(lTweetPage, pTimeGap));
                                 pObserver.onCompleted();
                             } else {
                                 mHasMore.put(pTimeline, Boolean.FALSE);
-                                Observable<TweetPage> lTweetPages = mRepository.findTweets(pTimeline,
-                                                                                           pTimeGap,
-                                                                                           pPageCount,
-                                                                                           pPageSize);
-                                cacheTweetPages(lTweetPages).subscribe(pObserver);
+                                cacheTweetPages(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
                             }
                         } catch (Exception eException) {
                             pObserver.onError(eException);
@@ -134,25 +131,25 @@ public class TwitterDatabaseRepository implements TwitterRepository {
         });
     }
 
-    private Observable<TweetPage> cacheTweetPages(Observable<TweetPage> pTweetPages) {
-        final Observable<TweetPage> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
+    private Observable<TweetPageResponse> cacheTweetPages(Observable<TweetPageResponse> pTweetPages) {
+        final Observable<TweetPageResponse> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
 
-        final Observable<TweetPage> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPage>() {
-            public Subscription onSubscribe(final Observer<? super TweetPage> pPageObserver) {
-                return lTweetPagesTransaction.subscribe(new Observer<TweetPage>() {
-                    public void onNext(final TweetPage pTweetPage) {
-                        Observable.from(pTweetPage).subscribe(new Observer<Tweet>() {
+        final Observable<TweetPageResponse> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pPageObserver) {
+                return lTweetPagesTransaction.subscribe(new Observer<TweetPageResponse>() {
+                    public void onNext(final TweetPageResponse pTweetPageResponse) {
+                        Observable.from(pTweetPageResponse.tweetPage()).subscribe(new Observer<Tweet>() {
                             public void onNext(Tweet pTweet) {
                                 mTweetDAO.create(pTweet);
                             }
 
                             public void onCompleted() {
-                                TimeGap lRemainingTimeGap = pTweetPage.remainingGap();
+                                mTimeGapDAO.delete(pTweetPageResponse.initialGap());
+                                TimeGap lRemainingTimeGap = pTweetPageResponse.remainingGap();
                                 if (lRemainingTimeGap != null) {
                                     mTimeGapDAO.create(lRemainingTimeGap);
                                 }
-                                mTimeGapDAO.delete(pTweetPage.timeGap());
-                                pPageObserver.onNext(pTweetPage);
+                                pPageObserver.onNext(pTweetPageResponse);
                             }
 
                             public void onError(Throwable pThrowable) {

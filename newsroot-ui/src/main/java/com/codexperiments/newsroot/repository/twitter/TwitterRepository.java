@@ -4,7 +4,6 @@ import rx.Observable;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
 
 public interface TwitterRepository {
     static final int DEFAULT_PAGE_COUNT = 5;
@@ -12,5 +11,5 @@ public interface TwitterRepository {
 
     Timeline findTimeline(String pUsername);
 
-    Observable<TweetPage> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize);
+    Observable<TweetPageResponse> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize);
 }

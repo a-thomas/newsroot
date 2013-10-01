@@ -21,8 +21,8 @@ import org.simpleframework.http.Request;
 import rx.Observer;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
+import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
 import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 import com.codexperiments.newsroot.test.common.BackendTestCase;
@@ -32,7 +32,7 @@ import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 public class TwitterAPITest extends BackendTestCase {
     private TwitterManager mTwitterManager;
     private TwitterRemoteRepository mTwitterAPI;
-    private Observer<TweetPage> mTweetPageObserver;
+    private Observer<TweetPageResponse> mTweetPageObserver;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -57,12 +57,12 @@ public class TwitterAPITest extends BackendTestCase {
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
         // Verify empty page received.
-        ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
-        Mockito.verify(mTweetPageObserver).onNext(lTweetPageArgs.capture());
+        ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
+        Mockito.verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();
 
-        TweetPage lTweetPage = lTweetPageArgs.getAllValues().get(0);
-        TweetPageData.checkTweetPage_empty(lTweetPage, lTimeGap);
+        TweetPageResponse lPageResponse = lTweetPageResponseCaptor.getAllValues().get(0);
+        TweetPageData.checkTweetPage_empty(lPageResponse, lTimeGap);
 
         Mockito.verifyNoMoreInteractions(getServer(), mTweetPageObserver);
     }
@@ -81,12 +81,12 @@ public class TwitterAPITest extends BackendTestCase {
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    not(hasQueryParam("max_id")))));
         // Verify page received.
-        ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
-        Mockito.verify(mTweetPageObserver).onNext(lTweetPageArgs.capture());
+        ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
+        Mockito.verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();
 
-        TweetPage lTweetPage = lTweetPageArgs.getAllValues().get(0);
-        TweetPageData.checkTweetPage_02_1(lTweetPage, lTimeGap);
+        TweetPageResponse lPageResponse = lTweetPageResponseCaptor.getAllValues().get(0);
+        TweetPageData.checkTweetPage_02_1(lPageResponse, lTimeGap);
 
         Mockito.verifyNoMoreInteractions(getServer(), mTweetPageObserver);
     }
@@ -113,14 +113,14 @@ public class TwitterAPITest extends BackendTestCase {
                                                                    hasQueryParam("count", TweetPageData.PAGE_SIZE),
                                                                    hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
         // Verify pages received.
-        ArgumentCaptor<TweetPage> lTweetPageArgs = ArgumentCaptor.forClass(TweetPage.class);
-        Mockito.verify(mTweetPageObserver, times(3)).onNext(lTweetPageArgs.capture());
+        ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
+        Mockito.verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
         Mockito.verify(mTweetPageObserver).onCompleted();
 
-        List<TweetPage> lTweetPages = lTweetPageArgs.getAllValues();
-        TweetPageData.checkTweetPage_02_1(lTweetPages.get(0), lTimeGap);
-        TweetPageData.checkTweetPage_02_2(lTweetPages.get(1), lTweetPages.get(0).remainingGap());
-        TweetPageData.checkTweetPage_02_3(lTweetPages.get(2), lTweetPages.get(1).remainingGap());
+        List<TweetPageResponse> lPageResponse = lTweetPageResponseCaptor.getAllValues();
+        TweetPageData.checkTweetPage_02_1(lPageResponse.get(0), lTimeGap);
+        TweetPageData.checkTweetPage_02_2(lPageResponse.get(1), lPageResponse.get(0).remainingGap());
+        TweetPageData.checkTweetPage_02_3(lPageResponse.get(2), lPageResponse.get(1).remainingGap());
 
         Mockito.verifyNoMoreInteractions(getServer(), mTweetPageObserver);
     }

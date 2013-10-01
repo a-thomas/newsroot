@@ -14,7 +14,7 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
+import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
@@ -101,8 +101,8 @@ public class NewsFragment extends Fragment {
     public void refreshTweets() {
         mTwitterRepository.findTweets(mTimeline, mTimeline.futureGap(), 5, 20)
                           .observeOn(AndroidScheduler.threadForUI())
-                          .subscribe(new Observer<TweetPage>() {
-                              public void onNext(TweetPage pTweetPage) {
+                          .subscribe(new Observer<TweetPageResponse>() {
+                              public void onNext(TweetPageResponse pTweetPageResponse) {
                                   // mTimeline.addTweets(pTweetPage);
                                   mUIListAdapter.notifyDataSetChanged();
                               }
@@ -127,8 +127,8 @@ public class NewsFragment extends Fragment {
             mLoadingMore = true;
             mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
                               .observeOn(AndroidScheduler.threadForUI())
-                              .subscribe(new Observer<TweetPage>() {
-                                  public void onNext(TweetPage pTweetPage) {
+                              .subscribe(new Observer<TweetPageResponse>() {
+                                  public void onNext(TweetPageResponse pTweetPageResponse) {
                                       // mTimeline.addTweets(pTweetPage);
                                       mUIListAdapter.notifyDataSetChanged();
                                   }

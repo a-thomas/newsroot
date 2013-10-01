@@ -7,36 +7,26 @@ import com.codexperiments.newsroot.common.Page;
 
 public class TweetPage implements Page<Tweet> {
     private final List<Tweet> mTweets;
-
     private final TimeRange mTimeRange;
-    private final TimeGap mInitialGap;
-    private final TimeGap mRemainingGap;
     private final boolean mIsFull;
 
-    public TweetPage(List<Tweet> pTweets, TimeGap pTimeGap, int pPageSize) {
+    public TweetPage(List<Tweet> pTweets, int pPageSize) {
         super();
         mTweets = pTweets;
         mIsFull = pTweets.size() >= pPageSize;
-
         mTimeRange = TimeRange.from(pTweets);
-        mInitialGap = pTimeGap;
-        mRemainingGap = mIsFull ? mInitialGap.remainingGap(mTimeRange) : null;
-    }
-
-    public TimeGap timeGap() {
-        return mInitialGap;
     }
 
     public TimeRange timeRange() {
         return mTimeRange;
     }
 
-    public TimeGap remainingGap() {
-        return mRemainingGap;
-    }
-
     public List<Tweet> tweets() {
         return mTweets;
+    }
+
+    public boolean isFull() {
+        return mIsFull;
     }
 
     @Override

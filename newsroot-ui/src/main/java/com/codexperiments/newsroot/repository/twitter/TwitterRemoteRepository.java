@@ -48,22 +48,23 @@ public class TwitterRemoteRepository implements TwitterRepository {
     }
 
     @Override
-    public Observable<TweetPage> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
+    public Observable<TweetPageResponse> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
         return findTweets(TwitterQuery.URL_HOME, pTimeGap, pPageCount);
     }
 
-    private Observable<TweetPage> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageCount) {
-        return Observable.create(new OnSubscribeFunc<TweetPage>() {
-            public Subscription onSubscribe(final Observer<? super TweetPage> pObserver) {
+    private Observable<TweetPageResponse> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageCount) {
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
                 AndroidScheduler.threadPoolForIO().schedule(new Action0() {
                     public void call() {
                         try {
-                            TimeGap lRemainingTimeGap = pTimeGap;
+                            TimeGap lTimeGap = pTimeGap;
                             int lPageCount = pPageCount;
-                            while ((lRemainingTimeGap != null) && (lPageCount-- > 0)) {
-                                TweetPage lTweetPage = findTweetPage(pUrl, lRemainingTimeGap, mPageSize);
-                                pObserver.onNext(lTweetPage);
-                                lRemainingTimeGap = lTweetPage.remainingGap();
+                            while ((lTimeGap != null) && (lPageCount-- > 0)) {
+                                TweetPage lTweetPage = findTweetPage(pUrl, lTimeGap, mPageSize);
+                                TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, lTimeGap);
+                                pObserver.onNext(lTweetPageResponse);
+                                lTimeGap = lTweetPageResponse.remainingGap();
                             }
 
                             // if (!lRemainingTimeGap.isPastGap() && lRemainingTimeGap != null) {
@@ -110,7 +111,7 @@ public class TwitterRemoteRepository implements TwitterRepository {
                 break;
             }
         }
-        return new TweetPage(lTweets, pTimeGap, pPageSize);
+        return new TweetPage(lTweets, pPageSize);
     }
 
     private Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {

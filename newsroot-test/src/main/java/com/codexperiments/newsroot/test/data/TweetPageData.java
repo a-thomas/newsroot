@@ -10,7 +10,7 @@ import java.util.List;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
+import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 
 public class TweetPageData {
     public static final int PAGE_SIZE = 20;
@@ -24,44 +24,44 @@ public class TweetPageData {
     public static final long EARLIEST_02_3 = 349452667745087500L;
     public static final long OLDEST_02_3 = 349443896905965600L;
 
-    public static void checkTweetPage_empty(TweetPage pTweetPage, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPage.tweets();
+    public static void checkTweetPage_empty(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
+        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
         assertThat(lTweets, hasSize(0));
-        assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), nullValue());
+        assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
+        assertThat(pTweetPageResponse.remainingGap(), nullValue());
     }
 
-    public static void checkTweetPage_02_1(TweetPage pTweetPage, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPage.tweets();
+    public static void checkTweetPage_02_1(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
+        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
         assertThat(lTweets, hasSize(20));
-        assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
+        assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
+        assertThat(pTweetPageResponse.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
-        Tweet lFirstTweet = pTweetPage.tweets().get(0);
+        Tweet lFirstTweet = pTweetPageResponse.tweetPage().tweets().get(0);
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_1));
 
-        Tweet lLastTweet = pTweetPage.tweets().get(19);
+        Tweet lLastTweet = pTweetPageResponse.tweetPage().tweets().get(19);
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_1));
     }
 
-    public static void checkTweetPage_02_2(TweetPage pTweetPage, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPage.tweets();
+    public static void checkTweetPage_02_2(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
+        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
         assertThat(lTweets, hasSize(20));
-        assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
+        assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
+        assertThat(pTweetPageResponse.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
-        Tweet lFirstTweet = pTweetPage.tweets().get(0);
+        Tweet lFirstTweet = pTweetPageResponse.tweetPage().tweets().get(0);
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_2));
 
-        Tweet lLastTweet = pTweetPage.tweets().get(19);
+        Tweet lLastTweet = pTweetPageResponse.tweetPage().tweets().get(19);
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_2));
     }
 
-    public static void checkTweetPage_02_3(TweetPage pTweetPage, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPage.tweets();
-        assertThat(pTweetPage.tweets(), hasSize(19));
-        assertThat(pTweetPage.timeGap(), equalTo(pTimeGap));
-        assertThat(pTweetPage.remainingGap(), nullValue());
+    public static void checkTweetPage_02_3(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
+        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
+        assertThat(pTweetPageResponse.tweetPage().tweets(), hasSize(19));
+        assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
+        assertThat(pTweetPageResponse.remainingGap(), nullValue());
 
         Tweet lFirstTweet = lTweets.get(0);
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_3));

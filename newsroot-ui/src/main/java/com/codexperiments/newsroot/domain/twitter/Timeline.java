@@ -1,11 +1,12 @@
 package com.codexperiments.newsroot.domain.twitter;
 
+import com.codexperiments.newsroot.common.structure.PageIndex;
+
 public class Timeline {
     private long mId;
-
     private String mUsername;
-
     private TimeRange mTimeRange;
+    private PageIndex<Tweet> mIndex;
 
     // private long mEarliestId;
     // private long mOldestId;
@@ -17,6 +18,7 @@ public class Timeline {
         mId = -1;
         mUsername = pUsername;
         mTimeRange = null;
+        mIndex = new PageIndex<Tweet>();
         // mEarliestId = -1;
         // mOldestId = -1;
     }
@@ -33,6 +35,10 @@ public class Timeline {
         return mId;
     }
 
+    public String username() {
+        return mUsername;
+    }
+
     public TimeGap futureGap() {
         return TimeGap.futureTimeGap(mTimeRange);
     }
@@ -41,10 +47,10 @@ public class Timeline {
         return TimeGap.pastTimeGap(mTimeRange);
     }
 
-    // public String username() {
-    // return mUsername;
-    // }
-    //
+    public void add(TweetPage pTweetPage) {
+        mIndex.insert(pTweetPage);
+    }
+
     // public long earliestBound() {
     // return mEarliestId;
     // }

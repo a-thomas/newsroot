@@ -27,6 +27,7 @@ public class NewsFragment extends Fragment {
     private TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
+    // private PageIndex<News> mTweets;
     // private List<News> mTweets;
     // private boolean mFromCache;
     // private boolean mHasMore; // TODO
@@ -52,6 +53,7 @@ public class NewsFragment extends Fragment {
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
         mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
+        // mTweets = new PageIndex<News>();
         // mTweets = new ArrayList<News>(); // TODO Get from prefs.
         // mFromCache = true;
         // mHasMore = true;
@@ -103,7 +105,7 @@ public class NewsFragment extends Fragment {
                           .observeOn(AndroidScheduler.threadForUI())
                           .subscribe(new Observer<TweetPageResponse>() {
                               public void onNext(TweetPageResponse pTweetPageResponse) {
-                                  // mTimeline.addTweets(pTweetPage);
+                                  mTimeline.add(pTweetPageResponse.tweetPage());
                                   mUIListAdapter.notifyDataSetChanged();
                               }
 
@@ -129,7 +131,7 @@ public class NewsFragment extends Fragment {
                               .observeOn(AndroidScheduler.threadForUI())
                               .subscribe(new Observer<TweetPageResponse>() {
                                   public void onNext(TweetPageResponse pTweetPageResponse) {
-                                      // mTimeline.addTweets(pTweetPage);
+                                      mTimeline.add(pTweetPageResponse.tweetPage());
                                       mUIListAdapter.notifyDataSetChanged();
                                   }
 

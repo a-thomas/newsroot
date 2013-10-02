@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
@@ -130,12 +131,18 @@ public class NewsFragment extends Fragment {
             mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
                               .observeOn(AndroidScheduler.threadForUI())
                               .subscribe(new Observer<TweetPageResponse>() {
+                                  TimeGap lRemainingGap;
+
                                   public void onNext(TweetPageResponse pTweetPageResponse) {
+                                      lRemainingGap = pTweetPageResponse.remainingGap();
                                       mTimeline.add(pTweetPageResponse.tweetPage());
                                       mUIListAdapter.notifyDataSetChanged();
                                   }
 
                                   public void onCompleted() {
+                                      if (lRemainingGap != null) {
+                                          mTimeline.add(lRemainingGap);
+                                      }
                                       mLoadingMore = false;
                                       mUIDialog.dismiss();
                                   }

@@ -19,6 +19,10 @@ public class PageIndex<TItem> {
     private final Node NIL = new Node();
     private Node mRoot;
 
+    public static <TItem> PageIndex<TItem> newPageIndex() {
+        return new PageIndex<TItem>();
+    }
+
     public PageIndex() {
         super();
         mRoot = NIL;
@@ -65,7 +69,7 @@ public class PageIndex<TItem> {
         Node lX = pNode;
         // Iterate through nodes in-order.
         while ((pIntervalSize > 0) && (lX != NIL)) {
-            Page<TItem> lPage = lX.mPage;
+            Page<? extends TItem> lPage = lX.mPage;
             int lPageSize = lX.size();
             // Copy all node items until we get expected item count or until there is no more item in the node.
             while ((pIntervalSize > 0) && (lStartIndex < lPageSize)) {
@@ -80,7 +84,7 @@ public class PageIndex<TItem> {
         return lItems;
     }
 
-    public void insert(Page<TItem> pPage) {
+    public void insert(Page<? extends TItem> pPage) {
         long lKey = pPage.lowerBound();
         Node lX = mRoot;
         Node lY = NIL;
@@ -253,7 +257,7 @@ public class PageIndex<TItem> {
         maintainOnRightRotate(pY, lX);
     }
 
-    protected void maintainOnInsertTraversal(Node pX, boolean pLeft, Page<TItem> pPage) {
+    protected void maintainOnInsertTraversal(Node pX, boolean pLeft, Page<? extends TItem> pPage) {
         if (pLeft) {
             pX.mStartIndex += pPage.size();
         }
@@ -329,7 +333,7 @@ public class PageIndex<TItem> {
         private boolean mColor;
         private long mKey;
         private int mStartIndex;
-        private Page<TItem> mPage;
+        private Page<? extends TItem> mPage;
 
         private Node mParent;
         private Node mLeft;
@@ -348,7 +352,7 @@ public class PageIndex<TItem> {
             mSuccessor = this;
         }
 
-        protected Node(long pKey, boolean pColor, Node pParent, Page<TItem> pPage) {
+        protected Node(long pKey, boolean pColor, Node pParent, Page<? extends TItem> pPage) {
             super();
             mColor = pColor;
             mKey = pKey;

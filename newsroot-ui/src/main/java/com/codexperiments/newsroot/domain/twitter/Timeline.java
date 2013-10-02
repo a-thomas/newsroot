@@ -6,7 +6,7 @@ public class Timeline {
     private long mId;
     private String mUsername;
     private TimeRange mTimeRange;
-    private PageIndex<Tweet> mIndex;
+    private PageIndex<News> mIndex;
 
     // private long mEarliestId;
     // private long mOldestId;
@@ -18,7 +18,7 @@ public class Timeline {
         mId = -1;
         mUsername = pUsername;
         mTimeRange = null;
-        mIndex = new PageIndex<Tweet>();
+        mIndex = PageIndex.newPageIndex();
         // mEarliestId = -1;
         // mOldestId = -1;
     }
@@ -49,6 +49,10 @@ public class Timeline {
 
     public void add(TweetPage pTweetPage) {
         mIndex.insert(pTweetPage);
+    }
+
+    public void add(TimeGap pTimeGap) {
+        mIndex.insert(new TimeGapPage(pTimeGap));
     }
 
     // public long earliestBound() {

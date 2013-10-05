@@ -12,6 +12,9 @@ import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.newsroot.repository.twitter.TwitterDatabaseRepository;
 import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
+import com.codexperiments.robolabor.task.android.AndroidTaskManager;
+import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
+import com.codexperiments.robolabor.task.handler.Task;
 
 public abstract class BaseApplication extends Application {
     private List<Object> mServices;
@@ -50,15 +53,15 @@ public abstract class BaseApplication extends Application {
 
         registerService(Platform.Factory.findCurrentPlatform(this));
         registerService(new AndroidEventBus());
-        // registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
-        // @Override
-        // public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
-        // // if (pTask) {
-        // return true;
-        // // }
-        // // return super.keepResultOnHold(pTask);
-        // }
-        // }));
+        registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
+            @Override
+            public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
+                // if (pTask) {
+                return true;
+                // }
+                // return super.keepResultOnHold(pTask);
+            }
+        }));
         registerService(new TwitterManager(this, new TwitterManager.Config() {
             public String getHost() {
                 return "https://api.twitter.com/";

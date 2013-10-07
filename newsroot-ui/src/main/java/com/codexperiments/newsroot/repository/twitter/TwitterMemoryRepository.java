@@ -25,7 +25,7 @@ public class TwitterMemoryRepository implements TwitterRepository {
         if (lCacheEntry != null) {
             lTimeline = lCacheEntry.mTimeline;
         } else {
-            lTimeline = new Timeline(pUsername);
+            lTimeline = mRepository.findTimeline(pUsername);
             mTimelines.put(pUsername, new CacheEntry(lTimeline));
         }
         return lTimeline;

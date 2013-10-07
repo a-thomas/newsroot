@@ -44,7 +44,7 @@ public class TwitterRemoteRepository implements TwitterRepository {
 
     @Override
     public Timeline findTimeline(String pUsername) {
-        return null;
+        return new Timeline(pUsername);
     }
 
     @Override

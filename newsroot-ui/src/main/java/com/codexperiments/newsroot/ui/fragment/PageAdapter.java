@@ -1,42 +1,37 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.common.Page;
+import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 
-public class NewsAdapter extends BaseAdapter {
-    private static final int DEFAULT_LIST_SIZE = 100;
-
+public class PageAdapter<TItem> extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
     private RefreshCallback mRefreshCallback;
     private MoreCallback mMoreCallback;
 
-    private Timeline mTimeline;
-    private List<News> mTweets;
+    private PageIndex<TItem> mIndex;
     private int mLastPosition;
 
-    public NewsAdapter(LayoutInflater pLayoutInflater, Timeline pTimeline/* , Callback pCallback */) {
+    public PageAdapter(LayoutInflater pLayoutInflater, Timeline pTimeline/* , Callback pCallback */) {
         super();
         mLayoutInflater = pLayoutInflater;
         mRefreshCallback = null;
         mMoreCallback = null;
 
-        mTimeline = pTimeline;
-        mTweets = new ArrayList<News>(DEFAULT_LIST_SIZE);
+        mIndex = new PageIndex<TItem>();
         mLastPosition = 0;
     }
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-        if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) /* && (mTimeline.hasMore()) */) {
+        if ((pPosition == mIndex.size() - 1) && (mLastPosition != pPosition) /* && (mTimeline.hasMore()) */) {
             if (mMoreCallback != null) mMoreCallback.onMore();
             mLastPosition = pPosition;
         }
@@ -48,7 +43,7 @@ public class NewsAdapter extends BaseAdapter {
             lUINewsItem = (NewsItem) pConvertView;
         }
 
-        lUINewsItem.setContent(mTweets.get(pPosition));
+        lUINewsItem.setContent((News) mIndex.find(pPosition, 1).get(0));
         return lUINewsItem;
     }
 
@@ -59,18 +54,17 @@ public class NewsAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int pPosition) {
-        return mTweets.get(pPosition);
+        return mIndex.find(pPosition, 1).get(0);
     }
 
     @Override
     public int getCount() {
-        return mTweets.size();
+        return mIndex.size();
     }
 
-    // public void notifyDataSetChanged(List<News> pTweets) {
-    // mTweets = pTweets;
-    // super.notifyDataSetChanged();
-    // }
+    public void append(Page<? extends TItem> pPage) {
+        mIndex.insert(pPage);
+    }
 
     public void setRefreshCallback(RefreshCallback pRefreshCallback) {
         mRefreshCallback = pRefreshCallback;
@@ -87,9 +81,4 @@ public class NewsAdapter extends BaseAdapter {
     public interface MoreCallback {
         void onMore();
     }
-    // public interface Callback {
-    // void onRefresh();
-    //
-    // void onMore();
-    // }
 }

@@ -84,6 +84,11 @@ public class NewsFragment extends Fragment {
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
 
         ReactiveCommand<TimeGap> reactiveCommand = new ReactiveCommand<TimeGap>(null);
+        reactiveCommand.registerAsync(new Func1<TimeGap, Observable<TweetPageResponse>>() {
+            public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
+                return null;
+            }
+        });
         reactiveCommand.subscribe(new Action1<TimeGap>() {
             public void call(TimeGap pTimeGap) {
                 mTwitterRepository.findTweets(mTimeline, pTimeGap, 1, 20);
@@ -220,17 +225,7 @@ public class NewsFragment extends Fragment {
         }
 
         public <TResult> Observable<TResult> registerAsync(final Func1<TParam, Observable<TResult>> pAsyncCommand) {
-            // return mCommand.map(new Func1<TParam, TResult>() {
-            // public TResult call(TParam pParam) {
-            // return pAsyncCommand.call(pParam);
-            // }
-            // });
-            Observable<Observable<TResult>> executeCommand = mCommand.map(new Func1<TParam, Observable<TResult>>() {
-                public Observable<TResult> call(TParam pParam) {
-                    return pAsyncCommand.call(pParam);
-                }
-            });
-            return Observable.merge(executeCommand);
+            return Observable.merge(mCommand.map(pAsyncCommand)).observeOn(AndroidScheduler.threadForUI());
         }
 
         @Override

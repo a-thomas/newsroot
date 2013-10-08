@@ -24,8 +24,8 @@ public class TimeRange {
             long lEarliestBound = pTweets.get(0).getId();
             long lOldestBound = pTweets.get(lSize - 1).getId();
             if (pTimeRange != null) {
-                if (lEarliestBound > pTimeRange.mEarliestBound) lEarliestBound = pTimeRange.mEarliestBound;
-                if (lOldestBound < pTimeRange.mOldestBound) lOldestBound = pTimeRange.mOldestBound;
+                if (lEarliestBound < pTimeRange.mEarliestBound) lEarliestBound = pTimeRange.mEarliestBound;
+                if (lOldestBound > pTimeRange.mOldestBound) lOldestBound = pTimeRange.mOldestBound;
             }
             return new TimeRange(lEarliestBound, lOldestBound);
         }

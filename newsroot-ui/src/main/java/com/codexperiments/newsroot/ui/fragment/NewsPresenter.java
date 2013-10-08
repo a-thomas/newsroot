@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
+import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Activity;
 import android.os.Bundle;
@@ -89,13 +90,13 @@ public class NewsPresenter extends Fragment {
                 }
             });
 
-            mFindMoreCommand.map(new Func1<TweetPageResponse, TweetPage>() {
-                public TweetPage call(TweetPageResponse pTweetPageResponse) {
+            mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
+                public void call(TweetPageResponse pTweetPageResponse) {
                     TweetPage lPage = pTweetPageResponse.tweetPage();
                     mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                    return lPage;
+                    mTweets.insert(lPage);
                 }
-            }).subscribe(RxUI.toPageIndex(mTweets));
+            });
         }
         return mFindMoreCommand;
     }

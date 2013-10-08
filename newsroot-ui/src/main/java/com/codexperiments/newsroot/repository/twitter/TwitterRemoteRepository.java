@@ -60,6 +60,8 @@ public class TwitterRemoteRepository implements TwitterRepository {
                         try {
                             TimeGap lTimeGap = pTimeGap;
                             int lPageCount = pPageCount;
+                            // XXX
+                            try { Thread.sleep(5000); } catch (InterruptedException eInterruptedException) { }
                             while ((lTimeGap != null) && (lPageCount-- > 0)) {
                                 TweetPage lTweetPage = findTweetPage(pUrl, lTimeGap, mPageSize);
                                 TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, lTimeGap);

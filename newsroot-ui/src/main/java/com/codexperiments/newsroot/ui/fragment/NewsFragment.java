@@ -16,7 +16,6 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.ui.fragment.NewsPresenter.NewsView;
 import com.codexperiments.robolabor.task.TaskManager;
 
@@ -25,26 +24,12 @@ public class NewsFragment extends Fragment implements NewsView {
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
-    private TwitterRepository mTwitterRepository;
 
     private NewsPresenter mPresenter;
 
-    // private Timeline mTimeline;
-    // private PageIndex<News> mTweets;
-    // private List<News> mTweets;
-    // private boolean mFromCache;
-    // private boolean mHasMore; // TODO
-    // private boolean mLoadingMore;
-
-    // private NewsAdapter mUIListAdapter;
-    // private PageAdapter<News> mUIListAdapter;
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
     private ProgressDialog mUIDialog;
-
-    // private Observable<Void> mOnMoreAction;
-
-    // private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
     public static final NewsFragment forUser(String pScreenName) {
         NewsFragment lFragment = new NewsFragment();
@@ -59,15 +44,7 @@ public class NewsFragment extends Fragment implements NewsView {
         super.onCreateView(pLayoutInflater, pContainer, pBundle);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
-        mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
-        // mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
-
-        // mTweets = new PageIndex<News>();
-        // mTweets = new ArrayList<News>(); // TODO Get from prefs.
-        // mFromCache = true;
-        // mHasMore = true;
-        // mLoadingMore = false;
         mUIDialog = new ProgressDialog(getActivity());
         mUIDialog.setTitle("Please wait...");
         mUIDialog.setMessage("Retrieving tweets ...");
@@ -75,35 +52,10 @@ public class NewsFragment extends Fragment implements NewsView {
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
 
-        // mUIListAdapter = new NewsAdapter(pLayoutInflater, mTimeline);
         mUIListAdapter = new PageAdapter<News>(pLayoutInflater);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
-
-        // Observable<Boolean> onMo = onMoreAction.map(new Func1<Void, Boolean>() {
-        // public Boolean call(Void pVoid) {
-        // return Boolean.TRUE;
-        // }
-        // });
-        // Observable<Boolean> onDo = onFinished.map(new Func1<Void, Boolean>() {
-        // public Boolean call(Void pVoid) {
-        // return Boolean.FALSE;
-        // }
-        // });
-        // Observable.merge(onMo, onDo).subscribe(RxUI.toDialogVisibleProp(mUIDialog, getActivity()));
-
-        // AsyncCommand<Void, TweetPageResponse> findMoreCommand = AsyncCommand.create(new Func1<Void,
-        // Observable<TweetPageResponse>>() {
-        // public Observable<TweetPageResponse> call(Void pVoid) {
-        // return mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20);
-        // }
-        // });
-        // findMoreCommand.map(new Func1<TweetPageResponse, TweetPage>() {
-        // public TweetPage call(TweetPageResponse pTweetPageResponse) {
-        // return pTweetPageResponse.tweetPage();
-        // }
-        // }).subscribe(RxUI.toListView(mUIListAdapter));
 
         FragmentManager lFragmentManager = getFragmentManager();
         mPresenter = (NewsPresenter) lFragmentManager.findFragmentByTag("presenter");

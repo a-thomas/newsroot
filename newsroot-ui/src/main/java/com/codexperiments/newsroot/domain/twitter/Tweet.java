@@ -56,7 +56,7 @@ public class Tweet implements News {
     }
 
     public long getCreatedAt() {
-        return mCreatedAt;
+        return ii + mCreatedAt;
     }
 
     public void setCreatedAt(long pCreatedAt) {

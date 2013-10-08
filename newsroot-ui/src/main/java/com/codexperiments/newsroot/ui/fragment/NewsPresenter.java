@@ -17,6 +17,7 @@ import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.twitter.TimeGapPage;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
@@ -75,7 +76,7 @@ public class NewsPresenter extends Fragment {
         super.onActivityCreated(pSavedInstanceState);
         mView.onBind(mTweets);
 
-        mFindMoreCommand.onNext(RxUI.VOID_SIGNAL);
+        //mFindMoreCommand.onNext(RxUI.VOID_SIGNAL);
     }
 
     public RxPageIndex<News> tweets() {
@@ -95,6 +96,11 @@ public class NewsPresenter extends Fragment {
                     TweetPage lPage = pTweetPageResponse.tweetPage();
                     mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
                     mTweets.insert(lPage);
+                    // XXX
+                    if (lPage.size() > 15) {
+                        mTweets.insert(new TimeGapPage(new TimeGap(lPage.tweets().get(15).getId() - 1, lPage.tweets().get(15).getId() - 2)));
+                    }
+
                 }
             });
         }

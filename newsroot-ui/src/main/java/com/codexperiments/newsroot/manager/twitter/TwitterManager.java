@@ -56,6 +56,12 @@ public class TwitterManager {
                                              mConfig.getHost() + "oauth/access_token",
                                              mConfig.getHost() + "oauth/authorize");
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
+        if (!mAuthorized) {
+            mPreferences.edit().putString(PREF_USER_TOKEN, "1272413971-6yoFhYjcCg7EJbYXIQNWv9wRh8vmPTRRwt29NXD")
+                            .putString(PREF_USER_SECRET, "341L0ANySNsvlhSVIj823SYN6j7oILuhRDvW8h7gDs")
+                            .putBoolean(PREF_USER_AUTHORIZED, true).apply();
+        }
+        mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (mAuthorized) {
             mId = mPreferences.getString(PREF_USER_ID, null);
             mScreenName = mPreferences.getString(PREF_USER_SCREEN_NAME, null);

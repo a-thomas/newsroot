@@ -49,7 +49,7 @@ public class TimeGap implements News {
         // mTweets = null;
     }
 
-    private TimeGap(long pEarliestBound, long pOldestBound) {
+    public TimeGap(long pEarliestBound, long pOldestBound) {
         super();
         // mId = 0;
         mEarliestBound = pEarliestBound;
@@ -57,7 +57,7 @@ public class TimeGap implements News {
         // mTweets = null;
     }
 
-    private TimeGap(long pId, long pEarliestBound, long pOldestBound) {
+    public TimeGap(long pId, long pEarliestBound, long pOldestBound) {
         super();
         mId = pId;
         mEarliestBound = pEarliestBound;

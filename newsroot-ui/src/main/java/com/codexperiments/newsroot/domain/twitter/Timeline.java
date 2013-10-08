@@ -1,12 +1,11 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-import com.codexperiments.newsroot.common.structure.PageIndex;
-
 public class Timeline {
     private long mId;
     private String mUsername;
-    private TimeRange mTimeRange;
-    private PageIndex<News> mIndex;
+
+    // private TimeRange mTimeRange;
+    // private PageIndex<News> mIndex;
 
     // private long mEarliestId;
     // private long mOldestId;
@@ -17,8 +16,8 @@ public class Timeline {
         super();
         mId = -1;
         mUsername = pUsername;
-        mTimeRange = null;
-        mIndex = PageIndex.newPageIndex();
+        // mTimeRange = null;
+        // mIndex = PageIndex.newPageIndex();
         // mEarliestId = -1;
         // mOldestId = -1;
     }
@@ -39,21 +38,21 @@ public class Timeline {
         return mUsername;
     }
 
-    public TimeGap futureGap() {
-        return TimeGap.futureTimeGap(mTimeRange);
-    }
+    // public TimeGap futureGap() {
+    // return TimeGap.futureTimeGap(mTimeRange);
+    // }
+    //
+    // public TimeGap pastGap() {
+    // return TimeGap.pastTimeGap(mTimeRange);
+    // }
 
-    public TimeGap pastGap() {
-        return TimeGap.pastTimeGap(mTimeRange);
-    }
-
-    public void add(TweetPage pTweetPage) {
-        mIndex.insert(pTweetPage);
-    }
-
-    public void add(TimeGap pTimeGap) {
-        mIndex.insert(new TimeGapPage(pTimeGap));
-    }
+    // public void add(TweetPage pTweetPage) {
+    // mIndex.insert(pTweetPage);
+    // }
+    //
+    // public void add(TimeGap pTimeGap) {
+    // mIndex.insert(new TimeGapPage(pTimeGap));
+    // }
 
     // public long earliestBound() {
     // return mEarliestId;

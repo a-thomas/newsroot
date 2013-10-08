@@ -1,59 +1,50 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Scheduler;
-import rx.Subscription;
-import rx.subjects.PublishSubject;
-import rx.util.functions.Action1;
-import rx.util.functions.Func1;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
-import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TimeGapPage;
-import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
-import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
+import com.codexperiments.newsroot.ui.fragment.NewsPresenter.NewsView;
 import com.codexperiments.robolabor.task.TaskManager;
 
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements NewsView {
     private static final String ARG_SCREEN_NAME = "screenName";
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
     private TwitterRepository mTwitterRepository;
 
-    private Timeline mTimeline;
-    private PageIndex<News> mTweets;
+    private NewsPresenter mPresenter;
+
+    // private Timeline mTimeline;
+    // private PageIndex<News> mTweets;
     // private List<News> mTweets;
     // private boolean mFromCache;
     // private boolean mHasMore; // TODO
     // private boolean mLoadingMore;
 
     // private NewsAdapter mUIListAdapter;
+    // private PageAdapter<News> mUIListAdapter;
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
     private ProgressDialog mUIDialog;
 
-    private Observable<Void> mOnMore;
+    // private Observable<Void> mOnMoreAction;
+
+    // private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
     public static final NewsFragment forUser(String pScreenName) {
         NewsFragment lFragment = new NewsFragment();
@@ -70,8 +61,9 @@ public class NewsFragment extends Fragment {
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
-        mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
-        mTweets = new PageIndex<News>();
+        // mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
+
+        // mTweets = new PageIndex<News>();
         // mTweets = new ArrayList<News>(); // TODO Get from prefs.
         // mFromCache = true;
         // mHasMore = true;
@@ -83,96 +75,43 @@ public class NewsFragment extends Fragment {
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
 
-        ReactiveCommand<TimeGap> reactiveCommand = new ReactiveCommand<TimeGap>(null);
-        reactiveCommand.registerAsync(new Func1<TimeGap, Observable<TweetPageResponse>>() {
-            public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
-                return null;
-            }
-        });
-        reactiveCommand.subscribe(new Action1<TimeGap>() {
-            public void call(TimeGap pTimeGap) {
-                mTwitterRepository.findTweets(mTimeline, pTimeGap, 1, 20);
-            }
-        });
-
         // mUIListAdapter = new NewsAdapter(pLayoutInflater, mTimeline);
-        mUIListAdapter = new PageAdapter<News>(pLayoutInflater, mTimeline);
-        final PublishSubject<Void> onFinished = PublishSubject.create();
-        mOnMore = onMoreAction(mUIListAdapter);
-        mOnMore.startWith(new Void[] { null }).subscribe(new Action1<Void>() {
-            public void call(Void pVoid) {
-                // moreTweets();
-                // Observable<TweetPageResponse> findTweets =
-                mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
-                                  .observeOn(AndroidScheduler.threadForUI())
-                                  .map(new Func1<TweetPageResponse, TweetPage>() {
-                                      public TweetPage call(TweetPageResponse pTweetPageResponse) {
-                                          return pTweetPageResponse.tweetPage();
-                                      }
-                                  })
-                                  .subscribe(toList(mUIListAdapter, onFinished));
-
-                // bindToList(findTweets, mUIListAdapter);
-            }
-        });
-
-        Observable<Boolean> onMo = mOnMore.map(new Func1<Void, Boolean>() {
-            public Boolean call(Void pVoid) {
-                return Boolean.TRUE;
-            }
-        });
-        Observable<Boolean> onDo = onFinished.map(new Func1<Void, Boolean>() {
-            public Boolean call(Void pVoid) {
-                return Boolean.FALSE;
-            }
-        });
-        Observable.merge(onMo, onDo).subscribe(toDialogVisibleProp(mUIDialog));
-        // showProgress(mUIMore.map(new Func1<Void, Boolean>() {
-        // public Boolean call(Void pVoid) {
-        // return Boolean.TRUE;
-        // }
-        // }));
-        // mUIListAdapter = new BaseAdapter() {
-        // int mLastPosition = 0;
-        //
-        // @Override
-        // public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-        // if ((pPosition == mTweets.size() - 1) && (mLastPosition != pPosition) /* && (mTimeline.hasMore()) */) {
-        // moreTweets();
-        // mUIMore.onNext(null);
-        // mLastPosition = pPosition;
-        // }
-        //
-        // NewsItem lUINewsItem;
-        // if (pConvertView == null) {
-        // lUINewsItem = (NewsItem) pLayoutInflater.inflate(R.layout.item_news, pParent, false);
-        // } else {
-        // lUINewsItem = (NewsItem) pConvertView;
-        // }
-        //
-        // lUINewsItem.setContent(mTweets.find(pPosition, 1).get(0));
-        // return lUINewsItem;
-        // }
-        //
-        // @Override
-        // public long getItemId(int pPosition) {
-        // return pPosition;
-        // }
-        //
-        // @Override
-        // public Object getItem(int pPosition) {
-        // return mTweets.find(pPosition, 1);
-        // }
-        //
-        // @Override
-        // public int getCount() {
-        // return mTweets.size();
-        // }
-        // };
-
+        mUIListAdapter = new PageAdapter<News>(pLayoutInflater);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
+
+        // Observable<Boolean> onMo = onMoreAction.map(new Func1<Void, Boolean>() {
+        // public Boolean call(Void pVoid) {
+        // return Boolean.TRUE;
+        // }
+        // });
+        // Observable<Boolean> onDo = onFinished.map(new Func1<Void, Boolean>() {
+        // public Boolean call(Void pVoid) {
+        // return Boolean.FALSE;
+        // }
+        // });
+        // Observable.merge(onMo, onDo).subscribe(RxUI.toDialogVisibleProp(mUIDialog, getActivity()));
+
+        // AsyncCommand<Void, TweetPageResponse> findMoreCommand = AsyncCommand.create(new Func1<Void,
+        // Observable<TweetPageResponse>>() {
+        // public Observable<TweetPageResponse> call(Void pVoid) {
+        // return mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20);
+        // }
+        // });
+        // findMoreCommand.map(new Func1<TweetPageResponse, TweetPage>() {
+        // public TweetPage call(TweetPageResponse pTweetPageResponse) {
+        // return pTweetPageResponse.tweetPage();
+        // }
+        // }).subscribe(RxUI.toListView(mUIListAdapter));
+
+        FragmentManager lFragmentManager = getFragmentManager();
+        mPresenter = (NewsPresenter) lFragmentManager.findFragmentByTag("presenter");
+        if (mPresenter == null) {
+            mPresenter = NewsPresenter.forUser(getArguments().getString(ARG_SCREEN_NAME));
+            lFragmentManager.beginTransaction().add(mPresenter, "presenter").commit();
+        }
+        mPresenter.setTargetFragment(this, 0);
 
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
         return lUIFragment;
@@ -183,6 +122,15 @@ public class NewsFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle pBundle) {
+    }
+
+    @Override
+    public void onBind(PageIndex<News> pIndex) {
+        mUIListAdapter.bindTo(mPresenter.tweets());
+        mPresenter.tweets().onInsert().subscribe(RxUI.notifyListView(mUIListAdapter));
+
+        Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
+        onMoreAction.subscribe(mPresenter.findMoreCommand());
     }
 
     @Override
@@ -199,49 +147,6 @@ public class NewsFragment extends Fragment {
         mUIDialog.dismiss();
         mTaskManager.unmanage(this);
         mEventBus.unregisterListener(this);
-    }
-
-    public static class ReactiveCommand<TParam> extends Observable<TParam> {
-        private PublishSubject<Boolean> mInflight = PublishSubject.create(); // TODO Lazy
-        // ScheduledSubject<Exception> exceptions;
-        private PublishSubject<TParam> mCommand = PublishSubject.create();
-        private Observable<TParam> mTask;
-        private Scheduler mScheduler = AndroidScheduler.threadForUI();
-
-        public ReactiveCommand(Observable<TParam> pTask) {
-            super(null);
-            mCommand = PublishSubject.create();
-            mTask = pTask;
-        }
-
-        public void execute(TParam pParam) {
-            mInflight.onNext(Boolean.TRUE);
-            mCommand.onNext(pParam);
-            mInflight.onNext(Boolean.FALSE);
-        }
-
-        public Observable<TParam> task() {
-            return mTask;
-        }
-
-        public <TResult> Observable<TResult> registerAsync(final Func1<TParam, Observable<TResult>> pAsyncCommand) {
-            return Observable.merge(mCommand.map(pAsyncCommand)).observeOn(AndroidScheduler.threadForUI());
-        }
-
-        @Override
-        public Subscription subscribe(Observer<? super TParam> pObserver) {
-            return mCommand.subscribe(pObserver);
-        }
-    }
-
-    public Observable<Void> onMoreAction(PageAdapter<News> pPageAdapter) {
-        final PublishSubject<Void> lPublisher = PublishSubject.create();
-        pPageAdapter.setMoreCallback(new MoreCallback() {
-            public void onMore() {
-                lPublisher.onNext(null);
-            }
-        });
-        return lPublisher;
     }
 
     public void refreshTweets() {
@@ -299,9 +204,9 @@ public class NewsFragment extends Fragment {
         // }
         // });
         // }
-        Observable<TweetPageResponse> findTweets = mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
-                                                                     .observeOn(AndroidScheduler.threadForUI());
-        bindToList(findTweets, mUIListAdapter);
+        // Observable<TweetPageResponse> findTweets = mTwitterRepository.findTweets(mTimeline, mTimeline.pastGap(), 1, 20)
+        // .observeOn(AndroidScheduler.threadForUI());
+        // bindToList(findTweets, mUIListAdapter);
         // Observable<Boolean> showProgress = Observable.from(Boolean.FALSE).startWith(Boolean.TRUE);
         // showProgress(showProgress);
         // new ListViewBinder(mUIList, mUIListAdapter, new PageIndex<News>()).bind(lFindTweets);
@@ -309,97 +214,25 @@ public class NewsFragment extends Fragment {
         // lFindTweets = updateList(lFindTweets, mUIListAdapter);
     }
 
-    public Observer<Boolean> toDialogVisibleProp(final Dialog pDialog) {
-        return new Observer<Boolean>() {
-            public void onNext(Boolean pVisible) {
-                if (pVisible == Boolean.TRUE) {
-                    pDialog.show();
-                } else {
-                    pDialog.dismiss();
-                }
-            }
-
-            public void onCompleted() {
-                pDialog.dismiss();
-            }
-
-            public void onError(Throwable pThrowable) {
-                pDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        };
-    }
-
-    public void showDialog(final Observable<TweetPageResponse> pTweetResponses) {
-        // mLoadingMore = true;
-        mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
-
-        pTweetResponses.subscribe(new Observer<TweetPageResponse>() {
-            public void onNext(TweetPageResponse pTweetPageResponse) {
-            }
-
-            public void onCompleted() {
-                mUIDialog.dismiss();
-            }
-
-            public void onError(Throwable pThrowable) {
-                mUIDialog.dismiss();
-                Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        });
-    }
-
-    public <TItem> Observer<Page<? extends TItem>> toList(final PageAdapter<TItem> pAdapter,
-                                                          final PublishSubject<Void> pOnFinished)
-    {
-        return new Observer<Page<? extends TItem>>() {
-            public void onNext(Page<? extends TItem> pPage) {
-                // mTimeline.delete(pTweetPageResponse.initialGap());
-                pAdapter.append(pPage);
-                // pAdapter.insert(new TimeGapPage(pTweetPageResponse.remainingGap()));
-                // mTimeline.add(pTweetPageResponse.tweetPage());
-                // mTimeline.add(pTweetPageResponse.remainingGap());
-                pAdapter.notifyDataSetChanged();
-            }
-
-            public void onCompleted() {
-                pOnFinished.onNext(null);
-            }
-
-            public void onError(Throwable pThrowable) {
-                pOnFinished.onNext(null);
-            }
-        };
-    }
-
-    public void bindToList(final Observable<TweetPageResponse> pTweetResponses, final BaseAdapter pAdapter) {
-        // mLoadingMore = true;
-        // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
-
-        pTweetResponses.subscribe(new Observer<TweetPageResponse>() {
-            public void onNext(TweetPageResponse pTweetPageResponse) {
-                // mTimeline.delete(pTweetPageResponse.initialGap());
-                mTweets.insert(pTweetPageResponse.tweetPage());
-                mTweets.insert(new TimeGapPage(pTweetPageResponse.remainingGap()));
-                // mTimeline.add(pTweetPageResponse.tweetPage());
-                // mTimeline.add(pTweetPageResponse.remainingGap());
-                pAdapter.notifyDataSetChanged();
-            }
-
-            public void onCompleted() {
-                // mLoadingMore = false;
-                // mUIDialog.dismiss();
-            }
-
-            public void onError(Throwable pThrowable) {
-                // mUIDialog.dismiss();
-                // Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
-                pThrowable.printStackTrace();
-            }
-        });
-    }
+    // public void showDialog(final Observable<TweetPageResponse> pTweetResponses) {
+    // // mLoadingMore = true;
+    // mUIDialog = ProgressDialog.show(getActivity(), "Please wait...", "Retrieving tweets ...", true);
+    //
+    // pTweetResponses.subscribe(new Observer<TweetPageResponse>() {
+    // public void onNext(TweetPageResponse pTweetPageResponse) {
+    // }
+    //
+    // public void onCompleted() {
+    // mUIDialog.dismiss();
+    // }
+    //
+    // public void onError(Throwable pThrowable) {
+    // mUIDialog.dismiss();
+    // Toast.makeText(getActivity(), "Oups!!! Something happened", Toast.LENGTH_LONG).show();
+    // pThrowable.printStackTrace();
+    // }
+    // });
+    // }
 
     // public static abstract class ListViewBinder extends BaseAdapter {
     // private ListView mListView;

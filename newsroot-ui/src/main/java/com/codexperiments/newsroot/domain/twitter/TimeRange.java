@@ -16,6 +16,21 @@ public class TimeRange {
         }
     }
 
+    public static TimeRange append(TimeRange pTimeRange, List<Tweet> pTweets) {
+        int lSize = pTweets.size();
+        if (lSize <= 0) {
+            return pTimeRange;
+        } else {
+            long lEarliestBound = pTweets.get(0).getId();
+            long lOldestBound = pTweets.get(lSize - 1).getId();
+            if (pTimeRange != null) {
+                if (lEarliestBound > pTimeRange.mEarliestBound) lEarliestBound = pTimeRange.mEarliestBound;
+                if (lOldestBound < pTimeRange.mOldestBound) lOldestBound = pTimeRange.mOldestBound;
+            }
+            return new TimeRange(lEarliestBound, lOldestBound);
+        }
+    }
+
     private TimeRange() {
         super();
         mEarliestBound = Long.MAX_VALUE;

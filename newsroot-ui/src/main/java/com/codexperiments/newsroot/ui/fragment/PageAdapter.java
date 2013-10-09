@@ -125,6 +125,11 @@ public class PageAdapter<TItem> extends BaseAdapter {
         else return ITEM_TWEET;
     }
 
+//    @Override
+//    public boolean isEnabled(int position) {
+//        return position % 2 == 0;
+//    }
+
     public void setRefreshCallback(RefreshCallback pRefreshCallback) {
         mRefreshCallback = pRefreshCallback;
     }

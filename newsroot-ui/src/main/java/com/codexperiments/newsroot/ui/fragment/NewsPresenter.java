@@ -1,6 +1,9 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
+import rx.Observer;
+import rx.Subscription;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Activity;
@@ -12,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
-import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
@@ -34,6 +36,7 @@ public class NewsPresenter extends Fragment {
     private RxPageIndex<News> mTweets;
     private TimeRange mTimeRange;
 
+    private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
     public static final NewsPresenter forUser(String pScreenName) {
@@ -87,6 +90,7 @@ public class NewsPresenter extends Fragment {
         if (mFindMoreCommand == null) {
             mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
                 public Observable<TweetPageResponse> call(Void pVoid) {
+//                    try { Thread.sleep(1000000000); } catch (InterruptedException e) { }
                     return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
                 }
             });
@@ -105,6 +109,34 @@ public class NewsPresenter extends Fragment {
             });
         }
         return mFindMoreCommand;
+    }
+
+    public AsyncCommand<TimeGap, TweetPageResponse> findGapCommand() {
+        if (mFindGapCommand == null) {
+            mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
+                public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
+                    return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+                        public Subscription onSubscribe(Observer<? super TweetPageResponse> t1) {
+                            try { Thread.sleep(5000); } catch (InterruptedException e) { }
+                            return null;
+                        }});
+                }
+            });
+
+            mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
+                public void call(TweetPageResponse pTweetPageResponse) {
+                    TweetPage lPage = pTweetPageResponse.tweetPage();
+                    mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
+                    mTweets.insert(lPage);
+                    // XXX
+                    if (lPage.size() > 15) {
+                        mTweets.insert(new TimeGapPage(new TimeGap(lPage.tweets().get(15).getId() - 1, lPage.tweets().get(15).getId() - 2)));
+                    }
+
+                }
+            });
+        }
+        return mFindGapCommand;
     }
 
     @Override

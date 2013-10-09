@@ -37,6 +37,6 @@ public class NewsTimeGapItem extends RelativeLayout
     public void setContent(TimeGap pTimeGap)
     {
         TimeGap lTimeGap = (TimeGap) pTimeGap;
-        mUINewsCreatedAt.setText(lTimeGap.earliestBound() + "==" + lTimeGap.oldestBound());
+        mUINewsCreatedAt.setText(lTimeGap.earliestBound() + "==\n" + lTimeGap.oldestBound());
     }
 }

@@ -69,7 +69,7 @@ public class RxUI {
     // };
     // }
     //
-    public static <TItem> Observer<Page<? extends TItem>> notifyListView(final BaseAdapter pAdapter) {
+    public static <TItem> Observer<Page<? extends TItem>> toListView(final BaseAdapter pAdapter) {
         return new Observer<Page<? extends TItem>>() {
             public void onNext(Page<? extends TItem> pPage) {
                 pAdapter.notifyDataSetChanged();

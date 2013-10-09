@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>   
-	<color name="header_color">#FFCF0609</color>
+<resources>
+
+    <color name="header_color">#FFCF0609</color>
+    <color name="color1">#FFFFFFFF</color>
+    <color name="color2">#FFFF0000</color>
+    <color name="color3">#FF00FF00</color>
+    <color name="color4">#FF0000FF</color>
+    <color name="color5">#FFFFFF00</color>
+    <color name="color6">#FF00FFFF</color>
+    <color name="color7">#FFFF00FF</color>
+    <color name="color8">#FF000000</color>
+    
 </resources>

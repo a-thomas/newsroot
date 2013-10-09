@@ -26,7 +26,7 @@ import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 
-public class NewsPresenter extends Fragment {
+public class NewsListPresentation extends Fragment {
     private static final String ARG_SCREEN_NAME = "screenName";
 
     private NewsView mView;
@@ -39,15 +39,15 @@ public class NewsPresenter extends Fragment {
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
-    public static final NewsPresenter forUser(String pScreenName) {
-        NewsPresenter lPresenter = new NewsPresenter();
+    public static final NewsListPresentation forUser(String pScreenName) {
+        NewsListPresentation lPresenter = new NewsListPresentation();
         Bundle lArguments = new Bundle();
         lArguments.putString(ARG_SCREEN_NAME, pScreenName);
         lPresenter.setArguments(lArguments);
         return lPresenter;
     }
 
-    protected NewsPresenter() {
+    protected NewsListPresentation() {
         super();
     }
 

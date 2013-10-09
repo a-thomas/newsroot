@@ -7,11 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,23 +20,23 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.ui.fragment.NewsPresenter.NewsView;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsView;
 import com.codexperiments.robolabor.task.TaskManager;
 
-public class NewsFragment extends Fragment implements NewsView {
+public class NewsListFragment extends Fragment implements NewsView {
     private static final String ARG_SCREEN_NAME = "screenName";
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
 
-    private NewsPresenter mPresenter;
+    private NewsListPresentation mPresentation;
 
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
     private ProgressDialog mUIDialog;
 
-    public static final NewsFragment forUser(String pScreenName) {
-        NewsFragment lFragment = new NewsFragment();
+    public static final NewsListFragment forUser(String pScreenName) {
+        NewsListFragment lFragment = new NewsListFragment();
         Bundle lArguments = new Bundle();
         lArguments.putString(ARG_SCREEN_NAME, pScreenName);
         lFragment.setArguments(lArguments);
@@ -59,38 +58,40 @@ public class NewsFragment extends Fragment implements NewsView {
 
         mUIListAdapter = new PageAdapter<News>(pLayoutInflater);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
-        mUIList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE); // CHOICE_MODE_MULTIPLE
-//        mUIList.setItemsCanFocus(false);
+        mUIList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE); // CHOICE_MODE_MULTIPLE
+        // mUIList.setItemsCanFocus(false);
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
-//        mUIList.setOnItemSelectedListener(new OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-//                Toast.makeText(getActivity(), String.valueOf("toto"), Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> arg0) {
-//                // TODO Auto-generated method stub
-//                
-//            }
-//        });
+        // mUIList.setOnItemSelectedListener(new OnItemSelectedListener() {
+        // @Override
+        // public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        // Toast.makeText(getActivity(), String.valueOf("toto"), Toast.LENGTH_SHORT).show();
+        // }
+        //
+        // @Override
+        // public void onNothingSelected(AdapterView<?> arg0) {
+        // // TODO Auto-generated method stub
+        //
+        // }
+        // });
         mUIList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 arg1.setSelected(false);
-                Toast.makeText(getActivity(), String.valueOf(arg2+"=="+arg3+"=="+mUIList.getCheckedItemCount()), Toast.LENGTH_SHORT).show();
-//                mUIList.setItemChecked(arg2, true);
+                Toast.makeText(getActivity(),
+                               String.valueOf(arg2 + "==" + arg3 + "==" + mUIList.getCheckedItemCount()),
+                               Toast.LENGTH_SHORT).show();
+                // mUIList.setItemChecked(arg2, true);
             }
         });
 
         FragmentManager lFragmentManager = getFragmentManager();
-        mPresenter = (NewsPresenter) lFragmentManager.findFragmentByTag("presenter");
-        if (mPresenter == null) {
-            mPresenter = NewsPresenter.forUser(getArguments().getString(ARG_SCREEN_NAME));
-            lFragmentManager.beginTransaction().add(mPresenter, "presenter").commit();
+        mPresentation = (NewsListPresentation) lFragmentManager.findFragmentByTag("presentation");
+        if (mPresentation == null) {
+            mPresentation = NewsListPresentation.forUser(getArguments().getString(ARG_SCREEN_NAME));
+            lFragmentManager.beginTransaction().add(mPresentation, "presentation").commit();
         }
-        mPresenter.setTargetFragment(this, 0);
+        mPresentation.setTargetFragment(this, 0);
 
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
         return lUIFragment;
@@ -105,11 +106,11 @@ public class NewsFragment extends Fragment implements NewsView {
 
     @Override
     public void onBind(PageIndex<News> pIndex) {
-        mUIListAdapter.bindTo(mPresenter.tweets());
-        mPresenter.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
+        mUIListAdapter.bindTo(mPresentation.tweets());
+        mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
 
         Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
-        onMoreAction.subscribe(mPresenter.findMoreCommand());
+        onMoreAction.subscribe(mPresentation.findMoreCommand());
     }
 
     @Override

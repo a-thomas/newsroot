@@ -14,7 +14,7 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
-import com.codexperiments.newsroot.ui.fragment.NewsFragment;
+import com.codexperiments.newsroot.ui.fragment.NewsListFragment;
 import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 
 public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
@@ -37,7 +37,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mButton1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View pV) {
-                NewsFragment lNewsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
+                NewsListFragment lNewsFragment = (NewsListFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
                 lNewsFragment.refreshTweets();
             }
         });
@@ -46,7 +46,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
         mButton2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View pV) {
-                NewsFragment lNewsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
+                NewsListFragment lNewsFragment = (NewsListFragment) getSupportFragmentManager().findFragmentById(R.id.activity_content);
                 lNewsFragment.moreTweets();
             }
         });
@@ -137,7 +137,7 @@ public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Li
     }
 
     private void showHome() {
-        NewsFragment lNewsFragment = NewsFragment.forUser(mTweetManager.getScreenName());
+        NewsListFragment lNewsFragment = NewsListFragment.forUser(mTweetManager.getScreenName());
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_content, lNewsFragment).commit();
     }
 }

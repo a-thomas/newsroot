@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TweetPresentation;
+import com.codexperiments.newsroot.presentation.TweetPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
 public class NewsItem extends RelativeLayout implements Checkable, PageAdapterItem<TweetPresentation> {

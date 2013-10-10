@@ -19,10 +19,11 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsPresentation;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsView;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TimeGapPresentation;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TweetPresentation;
+import com.codexperiments.newsroot.presentation.NewsListPresentation;
+import com.codexperiments.newsroot.presentation.NewsListPresentation.NewsView;
+import com.codexperiments.newsroot.presentation.NewsPresentation;
+import com.codexperiments.newsroot.presentation.TimeGapPresentation;
+import com.codexperiments.newsroot.presentation.TweetPresentation;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class NewsListFragment extends Fragment implements NewsView {
@@ -62,29 +63,11 @@ public class NewsListFragment extends Fragment implements NewsView {
         mUIListAdapter.addItemType(TimeGapPresentation.class, R.layout.item_news_timegap);
         mUIListAdapter.addItemType(TweetPresentation.class, R.layout.item_news);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
-        mUIList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE); // CHOICE_MODE_MULTIPLE
+        mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE); // CHOICE_MODE_MULTIPLE
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
-        // mUIList.setOnItemSelectedListener(new OnItemSelectedListener() {
-        // @Override
-        // public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        // Toast.makeText(getActivity(), String.valueOf("toto"), Toast.LENGTH_SHORT).show();
-        // }
-        //
-        // @Override
-        // public void onNothingSelected(AdapterView<?> arg0) {
-        // // TODO Auto-generated method stub
-        //
-        // }
-        // });
         mUIList.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                arg1.setSelected(false);
-                Toast.makeText(getActivity(),
-                               String.valueOf(arg2 + "==" + arg3 + "==" + mUIList.getCheckedItemCount()),
-                               Toast.LENGTH_SHORT).show();
-                // mUIList.setItemChecked(arg2, true);
+            public void onItemClick(AdapterView<?> pListView, View pItemView, int pPosition, long pItemId) {
             }
         });
 

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TimeGapPresentation;
+import com.codexperiments.newsroot.presentation.TimeGapPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
 public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<TimeGapPresentation> {

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.presentation;
 
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
@@ -20,10 +20,10 @@ import com.codexperiments.newsroot.common.structure.RxPageIndex;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.ui.fragment.NewsPage;
 
 public class NewsListPresentation extends Fragment {
     private static final String ARG_SCREEN_NAME = "screenName";
@@ -37,36 +37,6 @@ public class NewsListPresentation extends Fragment {
 
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
-
-    public interface NewsPresentation {
-
-    }
-
-    public static class TweetPresentation implements NewsPresentation {
-        private Tweet mTweet;
-
-        public TweetPresentation(Tweet pTweet) {
-            super();
-            mTweet = pTweet;
-        }
-
-        public Tweet getTweet() {
-            return mTweet;
-        }
-    }
-
-    public static class TimeGapPresentation implements NewsPresentation {
-        private TimeGap mTimeGap;
-
-        public TimeGapPresentation(TimeGap pTimeGap) {
-            super();
-            mTimeGap = pTimeGap;
-        }
-
-        public TimeGap getTimeGap() {
-            return mTimeGap;
-        }
-    }
 
     public static final NewsListPresentation forUser(String pScreenName) {
         NewsListPresentation lPresenter = new NewsListPresentation();

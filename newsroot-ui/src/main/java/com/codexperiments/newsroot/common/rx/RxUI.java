@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsPresentation;
+import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 

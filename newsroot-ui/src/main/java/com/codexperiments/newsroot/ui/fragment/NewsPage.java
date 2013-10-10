@@ -7,9 +7,9 @@ import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsPresentation;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TimeGapPresentation;
-import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TweetPresentation;
+import com.codexperiments.newsroot.presentation.NewsPresentation;
+import com.codexperiments.newsroot.presentation.TimeGapPresentation;
+import com.codexperiments.newsroot.presentation.TweetPresentation;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 

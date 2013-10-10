@@ -66,10 +66,6 @@ public class NewsListFragment extends Fragment implements NewsView {
         mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE); // CHOICE_MODE_MULTIPLE
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
-        mUIList.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> pListView, View pItemView, int pPosition, long pItemId) {
-            }
-        });
 
         FragmentManager lFragmentManager = getFragmentManager();
         mPresentation = (NewsListPresentation) lFragmentManager.findFragmentByTag("presentation");

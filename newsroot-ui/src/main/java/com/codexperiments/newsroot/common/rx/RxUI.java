@@ -3,8 +3,10 @@ package com.codexperiments.newsroot.common.rx;
 import rx.Observable;
 import rx.Observer;
 import rx.subjects.PublishSubject;
+import rx.util.functions.Action1;
 import android.app.Activity;
 import android.app.Dialog;
+import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
 
@@ -17,6 +19,17 @@ import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
+    
+    public static Observable<Void> fromClick(View view) {
+        final PublishSubject<Void> lSubject = PublishSubject.create();
+        view.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                lSubject.onNext(null);
+            }
+        });
+        return lSubject;
+    }
+
 
     public static Observable<Void> fromOnMoreAction(PageAdapter<NewsPresentation> pPageAdapter) {
         final PublishSubject<Void> lPublisher = PublishSubject.create();
@@ -96,6 +109,21 @@ public class RxUI {
             }
         };
     }
+    
+    public static Observer<Boolean> toActivated(final View pView) {
+        return new Observer<Boolean>() {
+            public void onNext(Boolean pActivated) {
+                pView.setActivated(pActivated.booleanValue());
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+            }
+        };
+    }
+
     //
     // public static <TItem> Observer<Page<? extends TItem>> toListView(final PageAdapter<TItem> pAdapter,
     // final PublishSubject<Void> pOnFinished)

@@ -85,7 +85,7 @@ public class NewsListPresentation extends Fragment {
         return mTweets;
     }
 
-    public AsyncCommand<Void, TweetPageResponse> findMoreCommand() {
+    public AsyncCommand<Void, ?> findMoreCommand() {
         if (mFindMoreCommand == null) {
             mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
                 public Observable<TweetPageResponse> call(Void pVoid) {
@@ -111,7 +111,7 @@ public class NewsListPresentation extends Fragment {
         return mFindMoreCommand;
     }
 
-    public AsyncCommand<TimeGap, TweetPageResponse> findGapCommand() {
+    public AsyncCommand<TimeGap, ?> findGapCommand() {
         if (mFindGapCommand == null) {
             mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
                 public Observable<TweetPageResponse> call(TimeGap pTimeGap) {

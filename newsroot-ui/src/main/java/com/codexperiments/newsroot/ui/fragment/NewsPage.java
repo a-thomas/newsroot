@@ -10,26 +10,25 @@ import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.codexperiments.newsroot.presentation.TimeGapPresentation;
 import com.codexperiments.newsroot.presentation.TweetPresentation;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class NewsPage implements Page<NewsPresentation> {
-    private final List<? extends NewsPresentation> mNews;
+    private final List<NewsPresentation> mNews;
     private final TimeRange mTimeRange;
 
     public NewsPage(TimeGap pTimeGap) {
         super();
-        mNews = Lists.newArrayList(new TimeGapPresentation(pTimeGap));
+        mNews = Lists.<NewsPresentation>newArrayList(new TimeGapPresentation(pTimeGap));
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 
     public NewsPage(TweetPage pTweetPage) {
         super();
-        mNews = Lists.transform(pTweetPage.tweets(), new Function<Tweet, TweetPresentation>() {
-            public TweetPresentation apply(Tweet pTweet) {
-                return new TweetPresentation(pTweet);
-            }
-        });
+        List<Tweet> lTweets = pTweetPage.tweets();
+        mNews = Lists.newArrayListWithCapacity(lTweets.size());
+        for (Tweet lTweet : lTweets) {
+            mNews.add(new TweetPresentation(lTweet));
+        }
         mTimeRange = pTweetPage.timeRange();
     }
 

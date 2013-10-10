@@ -37,7 +37,7 @@ public class TimeRange {
         mOldestBound = Long.MIN_VALUE;
     }
 
-    private TimeRange(long pEarliestBound, long pOldestBound) {
+    public TimeRange(long pEarliestBound, long pOldestBound) {
         super();
         mEarliestBound = pEarliestBound;
         mOldestBound = pOldestBound;

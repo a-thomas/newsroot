@@ -7,36 +7,33 @@ import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TimeGapPresentation;
+import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
-public class NewsTimeGapItem extends RelativeLayout
-{
+public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<TimeGapPresentation> {
     private TextView mUINewsCreatedAt;
 
-    public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet, int pDefStyle)
-    {
+    public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet, int pDefStyle) {
         super(pContext, pAttrSet, pDefStyle);
     }
 
-    public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet)
-    {
+    public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet) {
         super(pContext, pAttrSet);
     }
 
-    public NewsTimeGapItem(Context pContext)
-    {
+    public NewsTimeGapItem(Context pContext) {
         super(pContext);
     }
 
     @Override
-    protected void onFinishInflate()
-    {
+    protected void onFinishInflate() {
         super.onFinishInflate();
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_timegap);
     }
 
-    public void setContent(TimeGap pTimeGap)
-    {
-        TimeGap lTimeGap = (TimeGap) pTimeGap;
+    @Override
+    public void setContent(TimeGapPresentation pTimeGapPresentation) {
+        TimeGap lTimeGap = pTimeGapPresentation.getTimeGap();
         mUINewsCreatedAt.setText(lTimeGap.earliestBound() + "==\n" + lTimeGap.oldestBound());
     }
 }

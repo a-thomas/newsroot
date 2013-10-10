@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 
@@ -18,7 +18,7 @@ public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
 
-    public static Observable<Void> fromOnMoreAction(PageAdapter<News> pPageAdapter) {
+    public static Observable<Void> fromOnMoreAction(PageAdapter<NewsPresentation> pPageAdapter) {
         final PublishSubject<Void> lPublisher = PublishSubject.create();
         pPageAdapter.setMoreCallback(new MoreCallback() {
             public void onMore() {

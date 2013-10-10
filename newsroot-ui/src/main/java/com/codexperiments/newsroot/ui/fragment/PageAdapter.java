@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import java.util.Map;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,15 +9,11 @@ import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.google.common.collect.Maps;
 
 public class PageAdapter<TItem> extends BaseAdapter {
-    private static final int ITEM_TWEET = 0;
-    private static final int ITEM_TIMEGAP = 1;
-    private static final int ITEM_MORE = 2;
-    
+    private static final int ITEM_MORE = 0;
+
     private LayoutInflater mLayoutInflater;
     private RefreshCallback mRefreshCallback;
     private MoreCallback mMoreCallback;
@@ -24,6 +22,29 @@ public class PageAdapter<TItem> extends BaseAdapter {
     private int mLastPosition;
     private int mItemCount;
     private boolean mHasMore;
+
+    private int mItemTypeCount;
+    private Map<Class<?>, ItemType> mItemTypes;
+
+    private static class ItemType {
+        int mType;
+        int mResource;
+
+        public ItemType(int pIndex, int pResource) {
+            super();
+            mType = pIndex;
+            mResource = pResource;
+        }
+
+        @Override
+        public String toString() {
+            return "ItemType [mIndex=" + mType + ", mResource=" + mResource + "]";
+        }
+    }
+
+    public interface PageAdapterItem<TItem> {
+        void setContent(TItem pItem);
+    }
 
     public PageAdapter(LayoutInflater pLayoutInflater) {
         super();
@@ -35,8 +56,16 @@ public class PageAdapter<TItem> extends BaseAdapter {
         mLastPosition = -1;
         mItemCount = 0;
         mHasMore = true;
+
+        mItemTypes = Maps.newHashMap();
+        mItemTypeCount = 1; // More item is taken into account.
     }
-    
+
+    public void addItemType(Class<?> pType, int pResource) {
+        mItemTypes.put(pType, new ItemType(mItemTypeCount, pResource));
+        mItemTypeCount = mItemTypes.size() + 1;
+    }
+
     public void setHasMore(boolean pValue) {
         mHasMore = pValue;
     }
@@ -53,48 +82,29 @@ public class PageAdapter<TItem> extends BaseAdapter {
     }
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
         if ((pPosition >= mItemCount) && (mLastPosition != pPosition) /* && (mTimeline.hasMore()) */) {
             if (mMoreCallback != null) mMoreCallback.onMore();
             mLastPosition = pPosition;
         }
 
-        switch (getItemViewType(pPosition)) {
-        case ITEM_MORE:
-            return getMoreView(pPosition, pConvertView, pParent);
-        case ITEM_TIMEGAP:
-            return getTimeGapView(pPosition, pConvertView, pParent);
-        case ITEM_TWEET:
-        default:
-            return getNewsView(pPosition, pConvertView, pParent);
-        }
-    }
-    
-    private View getMoreView(int pPosition, View pConvertView, ViewGroup pParent) {
-        NewsMoreItem lNewsMoreItem = (NewsMoreItem) pConvertView;
-        if (pConvertView == null) {
-            lNewsMoreItem = (NewsMoreItem) mLayoutInflater.inflate(R.layout.item_news_more, pParent, false);
-        }
-        lNewsMoreItem.setContent();
-        return lNewsMoreItem;
-    }
-    
-    private View getTimeGapView(int pPosition, View pConvertView, ViewGroup pParent) {
-        NewsTimeGapItem lNewsItem = (NewsTimeGapItem) pConvertView;
-        if (pConvertView == null) {
-            lNewsItem = (NewsTimeGapItem) mLayoutInflater.inflate(R.layout.item_news_timegap, pParent, false);
-        }
-        lNewsItem.setContent((TimeGap) mIndex.find((mItemCount - 1) - pPosition, 1).get(0));
-        return lNewsItem;
-    }
+        if (mHasMore && (pPosition == mItemCount)) {
+            if (pConvertView == null) {
+                pConvertView = mLayoutInflater.inflate(R.layout.item_news_more, pParent, false);
+            }
+            ((NewsMoreItem) pConvertView).setContent();
+        } else {
+            Object lItem = getItem(pPosition);
+            ItemType lItemType = mItemTypes.get(lItem.getClass());
+            int lItemResource = lItemType.mResource;
 
-    private View getNewsView(int pPosition, View pConvertView, ViewGroup pParent) {
-        NewsItem lNewsItem = (NewsItem) pConvertView;
-        if (pConvertView == null) {
-            lNewsItem = (NewsItem) mLayoutInflater.inflate(R.layout.item_news, pParent, false);
+            if (pConvertView == null) {
+                pConvertView = mLayoutInflater.inflate(lItemResource, pParent, false);
+            }
+            ((PageAdapterItem) pConvertView).setContent(lItem);
         }
-        lNewsItem.setContent((Tweet) mIndex.find((mItemCount - 1) - pPosition, 1).get(0));
-        return lNewsItem;
+        return pConvertView;
     }
 
     @Override
@@ -120,15 +130,19 @@ public class PageAdapter<TItem> extends BaseAdapter {
 
     @Override
     public int getItemViewType(int pPosition) {
-        if (mHasMore && (pPosition == mItemCount)) return ITEM_MORE;
-        else if (getItem(pPosition) instanceof TimeGap) return ITEM_TIMEGAP;
-        else return ITEM_TWEET;
+        if (mHasMore && (pPosition == mItemCount)) {
+            return ITEM_MORE;
+        } else {
+            Object lItem = getItem(pPosition);
+            ItemType lItemType = mItemTypes.get(lItem.getClass());
+            return lItemType.mType;
+        }
     }
 
-//    @Override
-//    public boolean isEnabled(int position) {
-//        return position % 2 == 0;
-//    }
+    // @Override
+    // public boolean isEnabled(int position) {
+    // return position % 2 == 0;
+    // }
 
     public void setRefreshCallback(RefreshCallback pRefreshCallback) {
         mRefreshCallback = pRefreshCallback;

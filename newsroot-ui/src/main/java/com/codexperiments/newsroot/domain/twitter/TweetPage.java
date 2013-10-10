@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.codexperiments.newsroot.common.Page;
 
-public class TweetPage implements Page<Tweet> {
+public class TweetPage implements Page<Tweet>, Iterable<Tweet> {
     private final List<Tweet> mTweets;
     private final TimeRange mTimeRange;
     private final boolean mIsFull;
@@ -54,6 +54,11 @@ public class TweetPage implements Page<Tweet> {
         return mTweets.iterator();
     }
 
+    // @Override
+    // public Iterator<Tweet> iterator() {
+    // return mTweets.iterator();
+    // }
+    //
     // public <T> void apply(final Observer<? super TweetPage> pPagedObserver, final Observable<T> pObservable) {
     // pObservable.subscribe(new Observer<T>() {
     // public void onNext(T pT) {

@@ -19,8 +19,10 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsPresentation;
 import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.NewsView;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TimeGapPresentation;
+import com.codexperiments.newsroot.ui.fragment.NewsListPresentation.TweetPresentation;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class NewsListFragment extends Fragment implements NewsView {
@@ -31,7 +33,7 @@ public class NewsListFragment extends Fragment implements NewsView {
 
     private NewsListPresentation mPresentation;
 
-    private PageAdapter<News> mUIListAdapter;
+    private PageAdapter<NewsPresentation> mUIListAdapter;
     private ListView mUIList;
     private ProgressDialog mUIDialog;
 
@@ -56,10 +58,11 @@ public class NewsListFragment extends Fragment implements NewsView {
 
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
 
-        mUIListAdapter = new PageAdapter<News>(pLayoutInflater);
+        mUIListAdapter = new PageAdapter<NewsPresentation>(pLayoutInflater);
+        mUIListAdapter.addItemType(TimeGapPresentation.class, R.layout.item_news_timegap);
+        mUIListAdapter.addItemType(TweetPresentation.class, R.layout.item_news);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE); // CHOICE_MODE_MULTIPLE
-        // mUIList.setItemsCanFocus(false);
         mUIList.setAdapter(mUIListAdapter);
         mUIDialog = new ProgressDialog(getActivity());
         // mUIList.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -105,7 +108,7 @@ public class NewsListFragment extends Fragment implements NewsView {
     }
 
     @Override
-    public void onBind(PageIndex<News> pIndex) {
+    public void onBind(PageIndex<NewsPresentation> pIndex) {
         mUIListAdapter.bindTo(mPresentation.tweets());
         mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
 

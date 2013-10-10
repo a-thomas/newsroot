@@ -17,11 +17,10 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TimeGapPage;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Timeline;
+import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
@@ -33,11 +32,41 @@ public class NewsListPresentation extends Fragment {
     private TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
-    private RxPageIndex<News> mTweets;
+    private RxPageIndex<NewsPresentation> mTweets;
     private TimeRange mTimeRange;
 
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
+
+    public interface NewsPresentation {
+
+    }
+
+    public static class TweetPresentation implements NewsPresentation {
+        private Tweet mTweet;
+
+        public TweetPresentation(Tweet pTweet) {
+            super();
+            mTweet = pTweet;
+        }
+
+        public Tweet getTweet() {
+            return mTweet;
+        }
+    }
+
+    public static class TimeGapPresentation implements NewsPresentation {
+        private TimeGap mTimeGap;
+
+        public TimeGapPresentation(TimeGap pTimeGap) {
+            super();
+            mTimeGap = pTimeGap;
+        }
+
+        public TimeGap getTimeGap() {
+            return mTimeGap;
+        }
+    }
 
     public static final NewsListPresentation forUser(String pScreenName) {
         NewsListPresentation lPresenter = new NewsListPresentation();
@@ -79,10 +108,10 @@ public class NewsListPresentation extends Fragment {
         super.onActivityCreated(pSavedInstanceState);
         mView.onBind(mTweets);
 
-        //mFindMoreCommand.onNext(RxUI.VOID_SIGNAL);
+        // mFindMoreCommand.onNext(RxUI.VOID_SIGNAL);
     }
 
-    public RxPageIndex<News> tweets() {
+    public RxPageIndex<NewsPresentation> tweets() {
         return mTweets;
     }
 
@@ -90,7 +119,7 @@ public class NewsListPresentation extends Fragment {
         if (mFindMoreCommand == null) {
             mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
                 public Observable<TweetPageResponse> call(Void pVoid) {
-//                    try { Thread.sleep(1000000000); } catch (InterruptedException e) { }
+                    // try { Thread.sleep(1000000000); } catch (InterruptedException e) { }
                     return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
                 }
             });
@@ -99,10 +128,11 @@ public class NewsListPresentation extends Fragment {
                 public void call(TweetPageResponse pTweetPageResponse) {
                     TweetPage lPage = pTweetPageResponse.tweetPage();
                     mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                    mTweets.insert(lPage);
+                    mTweets.insert(new NewsPage(lPage));
                     // XXX
                     if (lPage.size() > 15) {
-                        mTweets.insert(new TimeGapPage(new TimeGap(lPage.tweets().get(15).getId() - 1, lPage.tweets().get(15).getId() - 2)));
+                        long id = lPage.tweets().get(15).getId() - 1;
+                        mTweets.insert(new NewsPage(new TimeGap(id, id - 1)));
                     }
 
                 }
@@ -117,22 +147,21 @@ public class NewsListPresentation extends Fragment {
                 public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
                     return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
                         public Subscription onSubscribe(Observer<? super TweetPageResponse> t1) {
-                            try { Thread.sleep(5000); } catch (InterruptedException e) { }
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                            }
                             return null;
-                        }});
+                        }
+                    });
                 }
             });
 
             mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
                 public void call(TweetPageResponse pTweetPageResponse) {
-                    TweetPage lPage = pTweetPageResponse.tweetPage();
-                    mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                    mTweets.insert(lPage);
-                    // XXX
-                    if (lPage.size() > 15) {
-                        mTweets.insert(new TimeGapPage(new TimeGap(lPage.tweets().get(15).getId() - 1, lPage.tweets().get(15).getId() - 2)));
-                    }
-
+                    // TweetPage lPage = pTweetPageResponse.tweetPage();
+                    // mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
+                    // mTweets.insert(lPage);
                 }
             });
         }
@@ -150,6 +179,6 @@ public class NewsListPresentation extends Fragment {
     }
 
     public interface NewsView {
-        void onBind(PageIndex<News> pIndex);
+        void onBind(PageIndex<NewsPresentation> pIndex);
     }
 }

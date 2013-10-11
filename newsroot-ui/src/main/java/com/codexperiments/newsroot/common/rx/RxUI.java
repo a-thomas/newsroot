@@ -1,9 +1,11 @@
 package com.codexperiments.newsroot.common.rx;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
+import rx.Subscription;
 import rx.subjects.PublishSubject;
-import rx.util.functions.Action1;
+import rx.util.functions.Func1;
 import android.app.Activity;
 import android.app.Dialog;
 import android.view.View;
@@ -19,6 +21,46 @@ import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
+    
+    public static <TParam, TResult> Func1<TParam, TResult> toConstant(final TResult pConstant) {
+        return new Func1<TParam, TResult>() {
+            public TResult call(TParam pParam) {
+                return pConstant;
+            }
+        };
+    };
+    
+    public static <TValue> Func1<TValue, Boolean> eq(final TValue pConstant) {
+        return new Func1<TValue, Boolean>() {
+            public Boolean call(TValue pValue) {
+                return pConstant.equals(pValue);
+            }
+        };
+    };
+    
+    public static <TValue> Observable<TValue> distinct(final Observable<TValue> pObservable) {
+        return Observable.create(new OnSubscribeFunc<TValue>() {
+            public Subscription onSubscribe(final Observer<? super TValue> pObserver) {
+                return pObservable.subscribe(new Observer<TValue>() {
+                    TValue mPreviousValue = null;
+                    
+                    public void onNext(TValue pValue) {
+                        if ((pValue != null) && !pValue.equals(mPreviousValue)) {
+                            pObserver.onNext(pValue);
+                        }
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                });
+            }
+        });
+    };
     
     public static Observable<Void> fromClick(View view) {
         final PublishSubject<Void> lSubject = PublishSubject.create();

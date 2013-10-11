@@ -28,6 +28,13 @@ public class Property<TValue> extends Observable<TValue> implements Observer<TVa
         mProperty.onNext(pValue);
     }
 
+    public void setIfNew(TValue pValue) {
+        if ((mValue == null && pValue != null) || ((mValue != null) && !mValue.equals(pValue))) {
+            mValue = pValue;
+            mProperty.onNext(pValue);
+        }
+    }
+
     @Override
     public Subscription subscribe(Observer<? super TValue> pObserver) {
         return mProperty.subscribe(pObserver);

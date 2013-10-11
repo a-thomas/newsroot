@@ -7,6 +7,7 @@ import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
+import com.codexperiments.newsroot.presentation.NewsListPresentation;
 import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.codexperiments.newsroot.presentation.TimeGapPresentation;
 import com.codexperiments.newsroot.presentation.TweetPresentation;
@@ -16,9 +17,9 @@ public class NewsPage implements Page<NewsPresentation> {
     private final List<NewsPresentation> mNews;
     private final TimeRange mTimeRange;
 
-    public NewsPage(TimeGap pTimeGap) {
+    public NewsPage(TimeGap pTimeGap, NewsListPresentation pNewsListPresentation) {
         super();
-        mNews = Lists.<NewsPresentation>newArrayList(new TimeGapPresentation(pTimeGap));
+        mNews = Lists.<NewsPresentation>newArrayList(new TimeGapPresentation(pNewsListPresentation, pTimeGap));
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 

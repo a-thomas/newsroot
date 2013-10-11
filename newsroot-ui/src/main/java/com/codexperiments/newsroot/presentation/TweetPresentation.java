@@ -1,7 +1,5 @@
 package com.codexperiments.newsroot.presentation;
 
-import rx.Observable;
-
 import com.codexperiments.newsroot.common.rx.BooleanProperty;
 import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
@@ -30,7 +28,7 @@ public class TweetPresentation implements NewsPresentation {
         return mToggleSelection;
     }
     
-    public Observable<Boolean> isSelected() {
+    public BooleanProperty isSelected() {
         return mSelected;
     }
 }

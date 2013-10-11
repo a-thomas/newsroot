@@ -4,6 +4,8 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.subscriptions.Subscriptions;
+import rx.util.functions.Action0;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Activity;
@@ -23,6 +25,7 @@ import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.newsroot.ui.fragment.NewsPage;
 
 public class NewsListPresentation extends Fragment {
@@ -102,7 +105,7 @@ public class NewsListPresentation extends Fragment {
                     // XXX
                     if (lPage.size() > 15) {
                         long id = lPage.tweets().get(15).getId() - 1;
-                        mTweets.insert(new NewsPage(new TimeGap(id, id - 1)));
+                        mTweets.insert(new NewsPage(new TimeGap(id, id - 1), NewsListPresentation.this));
                     }
 
                 }
@@ -116,12 +119,18 @@ public class NewsListPresentation extends Fragment {
             mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
                 public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
                     return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-                        public Subscription onSubscribe(Observer<? super TweetPageResponse> t1) {
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                            }
-                            return null;
+                        public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+                            AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+                                public void call() {
+                                    try {
+                                        Thread.sleep(5000);
+                                        pObserver.onNext(null);
+                                        pObserver.onCompleted();
+                                    } catch (InterruptedException e) {
+                                    }
+                                }
+                            });
+                            return Subscriptions.empty();
                         }
                     });
                 }
@@ -129,9 +138,14 @@ public class NewsListPresentation extends Fragment {
 
             mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
                 public void call(TweetPageResponse pTweetPageResponse) {
-                    // TweetPage lPage = pTweetPageResponse.tweetPage();
-                    // mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                    // mTweets.insert(lPage);
+                    if (pTweetPageResponse != null) {
+                        // TweetPage lPage = pTweetPageResponse.tweetPage();
+                        // mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
+                        // mTweets.insert(lPage);
+                        mTweets.toString();
+                    } else {
+                        mTweets.toString();
+                    }
                 }
             });
         }

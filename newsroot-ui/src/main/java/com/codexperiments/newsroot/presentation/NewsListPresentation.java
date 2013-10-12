@@ -105,7 +105,7 @@ public class NewsListPresentation extends Fragment {
                     // XXX
                     if (lPage.size() > 15) {
                         long id = lPage.tweets().get(15).getId() - 1;
-                        mTweets.insert(new NewsPage(new TimeGap(id, id - 1), NewsListPresentation.this));
+                        mTweets.insert(new NewsPage(NewsListPresentation.this, new TimeGap(id, id - 1)));
                     }
 
                 }
@@ -114,10 +114,10 @@ public class NewsListPresentation extends Fragment {
         return mFindMoreCommand;
     }
 
-    public AsyncCommand<TimeGap, ?> findGapCommand() {
+    public AsyncCommand<TimeGap, TweetPageResponse> findGapCommand() {
         if (mFindGapCommand == null) {
             mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
-                public Observable<TweetPageResponse> call(TimeGap pTimeGap) {
+                public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
                     return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
                         public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
                             AndroidScheduler.threadPoolForIO().schedule(new Action0() {

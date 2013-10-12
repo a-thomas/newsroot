@@ -21,7 +21,7 @@ import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
-    
+
     public static <TParam, TResult> Func1<TParam, TResult> toConstant(final TResult pConstant) {
         return new Func1<TParam, TResult>() {
             public TResult call(TParam pParam) {
@@ -29,7 +29,7 @@ public class RxUI {
             }
         };
     };
-    
+
     public static <TValue> Func1<TValue, Boolean> eq(final TValue pConstant) {
         return new Func1<TValue, Boolean>() {
             public Boolean call(TValue pValue) {
@@ -37,13 +37,25 @@ public class RxUI {
             }
         };
     };
-    
+
+    public static Func1<Boolean, Boolean> not() {
+        return new Func1<Boolean, Boolean>() {
+            public Boolean call(Boolean pValue) {
+                if (pValue == Boolean.TRUE) {
+                    return Boolean.FALSE;
+                } else {
+                    return Boolean.TRUE;
+                }
+            }
+        };
+    };
+
     public static <TValue> Observable<TValue> distinct(final Observable<TValue> pObservable) {
         return Observable.create(new OnSubscribeFunc<TValue>() {
             public Subscription onSubscribe(final Observer<? super TValue> pObserver) {
                 return pObservable.subscribe(new Observer<TValue>() {
                     TValue mPreviousValue = null;
-                    
+
                     public void onNext(TValue pValue) {
                         if ((pValue != null) && !pValue.equals(mPreviousValue)) {
                             pObserver.onNext(pValue);
@@ -61,7 +73,7 @@ public class RxUI {
             }
         });
     };
-    
+
     public static Observable<Void> fromClick(View view) {
         final PublishSubject<Void> lSubject = PublishSubject.create();
         view.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +83,6 @@ public class RxUI {
         });
         return lSubject;
     }
-
 
     public static Observable<Void> fromOnMoreAction(PageAdapter<NewsPresentation> pPageAdapter) {
         final PublishSubject<Void> lPublisher = PublishSubject.create();
@@ -151,11 +162,25 @@ public class RxUI {
             }
         };
     }
-    
+
     public static Observer<Boolean> toActivated(final View pView) {
         return new Observer<Boolean>() {
             public void onNext(Boolean pActivated) {
                 pView.setActivated(pActivated.booleanValue());
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+            }
+        };
+    }
+
+    public static Observer<Boolean> toEnabled(final View pView) {
+        return new Observer<Boolean>() {
+            public void onNext(Boolean pActivated) {
+                pView.setEnabled(pActivated.booleanValue());
             }
 
             public void onCompleted() {

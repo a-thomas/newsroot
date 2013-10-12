@@ -17,9 +17,9 @@ public class NewsPage implements Page<NewsPresentation> {
     private final List<NewsPresentation> mNews;
     private final TimeRange mTimeRange;
 
-    public NewsPage(TimeGap pTimeGap, NewsListPresentation pNewsListPresentation) {
+    public NewsPage(NewsListPresentation pNewsListPresentation, TimeGap pTimeGap) {
         super();
-        mNews = Lists.<NewsPresentation>newArrayList(new TimeGapPresentation(pNewsListPresentation, pTimeGap));
+        mNews = Lists.<NewsPresentation> newArrayList(new TimeGapPresentation(pNewsListPresentation.findGapCommand(), pTimeGap));
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 

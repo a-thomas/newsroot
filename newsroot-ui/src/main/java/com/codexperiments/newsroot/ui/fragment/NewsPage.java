@@ -19,7 +19,7 @@ public class NewsPage implements Page<NewsPresentation> {
 
     public NewsPage(NewsListPresentation pNewsListPresentation, TimeGap pTimeGap) {
         super();
-        mNews = Lists.<NewsPresentation> newArrayList(new TimeGapPresentation(pNewsListPresentation.findGapCommand(), pTimeGap));
+        mNews = Lists.<NewsPresentation> newArrayList(new TimeGapPresentation.Model(pTimeGap));
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 
@@ -28,7 +28,7 @@ public class NewsPage implements Page<NewsPresentation> {
         List<Tweet> lTweets = pTweetPage.tweets();
         mNews = Lists.newArrayListWithCapacity(lTweets.size());
         for (Tweet lTweet : lTweets) {
-            mNews.add(new TweetPresentation(lTweet));
+            mNews.add(new TweetPresentation.Model(lTweet));
         }
         mTimeRange = pTweetPage.timeRange();
     }

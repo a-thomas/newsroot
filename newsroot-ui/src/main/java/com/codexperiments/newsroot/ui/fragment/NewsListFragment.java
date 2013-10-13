@@ -9,10 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
@@ -60,8 +57,8 @@ public class NewsListFragment extends Fragment implements NewsView {
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
 
         mUIListAdapter = new PageAdapter<NewsPresentation>(pLayoutInflater);
-        mUIListAdapter.addItemType(TimeGapPresentation.class, R.layout.item_news_timegap);
-        mUIListAdapter.addItemType(TweetPresentation.class, R.layout.item_news);
+        mUIListAdapter.addItemType(TimeGapPresentation.Model.class, R.layout.item_news_timegap);
+        mUIListAdapter.addItemType(TweetPresentation.Model.class, R.layout.item_news);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE); // CHOICE_MODE_MULTIPLE
         mUIList.setAdapter(mUIListAdapter);

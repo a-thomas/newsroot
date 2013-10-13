@@ -13,7 +13,7 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.presentation.TweetPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
-public class NewsItem extends RelativeLayout implements PageAdapterItem<TweetPresentation> {
+public class NewsItem extends RelativeLayout implements PageAdapterItem<TweetPresentation.Model> {
     private TweetPresentation mPresentation;
     private CompositeSubscription mSubcriptions;
 
@@ -38,31 +38,35 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<TweetPre
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+
         mChecked = false;
         mUINewsName = (TextView) findViewById(R.id.item_news_name);
         mUINewsScreenName = (TextView) findViewById(R.id.item_news_screenname);
         mUINewsText = (TextView) findViewById(R.id.item_news_text);
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
-        
+
         mSubcriptions = Subscriptions.create();
     }
 
     @Override
-    public void setContent(TweetPresentation pTweetPresentation) {
-        if (mPresentation != null) {
-            mSubcriptions.unsubscribe();
-            mSubcriptions = Subscriptions.create();
-        }
-        
-        mPresentation = pTweetPresentation;
+    public void setContent(TweetPresentation.Model pTweetPresentationModel) {
+        // if (mPresentation != null) {
+        // mSubcriptions.unsubscribe();
+        // mSubcriptions = Subscriptions.create();
+        // }
 
-        Tweet lTweet = pTweetPresentation.getTweet();
+        if (mPresentation == null) {
+            mPresentation = new TweetPresentation(pTweetPresentationModel);
+            mSubcriptions.add(mPresentation.isSelected().subscribe(RxUI.toActivated(this)));
+            mSubcriptions.add(RxUI.fromClick(this).subscribe(mPresentation.toggleSelection()));
+        } else {
+            mPresentation.bind(pTweetPresentationModel);
+        }
+
+        Tweet lTweet = pTweetPresentationModel.mTweet;
         mUINewsName.setText(lTweet.getName());
         mUINewsScreenName.setText(lTweet.getScreenName());
         mUINewsText.setText(lTweet.getText());
         mUINewsCreatedAt.setText(String.valueOf(lTweet.getCreatedAt()));
-        
-        mSubcriptions.add(mPresentation.isSelected().subscribe(RxUI.toActivated(this)));
-        mSubcriptions.add(RxUI.fromClick(this).subscribe(mPresentation.toggleSelection()));
     }
 }

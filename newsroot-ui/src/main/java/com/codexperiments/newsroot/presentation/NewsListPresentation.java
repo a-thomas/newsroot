@@ -1,11 +1,6 @@
 package com.codexperiments.newsroot.presentation;
 
 import rx.Observable;
-import rx.Observable.OnSubscribeFunc;
-import rx.Observer;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
-import rx.util.functions.Action0;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Activity;
@@ -25,7 +20,6 @@ import com.codexperiments.newsroot.domain.twitter.Timeline;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.newsroot.ui.fragment.NewsPage;
 
 public class NewsListPresentation extends Fragment {
@@ -114,43 +108,43 @@ public class NewsListPresentation extends Fragment {
         return mFindMoreCommand;
     }
 
-    public AsyncCommand<TimeGap, TweetPageResponse> findGapCommand() {
-        if (mFindGapCommand == null) {
-            mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
-                public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
-                    return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-                        public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-                            AndroidScheduler.threadPoolForIO().schedule(new Action0() {
-                                public void call() {
-                                    try {
-                                        Thread.sleep(5000);
-                                        pObserver.onNext(null);
-                                        pObserver.onCompleted();
-                                    } catch (InterruptedException e) {
-                                    }
-                                }
-                            });
-                            return Subscriptions.empty();
-                        }
-                    });
-                }
-            });
-
-            mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
-                public void call(TweetPageResponse pTweetPageResponse) {
-                    if (pTweetPageResponse != null) {
-                        // TweetPage lPage = pTweetPageResponse.tweetPage();
-                        // mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                        // mTweets.insert(lPage);
-                        mTweets.toString();
-                    } else {
-                        mTweets.toString();
-                    }
-                }
-            });
-        }
-        return mFindGapCommand;
-    }
+    // public AsyncCommand<TimeGap, TweetPageResponse> findGapCommand() {
+    // if (mFindGapCommand == null) {
+    // mFindGapCommand = AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
+    // public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
+    // return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+    // public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+    // AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+    // public void call() {
+    // try {
+    // Thread.sleep(5000);
+    // pObserver.onNext(null);
+    // pObserver.onCompleted();
+    // } catch (InterruptedException e) {
+    // }
+    // }
+    // });
+    // return Subscriptions.empty();
+    // }
+    // });
+    // }
+    // });
+    //
+    // mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
+    // public void call(TweetPageResponse pTweetPageResponse) {
+    // if (pTweetPageResponse != null) {
+    // // TweetPage lPage = pTweetPageResponse.tweetPage();
+    // // mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
+    // // mTweets.insert(lPage);
+    // mTweets.toString();
+    // } else {
+    // mTweets.toString();
+    // }
+    // }
+    // });
+    // }
+    // return mFindGapCommand;
+    // }
 
     @Override
     public void onAttach(Activity pActivity) {

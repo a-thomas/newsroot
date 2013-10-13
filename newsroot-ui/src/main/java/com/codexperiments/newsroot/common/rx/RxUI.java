@@ -8,6 +8,7 @@ import rx.subjects.PublishSubject;
 import rx.util.functions.Func1;
 import android.app.Activity;
 import android.app.Dialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
@@ -173,6 +174,7 @@ public class RxUI {
             }
 
             public void onError(Throwable pThrowable) {
+                Log.e("", "", pThrowable);
             }
         };
     }

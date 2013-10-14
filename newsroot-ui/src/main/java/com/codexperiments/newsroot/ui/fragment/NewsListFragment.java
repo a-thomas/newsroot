@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
+import rx.Observer;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -86,10 +87,10 @@ public class NewsListFragment extends Fragment implements NewsView {
     @Override
     public void onBind(PageIndex<NewsPresentation> pIndex) {
         mUIListAdapter.bindTo(mPresentation.tweets());
-        mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
+        // mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
 
-        Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
-        onMoreAction.subscribe(mPresentation.findMoreCommand());
+        // Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
+        // onMoreAction.subscribe(mPresentation.findMoreCommand());
     }
 
     @Override
@@ -319,4 +320,14 @@ public class NewsListFragment extends Fragment implements NewsView {
     // }
     // });
     // }
+
+    @Override
+    public Observer<Object> listView() {
+        return RxUI.toListView2(mUIListAdapter);
+    }
+
+    @Override
+    public Observable<Void> onMore() {
+        return RxUI.fromOnMoreAction(mUIListAdapter);
+    }
 }

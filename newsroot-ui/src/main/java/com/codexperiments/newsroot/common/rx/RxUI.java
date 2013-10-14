@@ -150,6 +150,20 @@ public class RxUI {
         };
     }
 
+    public static <TItem> Observer<Object> toListView2(final BaseAdapter pAdapter) {
+        return new Observer<Object>() {
+            public void onNext(Object pValue) {
+                pAdapter.notifyDataSetChanged();
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+            }
+        };
+    }
+
     public static <TItem> Observer<Page<? extends TItem>> toPageIndex(final PageIndex<TItem> pIndex) {
         return new Observer<Page<? extends TItem>>() {
             public void onNext(Page<? extends TItem> pPage) {

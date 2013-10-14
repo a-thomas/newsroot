@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.presentation;
 
 import rx.Observable;
+import rx.Observer;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.Activity;
@@ -74,8 +75,10 @@ public class NewsListPresentation extends Fragment {
     public void onActivityCreated(Bundle pSavedInstanceState) {
         super.onActivityCreated(pSavedInstanceState);
         mView.onBind(mTweets);
+        findMoreCommand();
 
-        // mFindMoreCommand.onNext(RxUI.VOID_SIGNAL);
+        mTweets.onInsert().subscribe(mView.listView());
+        mView.onMore().subscribe(mFindMoreCommand);
     }
 
     public RxPageIndex<NewsPresentation> tweets() {
@@ -158,5 +161,9 @@ public class NewsListPresentation extends Fragment {
 
     public interface NewsView {
         void onBind(PageIndex<NewsPresentation> pIndex);
+
+        Observable<Void> onMore();
+
+        Observer<Object> listView();
     }
 }

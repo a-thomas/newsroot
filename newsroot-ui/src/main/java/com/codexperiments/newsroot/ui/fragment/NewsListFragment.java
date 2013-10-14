@@ -87,10 +87,10 @@ public class NewsListFragment extends Fragment implements NewsView {
     @Override
     public void onBind(PageIndex<NewsPresentation> pIndex) {
         mUIListAdapter.bindTo(mPresentation.tweets());
-        // mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
+        mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
 
-        // Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
-        // onMoreAction.subscribe(mPresentation.findMoreCommand());
+        Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
+        onMoreAction.subscribe(mPresentation.findMoreCommand());
     }
 
     @Override

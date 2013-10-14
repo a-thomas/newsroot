@@ -77,8 +77,8 @@ public class NewsListPresentation extends Fragment {
         mView.onBind(mTweets);
         findMoreCommand();
 
-        mTweets.onInsert().subscribe(mView.listView());
-        mView.onMore().subscribe(mFindMoreCommand);
+        // mTweets.onInsert().subscribe(mView.listView());
+        // mView.onMore().subscribe(mFindMoreCommand);
     }
 
     public RxPageIndex<NewsPresentation> tweets() {

@@ -76,9 +76,9 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<NewsItem
         // mSubcriptions.unsubscribe();
         // mSubcriptions = Subscriptions.create();
         // }
+        mModel = pTweetPresentationModel;
 
         if (mToggleSelection == null) {
-            mModel = pTweetPresentationModel;
             mSelectedProperty = Property2.create(new PropertyProxy<Boolean>() {
                 public Boolean get() {
                     return mModel.mSelected;
@@ -88,6 +88,7 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<NewsItem
                     mModel.mSelected = pValue;
                 }
             });
+
             mToggleSelection = Command.create(Property2.toggle(mSelectedProperty));
             mToggleSelection.subscribe(mSelectedProperty);
 
@@ -95,7 +96,6 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<NewsItem
             mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
             mSubcriptions.add(RxUI.fromClick(this).subscribe(mToggleSelection));
         } else {
-            mModel = pTweetPresentationModel;
             mSelectedProperty.set(mModel.mSelected);
             // mPresentation.bind(pTweetPresentationModel);
         }

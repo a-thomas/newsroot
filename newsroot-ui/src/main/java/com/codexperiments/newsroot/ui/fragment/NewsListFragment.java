@@ -88,7 +88,6 @@ public class NewsListFragment extends Fragment {
 
         mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call(Void pVoid) {
-                // try { Thread.sleep(1000000000); } catch (InterruptedException e) { }
                 return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
             }
         });
@@ -122,21 +121,11 @@ public class NewsListFragment extends Fragment {
     public void onSaveInstanceState(Bundle pBundle) {
     }
 
-    // @Override
-    // public void onBind(PageIndex<NewsPresentation> pIndex) {
-    // mUIListAdapter.bindTo(mPresentation.tweets());
-    // mPresentation.tweets().onInsert().subscribe(RxUI.toListView(mUIListAdapter));
-    //
-    // Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
-    // onMoreAction.subscribe(mPresentation.findMoreCommand());
-    // }
-
     @Override
     public void onStart() {
         super.onStart();
         mEventBus.registerListener(this);
         mTaskManager.manage(this);
-        // moreTweets();
     }
 
     @Override

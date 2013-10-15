@@ -78,8 +78,9 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<N
         // mSubcriptions.unsubscribe();
         // mSubcriptions = Subscriptions.create();
         // }
+        mModel = pTimeGapPresentation;
+
         if (mLoadingProperty == null) {
-            mModel = pTimeGapPresentation;
             mLoadCommand = Command.create();
             mFindGapCommand = findGapCommand();
             mLoadingProperty = Property2.create(new PropertyProxy<Boolean>() {
@@ -109,7 +110,6 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<N
             Observable<Boolean> loadingFinished = mLoadCommand.map(RxUI.toConstant(Boolean.TRUE));
             Observable.merge(loadingRequested, loadingFinished).subscribe(mLoadingProperty); // TODO distinct.
         } else {
-            mModel = pTimeGapPresentation;
             mLoadingProperty.set(mModel.mLoading);
             // mPresentation.bind(pTimeGapPresentation);
         }

@@ -8,14 +8,36 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.common.rx.Command;
+import com.codexperiments.newsroot.common.rx.Property2;
+import com.codexperiments.newsroot.common.rx.Property2.PropertyProxy;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.presentation.TweetPresentation;
+import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
-public class NewsItem extends RelativeLayout implements PageAdapterItem<TweetPresentation.Model> {
-    private TweetPresentation mPresentation;
+public class NewsItem extends RelativeLayout implements PageAdapterItem<NewsItem.Model> {
+    public static class Model implements NewsPresentation {
+        public Tweet mTweet;
+        public Boolean mSelected;
+
+        public Model(Tweet pTweet) {
+            this(pTweet, Boolean.FALSE);
+        }
+
+        public Model(Tweet pTweet, Boolean pSelected) {
+            super();
+            mTweet = pTweet;
+            mSelected = pSelected;
+        }
+    }
+
+    public Model mModel;
+
+    // private TweetPresentation mPresentation;
     private CompositeSubscription mSubcriptions;
+    private Property2<Boolean> mSelectedProperty;
+    private Command<Void, Boolean> mToggleSelection;
 
     private boolean mChecked;
     private TextView mUINewsName;
@@ -49,18 +71,33 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<TweetPre
     }
 
     @Override
-    public void setContent(TweetPresentation.Model pTweetPresentationModel) {
+    public void setContent(NewsItem.Model pTweetPresentationModel) {
         // if (mPresentation != null) {
         // mSubcriptions.unsubscribe();
         // mSubcriptions = Subscriptions.create();
         // }
 
-        if (mPresentation == null) {
-            mPresentation = new TweetPresentation(pTweetPresentationModel);
-            mSubcriptions.add(mPresentation.isSelected().subscribe(RxUI.toActivated(this)));
-            mSubcriptions.add(RxUI.fromClick(this).subscribe(mPresentation.toggleSelection()));
+        if (mToggleSelection == null) {
+            mModel = pTweetPresentationModel;
+            mSelectedProperty = Property2.create(new PropertyProxy<Boolean>() {
+                public Boolean get() {
+                    return mModel.mSelected;
+                }
+
+                public void set(Boolean pValue) {
+                    mModel.mSelected = pValue;
+                }
+            });
+            mToggleSelection = Command.create(Property2.toggle(mSelectedProperty));
+            mToggleSelection.subscribe(mSelectedProperty);
+
+            // mPresentation = new TweetPresentation(pTweetPresentationModel);
+            mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
+            mSubcriptions.add(RxUI.fromClick(this).subscribe(mToggleSelection));
         } else {
-            mPresentation.bind(pTweetPresentationModel);
+            mModel = pTweetPresentationModel;
+            mSelectedProperty.set(mModel.mSelected);
+            // mPresentation.bind(pTweetPresentationModel);
         }
 
         Tweet lTweet = pTweetPresentationModel.mTweet;

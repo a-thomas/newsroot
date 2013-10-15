@@ -7,19 +7,16 @@ import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
-import com.codexperiments.newsroot.presentation.NewsListPresentation;
 import com.codexperiments.newsroot.presentation.NewsPresentation;
-import com.codexperiments.newsroot.presentation.TimeGapPresentation;
-import com.codexperiments.newsroot.presentation.TweetPresentation;
 import com.google.common.collect.Lists;
 
 public class NewsPage implements Page<NewsPresentation> {
     private final List<NewsPresentation> mNews;
     private final TimeRange mTimeRange;
 
-    public NewsPage(NewsListPresentation pNewsListPresentation, TimeGap pTimeGap) {
+    public NewsPage(TimeGap pTimeGap) {
         super();
-        mNews = Lists.<NewsPresentation> newArrayList(new TimeGapPresentation.Model(pTimeGap));
+        mNews = Lists.<NewsPresentation> newArrayList(new NewsTimeGapItem.Model(pTimeGap));
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 
@@ -28,7 +25,7 @@ public class NewsPage implements Page<NewsPresentation> {
         List<Tweet> lTweets = pTweetPage.tweets();
         mNews = Lists.newArrayListWithCapacity(lTweets.size());
         for (Tweet lTweet : lTweets) {
-            mNews.add(new TweetPresentation.Model(lTweet));
+            mNews.add(new NewsItem.Model(lTweet));
         }
         mTimeRange = pTweetPage.timeRange();
     }

@@ -1,7 +1,5 @@
 package com.codexperiments.newsroot.domain.twitter;
 
-import com.codexperiments.newsroot.common.rx.Property;
-import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
 
 public class Tweet implements News {
     static int iiii = 0;
@@ -79,17 +77,5 @@ public class Tweet implements News {
     @Override
     public String toString() {
         return "Tweet [mId=" + mId + ", mName=" + ii + "]";
-    }
-
-    public static Property<Boolean> selectedProperty(final Tweet pTweet) {
-        return Property.create(new PropertyAccess<Boolean>() {
-            public Boolean get() {
-                return pTweet.mSelected;
-            }
-
-            public void set(Boolean pValue) {
-                pTweet.mSelected = pValue;
-            }
-        });
     }
 }

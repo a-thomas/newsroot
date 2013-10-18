@@ -19,6 +19,7 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.rx.Property;
+import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
@@ -30,6 +31,7 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
     private/* final */Command<Void, Void> mLoadCommand;
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
 
+    private TimeGap mTimeGap;
     private TextView mUINewsCreatedAt;
     private CompositeSubscription mSubcriptions;
 
@@ -51,9 +53,12 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_timegap);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    protected void initialize(final TimeGap pTimeGap) {
+    public void initialize(final TimeGap pTimeGap) {
+        mTimeGap = pTimeGap;
         mSubcriptions = Subscriptions.create();
+        mLoadingProperty = loadingProperty();
 
         mLoadCommand = Command.create();
         mFindGapCommand = createFindGapCommand();
@@ -70,25 +75,26 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
             }
         });
 
-        mLoadingProperty = TimeGap.loadingProperty(pTimeGap);
-        mLoadingProperty.where(RxUI.eq(Boolean.TRUE)) //
-                        .map(new Func1<Boolean, TimeGap>() {
-                            public TimeGap call(Boolean pValue) {
-                                return pTimeGap;
-                            }
-                        })
-                        .subscribe(mFindGapCommand);
-
         mSubcriptions.add(RxUI.fromClick(this).subscribe(mLoadCommand));
         mSubcriptions.add(mLoadingProperty.subscribe(RxUI.toActivated(this)));
         mSubcriptions.add(mLoadingProperty.map(RxUI.not()).subscribe(RxUI.toEnabled(this)));
+        mSubcriptions.add(mLoadingProperty.where(RxUI.eq(Boolean.TRUE)).map(timegap()).subscribe(mFindGapCommand));
 
         Observable<Boolean> loadingRequested = mFindGapCommand.map(RxUI.toConstant(Boolean.FALSE));
         Observable<Boolean> loadingFinished = mLoadCommand.map(RxUI.toConstant(Boolean.TRUE));
         Observable.merge(loadingRequested, loadingFinished).subscribe(mLoadingProperty); // TODO distinct.
     }
 
-    private AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
+    @Override
+    public void setContent(TimeGap pTimeGap) {
+        mTimeGap = pTimeGap;
+
+        mUINewsCreatedAt.setText(mTimeGap.earliestBound() + "==\n" + mTimeGap.oldestBound());
+
+        mLoadingProperty.reset();
+    }
+
+    protected AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
         return AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
                 return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
@@ -110,12 +116,23 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
         });
     }
 
-    @Override
-    public void setContent(TimeGap pTimeGap) {
-        if (mSubcriptions == null) initialize(pTimeGap);
+    protected Func1<Boolean, TimeGap> timegap() {
+        return new Func1<Boolean, TimeGap>() {
+            public TimeGap call(Boolean pValue) {
+                return mTimeGap;
+            }
+        };
+    }
 
-        mLoadingProperty.set(pTimeGap.isLoading());
+    protected Property<Boolean> loadingProperty() {
+        return Property.create(new PropertyAccess<Boolean>() {
+            public Boolean get() {
+                return mTimeGap.isLoading();
+            }
 
-        mUINewsCreatedAt.setText(pTimeGap.earliestBound() + "==\n" + pTimeGap.oldestBound());
+            public void set(Boolean pValue) {
+                mTimeGap.setLoading(pValue);
+            }
+        });
     }
 }

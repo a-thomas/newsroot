@@ -43,6 +43,8 @@ public class PageAdapter<TItem> extends BaseAdapter {
     }
 
     public interface PageAdapterItem<TItem> {
+        void initialize(TItem pItem);
+
         void setContent(TItem pItem);
     }
 
@@ -101,6 +103,7 @@ public class PageAdapter<TItem> extends BaseAdapter {
 
             if (pConvertView == null) {
                 pConvertView = mLayoutInflater.inflate(lItemResource, pParent, false);
+                ((PageAdapterItem) pConvertView).initialize(lItem);
             }
             ((PageAdapterItem) pConvertView).setContent(lItem);
         }

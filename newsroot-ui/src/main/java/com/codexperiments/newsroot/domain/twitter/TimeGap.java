@@ -2,9 +2,6 @@ package com.codexperiments.newsroot.domain.twitter;
 
 import java.util.List;
 
-import com.codexperiments.newsroot.common.rx.Property;
-import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
-
 // TODO Make immutable
 public class TimeGap implements News {
     private/* final */long mId;
@@ -188,17 +185,5 @@ public class TimeGap implements News {
     @Override
     public String toString() {
         return "TimeGap [mId=" + mId + ", mEarliestBound=" + mEarliestBound + ", mOldestBound=" + mOldestBound + "]";
-    }
-
-    public static Property<Boolean> loadingProperty(final TimeGap pTimeGap) {
-        return Property.create(new PropertyAccess<Boolean>() {
-            public Boolean get() {
-                return pTimeGap.mLoading;
-            }
-
-            public void set(Boolean pValue) {
-                pTimeGap.mLoading = pValue;
-            }
-        });
     }
 }

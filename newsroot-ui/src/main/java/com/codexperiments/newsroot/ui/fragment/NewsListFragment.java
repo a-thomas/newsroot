@@ -1,6 +1,8 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
+import rx.subscriptions.CompositeSubscription;
+import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
 import android.app.ProgressDialog;
@@ -43,6 +45,7 @@ public class NewsListFragment extends Fragment {
     private RxPageIndex<News> mTweets;
     private TimeRange mTimeRange;
 
+    private CompositeSubscription mSubcriptions;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
     public static final NewsListFragment forUser(String pScreenName) {
@@ -79,12 +82,21 @@ public class NewsListFragment extends Fragment {
         mTweets = RxPageIndex.newPageIndex();
         mTimeRange = null;
 
+        initialize();
+
+        mUIListAdapter.bindTo(mTweets);
+        onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
+        return lUIFragment;
+    }
+
+    protected void initialize() {
+        mSubcriptions = Subscriptions.create();
         mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call(Void pVoid) {
                 return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
             }
         });
-        mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
+        mSubcriptions.add(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
                 TweetPage lPage = pTweetPageResponse.tweetPage();
                 mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
@@ -96,15 +108,10 @@ public class NewsListFragment extends Fragment {
                 }
 
             }
-        });
+        }));
 
-        mUIListAdapter.bindTo(mTweets);
-        mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter));
-        Observable<Void> onMoreAction = RxUI.fromOnMoreAction(mUIListAdapter)/* .startWith(RxUI.VOID_SIGNALS) */;
-        onMoreAction.subscribe(mFindMoreCommand);
-
-        onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
-        return lUIFragment;
+        mSubcriptions.add(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
+        mSubcriptions.add(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
     }
 
     public void onInitializeInstanceState(Bundle pBundle) {

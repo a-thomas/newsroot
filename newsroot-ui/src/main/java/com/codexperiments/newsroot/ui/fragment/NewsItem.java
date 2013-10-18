@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.rx.Property;
+import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
@@ -17,6 +18,7 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<Tweet> {
     private CompositeSubscription mSubcriptions;
     private Property<Boolean> mSelectedProperty;
 
+    private Tweet mTweet;
     private TextView mUINewsName;
     private TextView mUINewsScreenName;
     private TextView mUINewsText;
@@ -44,9 +46,11 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<Tweet> {
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    protected void initialize(Tweet pTweet) {
+    @Override
+    public void initialize(Tweet pTweet) {
+        mTweet = pTweet;
         mSubcriptions = Subscriptions.create();
-        mSelectedProperty = Tweet.selectedProperty(pTweet);
+        mSelectedProperty = isSelectedProperty();
 
         mSubcriptions.add(RxUI.fromClick(this).subscribe(Property.toggle(mSelectedProperty)));
         mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
@@ -54,13 +58,25 @@ public class NewsItem extends RelativeLayout implements PageAdapterItem<Tweet> {
 
     @Override
     public void setContent(Tweet pTweet) {
-        if (mSubcriptions == null) initialize(pTweet);
+        mTweet = pTweet;
 
-        mSelectedProperty.set(pTweet.isSelected());
+        mUINewsName.setText(mTweet.getName());
+        mUINewsScreenName.setText(mTweet.getScreenName());
+        mUINewsText.setText(mTweet.getText());
+        mUINewsCreatedAt.setText(String.valueOf(mTweet.getCreatedAt()));
 
-        mUINewsName.setText(pTweet.getName());
-        mUINewsScreenName.setText(pTweet.getScreenName());
-        mUINewsText.setText(pTweet.getText());
-        mUINewsCreatedAt.setText(String.valueOf(pTweet.getCreatedAt()));
+        mSelectedProperty.reset();
+    }
+
+    protected Property<Boolean> isSelectedProperty() {
+        return Property.create(new PropertyAccess<Boolean>() {
+            public Boolean get() {
+                return mTweet.isSelected();
+            }
+
+            public void set(Boolean pValue) {
+                mTweet.setSelected(pValue);
+            }
+        });
     }
 }

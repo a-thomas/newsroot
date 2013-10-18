@@ -3,7 +3,7 @@ package com.codexperiments.newsroot.common.rx;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
 import rx.util.functions.Action1;
 
 public class Property<TValue> extends Observable<TValue> implements Observer<TValue> {
@@ -23,7 +23,7 @@ public class Property<TValue> extends Observable<TValue> implements Observer<TVa
     }
 
     private PropertyAccess<TValue> mProxy;
-    private BehaviorSubject<TValue> mProperty;
+    private PublishSubject<TValue> mProperty;
 
     public static <TValue> Property<TValue> create(PropertyAccess<TValue> pProxy) {
         return new Property<TValue>(pProxy);
@@ -32,7 +32,17 @@ public class Property<TValue> extends Observable<TValue> implements Observer<TVa
     protected Property(PropertyAccess<TValue> pProxy) {
         super(null);
         mProxy = pProxy;
-        mProperty = BehaviorSubject.createWithDefaultValue(mProxy.get());
+        // mProperty = BehaviorSubject.createWithDefaultValue(mProxy.get());
+        mProperty = PublishSubject.create();
+    }
+
+    public void reset() {
+        mProperty.onNext(mProxy.get());
+    }
+
+    public void reset(PropertyAccess<TValue> pPropertyAccess) {
+        mProxy = pPropertyAccess;
+        mProperty.onNext(mProxy.get());
     }
 
     public void set(TValue pValue) {

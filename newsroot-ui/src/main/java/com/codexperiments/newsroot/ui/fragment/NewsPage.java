@@ -3,20 +3,20 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.List;
 
 import com.codexperiments.newsroot.common.Page;
+import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
 import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
-import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.google.common.collect.Lists;
 
-public class NewsPage implements Page<NewsPresentation> {
-    private final List<NewsPresentation> mNews;
+public class NewsPage implements Page<News> {
+    private final List<News> mNews;
     private final TimeRange mTimeRange;
 
     public NewsPage(TimeGap pTimeGap) {
         super();
-        mNews = Lists.<NewsPresentation> newArrayList(new NewsTimeGapItem.Model(pTimeGap));
+        mNews = Lists.<News> newArrayList(pTimeGap);
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 
@@ -25,7 +25,7 @@ public class NewsPage implements Page<NewsPresentation> {
         List<Tweet> lTweets = pTweetPage.tweets();
         mNews = Lists.newArrayListWithCapacity(lTweets.size());
         for (Tweet lTweet : lTweets) {
-            mNews.add(new NewsItem.Model(lTweet));
+            mNews.add(lTweet);
         }
         mTimeRange = pTweetPage.timeRange();
     }
@@ -34,7 +34,7 @@ public class NewsPage implements Page<NewsPresentation> {
         return mTimeRange;
     }
 
-    public List<? extends NewsPresentation> news() {
+    public List<? extends News> news() {
         return mNews;
     }
 
@@ -49,7 +49,7 @@ public class NewsPage implements Page<NewsPresentation> {
     }
 
     @Override
-    public NewsPresentation get(int pIndex) {
+    public News get(int pIndex) {
         return mNews.get(pIndex);
     }
 

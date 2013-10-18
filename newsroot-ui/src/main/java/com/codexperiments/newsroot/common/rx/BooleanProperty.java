@@ -2,7 +2,7 @@ package com.codexperiments.newsroot.common.rx;
 
 import rx.util.functions.Func1;
 
-public class BooleanProperty extends Property<Boolean> {
+public class BooleanProperty extends Property3<Boolean> {
     public static BooleanProperty create() {
         return new BooleanProperty(Boolean.FALSE);
     }

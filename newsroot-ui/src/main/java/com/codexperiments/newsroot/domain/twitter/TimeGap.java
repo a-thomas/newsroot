@@ -2,11 +2,16 @@ package com.codexperiments.newsroot.domain.twitter;
 
 import java.util.List;
 
+import com.codexperiments.newsroot.common.rx.Property;
+import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
+
 // TODO Make immutable
 public class TimeGap implements News {
     private/* final */long mId;
     private/* final */long mEarliestBound;
     private/* final */long mOldestBound;
+
+    private boolean mLoading;
 
     // private transient List<Tweet> mTweets;
 
@@ -152,6 +157,14 @@ public class TimeGap implements News {
         return mEarliestBound < pTimeRange.oldestBound();
     }
 
+    public boolean isLoading() {
+        return mLoading;
+    }
+
+    public void setLoading(boolean pLoading) {
+        mLoading = pLoading;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -175,5 +188,17 @@ public class TimeGap implements News {
     @Override
     public String toString() {
         return "TimeGap [mId=" + mId + ", mEarliestBound=" + mEarliestBound + ", mOldestBound=" + mOldestBound + "]";
+    }
+
+    public static Property<Boolean> loadingProperty(final TimeGap pTimeGap) {
+        return Property.create(new PropertyAccess<Boolean>() {
+            public Boolean get() {
+                return pTimeGap.mLoading;
+            }
+
+            public void set(Boolean pValue) {
+                pTimeGap.mLoading = pValue;
+            }
+        });
     }
 }

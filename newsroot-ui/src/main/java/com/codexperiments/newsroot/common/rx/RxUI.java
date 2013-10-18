@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.presentation.NewsPresentation;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 
@@ -85,7 +84,7 @@ public class RxUI {
         return lSubject;
     }
 
-    public static Observable<Void> fromOnMoreAction(PageAdapter<NewsPresentation> pPageAdapter) {
+    public static Observable<Void> fromOnMoreAction(PageAdapter<?> pPageAdapter) {
         final PublishSubject<Void> lPublisher = PublishSubject.create();
         pPageAdapter.setMoreCallback(new MoreCallback() {
             public void onMore() {

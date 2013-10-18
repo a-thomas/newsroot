@@ -4,33 +4,46 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.subjects.BehaviorSubject;
+import rx.util.functions.Action1;
 
 public class Property<TValue> extends Observable<TValue> implements Observer<TValue> {
-    protected TValue mValue;
-    protected BehaviorSubject<TValue> mProperty;
-
-    public static <TParam> Property<TParam> create(TParam pValue) {
-        return new Property<TParam>(pValue);
+    public static <TInput> Action1<TInput> toggle(final Property<Boolean> pProperty) {
+        return new Action1<TInput>() {
+            public void call(TInput pInput) {
+                Boolean lValue = Boolean.valueOf(!pProperty.mProxy.get().booleanValue());
+                pProperty.set(lValue);
+            }
+        };
     }
 
-    protected Property(TValue pValue) {
+    public interface PropertyAccess<TValue> {
+        TValue get();
+
+        void set(TValue pValue);
+    }
+
+    private PropertyAccess<TValue> mProxy;
+    private BehaviorSubject<TValue> mProperty;
+
+    public static <TValue> Property<TValue> create(PropertyAccess<TValue> pProxy) {
+        return new Property<TValue>(pProxy);
+    }
+
+    protected Property(PropertyAccess<TValue> pProxy) {
         super(null);
-        mValue = pValue;
-        mProperty = BehaviorSubject.createWithDefaultValue(pValue);
+        mProxy = pProxy;
+        mProperty = BehaviorSubject.createWithDefaultValue(mProxy.get());
     }
-    
-    public TValue get() {
-        return mValue;
-    }
-    
+
     public void set(TValue pValue) {
-        mValue = pValue;
+        mProxy.set(pValue);
         mProperty.onNext(pValue);
     }
 
     public void setIfNew(TValue pValue) {
-        if ((mValue == null && pValue != null) || ((mValue != null) && !mValue.equals(pValue))) {
-            mValue = pValue;
+        TValue lValue = mProxy.get();
+        if ((lValue == null && pValue != null) || ((lValue != null) && !lValue.equals(pValue))) {
+            mProxy.set(pValue);
             mProperty.onNext(pValue);
         }
     }
@@ -42,7 +55,7 @@ public class Property<TValue> extends Observable<TValue> implements Observer<TVa
 
     @Override
     public void onNext(TValue pValue) {
-        mValue = pValue;
+        mProxy.set(pValue);
         mProperty.onNext(pValue);
     }
 

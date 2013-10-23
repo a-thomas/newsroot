@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
-import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.rx.Property;
 import com.codexperiments.newsroot.common.rx.Property.PropertyAccess;
 import com.codexperiments.newsroot.common.rx.RxUI;
@@ -27,8 +26,7 @@ import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.PageAdapterItem;
 
 public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<TimeGap> {
-    private Property<Boolean> mLoadingProperty;
-    private/* final */Command<Void, Void> mLoadCommand;
+    // private Property<Boolean> mLoadingProperty;
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
 
     private TimeGap mTimeGap;
@@ -54,13 +52,10 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void initialize(final TimeGap pTimeGap) {
         mTimeGap = pTimeGap;
         mSubcriptions = Subscriptions.create();
-        mLoadingProperty = loadingProperty();
 
-        mLoadCommand = Command.create();
         mFindGapCommand = createFindGapCommand();
         mFindGapCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
@@ -75,14 +70,9 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
             }
         });
 
-        mSubcriptions.add(RxUI.fromClick(this).subscribe(mLoadCommand));
-        mSubcriptions.add(mLoadingProperty.subscribe(RxUI.toActivated(this)));
-        mSubcriptions.add(mLoadingProperty.map(RxUI.not()).subscribe(RxUI.toEnabled(this)));
-        mSubcriptions.add(mLoadingProperty.where(RxUI.eq(Boolean.TRUE)).map(timegap()).subscribe(mFindGapCommand));
-
-        Observable<Boolean> loadingRequested = mFindGapCommand.map(RxUI.toConstant(Boolean.FALSE));
-        Observable<Boolean> loadingFinished = mLoadCommand.map(RxUI.toConstant(Boolean.TRUE));
-        Observable.merge(loadingRequested, loadingFinished).subscribe(mLoadingProperty); // TODO distinct.
+        mSubcriptions.add(RxUI.fromClick(this).map(timegap()).subscribe(mFindGapCommand));
+        mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toActivated(this)));
+        mSubcriptions.add(mFindGapCommand.isRunning().map(RxUI.not()).subscribe(RxUI.toEnabled(this)));
     }
 
     @Override
@@ -90,8 +80,7 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
         mTimeGap = pTimeGap;
 
         mUINewsCreatedAt.setText(mTimeGap.earliestBound() + "==\n" + mTimeGap.oldestBound());
-
-        mLoadingProperty.reset();
+        // mFindGapCommand.reset();
     }
 
     protected AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
@@ -116,9 +105,9 @@ public class NewsTimeGapItem extends RelativeLayout implements PageAdapterItem<T
         });
     }
 
-    protected Func1<Boolean, TimeGap> timegap() {
-        return new Func1<Boolean, TimeGap>() {
-            public TimeGap call(Boolean pValue) {
+    protected Func1<Void, TimeGap> timegap() {
+        return new Func1<Void, TimeGap>() {
+            public TimeGap call(Void pVoid) {
                 return mTimeGap;
             }
         };

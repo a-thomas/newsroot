@@ -61,11 +61,13 @@ public class AsyncCommand<TParam, TResult> extends Observable<TResult> implement
         return mCommand.map(new Func1<TParam, Observable<TResult>>() {
             public Observable<TResult> call(TParam ppAsyncObservable) {
                 return pAsyncCommand.call(ppAsyncObservable) //
+                                    .observeOn(mScheduler)
+                                    // Is it appropriate??
                                     .finallyDo(new Action0() {
                                         public void call() {
                                             mIsRunning.onNext(Boolean.FALSE);
                                         }
-                                    }); // TODO Catch
+                                    }); // TODO Catch & toRef
             }
         }).map(new Func1<Observable<TResult>, Observable<TResult>>() {
             public Observable<TResult> call(Observable<TResult> pAsyncObservable) {

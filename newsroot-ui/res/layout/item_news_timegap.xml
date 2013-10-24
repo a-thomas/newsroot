@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.codexperiments.newsroot.ui.fragment.NewsTimeGapItem xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/NewsTimeGapItem"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".BlankFragment" >
 
     <TextView
@@ -13,4 +11,4 @@
         android:gravity="center"
         android:text="timegap" />
 
-</com.codexperiments.newsroot.ui.fragment.NewsTimeGapItem>
+</merge>

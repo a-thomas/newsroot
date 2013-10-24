@@ -5,7 +5,6 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -19,7 +18,9 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.RxUI;
+import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
+import com.codexperiments.newsroot.common.structure.TreePageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.domain.twitter.TimeRange;
@@ -37,14 +38,12 @@ public class NewsListFragment extends Fragment {
     private TaskManager mTaskManager;
     private TwitterRepository mTwitterRepository;
 
-    private PageAdapter<News> mUIListAdapter;
-    private ListView mUIList;
-    private ProgressDialog mUIDialog;
-
     private Timeline mTimeline;
     private RxPageIndex<News> mTweets;
     private TimeRange mTimeRange;
 
+    private PageAdapter<News> mUIListAdapter;
+    private ListView mUIList;
     private CompositeSubscription mSubcriptions;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
 
@@ -59,37 +58,101 @@ public class NewsListFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pContainer, Bundle pBundle) {
         super.onCreateView(pLayoutInflater, pContainer, pBundle);
+        // Services.
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
 
-        mUIDialog = new ProgressDialog(getActivity());
-        mUIDialog.setTitle("Please wait...");
-        mUIDialog.setMessage("Retrieving tweets ...");
-        mUIDialog.setIndeterminate(true);
-
-        View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
-
-        mUIListAdapter = new PageAdapter<News>(pLayoutInflater);
-        mUIListAdapter.addItemType(TimeGap.class, R.layout.item_news_timegap);
-        mUIListAdapter.addItemType(Tweet.class, R.layout.item_news);
-        mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
-        mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE); // CHOICE_MODE_MULTIPLE
-        mUIList.setAdapter(mUIListAdapter);
-        mUIDialog = new ProgressDialog(getActivity());
-
+        // Domain.
+        PageIndex<News> lIndex = new TreePageIndex<News>();
         mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
         mTweets = RxPageIndex.newPageIndex();
         mTimeRange = null;
-
-        initialize();
-
-        mUIListAdapter.bindTo(mTweets);
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
+
+        // UI.
+        View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
+        mUIListAdapter = createAdapter(pLayoutInflater, lIndex);
+        mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
+        mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
+
+        bind();
+        mUIList.setAdapter(mUIListAdapter);
         return lUIFragment;
     }
 
-    protected void initialize() {
+    protected PageAdapter<News> createAdapter(final LayoutInflater pLayoutInflater, final PageIndex<News> pIndex) {
+        return new PageAdapter<News>(pIndex) {
+            private boolean mHasMore = true;
+
+            @Override
+            public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
+                if (isLastItem(pPosition) && mHasMore) {
+                    return createMoreItem((NewsMoreItem) pConvertView);
+                } else {
+                    Object lItem = getItem(pPosition);
+                    if (lItem.getClass() == TimeGap.class) {
+                        return createTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem);
+                    } else if (lItem.getClass() == Tweet.class) {
+                        return createTweetItem((NewsTweetItem) pConvertView, (Tweet) lItem);
+                    }
+                }
+                throw new IllegalStateException();
+            }
+
+            @Override
+            public int getCount() {
+                return (mHasMore) ? super.getCount() + 1 : getCount();
+            }
+
+            @Override
+            public long getItemId(int pPosition) {
+                if (isLastItem(pPosition) && mHasMore) return -1;
+                else return pPosition;
+            }
+
+            @Override
+            public int getViewTypeCount() {
+                return 3;
+            }
+
+            @Override
+            public int getItemViewType(int pPosition) {
+                if (isLastItem(pPosition) && mHasMore) return 0;
+
+                Object lItem = getItem(pPosition);
+                if (lItem.getClass() == NewsTimeGapItem.class) return 1;
+                else if (lItem.getClass() == NewsTimeGapItem.class) return 2;
+                else throw new IllegalStateException();
+            }
+        };
+    }
+
+    protected NewsMoreItem createMoreItem(NewsMoreItem pMoreItem) {
+        if (pMoreItem == null) {
+            pMoreItem = new NewsMoreItem(getActivity());
+        }
+        pMoreItem.setContent();
+        return pMoreItem;
+    }
+
+    protected NewsTimeGapItem createTimeGapItem(NewsTimeGapItem pTimeGapItem, TimeGap pTimeGap) {
+        if (pTimeGapItem == null) {
+            pTimeGapItem = new NewsTimeGapItem(getActivity());
+        }
+        pTimeGapItem.setContent(pTimeGap);
+        return pTimeGapItem;
+    }
+
+    protected NewsTweetItem createTweetItem(NewsTweetItem pTweetItem, Tweet pTweet) {
+        if (pTweetItem == null) {
+            pTweetItem = new NewsTweetItem(getActivity());
+        }
+        pTweetItem.setContent(pTweet);
+        return pTweetItem;
+    }
+
+    protected void bind() {
         mSubcriptions = Subscriptions.create();
         mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call(Void pVoid) {
@@ -131,7 +194,6 @@ public class NewsListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mUIDialog.dismiss();
         mTaskManager.unmanage(this);
         mEventBus.unregisterListener(this);
     }

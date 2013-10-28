@@ -15,7 +15,7 @@ public class RxPageIndex<TItem> implements PageIndex<TItem> {
         return new RxPageIndex<TItem>(new TreePageIndex<TItem>());
     }
 
-    public static <TItem> RxPageIndex<TItem> newPageIndex(TreePageIndex<TItem> pPageIndex) {
+    public static <TItem> RxPageIndex<TItem> newPageIndex(PageIndex<TItem> pPageIndex) {
         return new RxPageIndex<TItem>(pPageIndex);
     }
 

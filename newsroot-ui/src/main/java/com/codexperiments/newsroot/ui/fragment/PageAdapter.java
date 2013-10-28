@@ -37,7 +37,7 @@ public abstract class PageAdapter<TItem> extends BaseAdapter {
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-        if (isLastItem(pPosition) && (pPosition >= mLastItemSeen)) {
+        if (isLastItem(pPosition) && (pPosition > mLastItemSeen)) {
             if (mMoreCallback != null) {
                 mMoreCallback.onMore();
             }

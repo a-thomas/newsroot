@@ -5,12 +5,16 @@ import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
+import rx.util.functions.Action1;
 import rx.util.functions.Func1;
+import rx.util.functions.Func2;
 import android.app.Activity;
 import android.app.Dialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.codexperiments.newsroot.common.Page;
@@ -21,6 +25,37 @@ import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
+
+    public static Observer<Boolean> toActivated(final Observable<View> pViews) {
+        PublishSubject<Boolean> lProperty = PublishSubject.create();
+        Observable.zip(lProperty, pViews, new Func2<Boolean, View, Boolean>() {
+            public Boolean call(Boolean pActivated, View pView) {
+                if (pView != null) {
+                    pView.setActivated(pActivated.booleanValue());
+                }
+                return pActivated;
+            }
+        }).subscribe(new Action1<Object>() {
+            public void call(Object pT1) {
+            }
+        });
+        return lProperty;
+    }
+
+    public static Observer<Boolean> toActivated(final View pView) {
+        return new Observer<Boolean>() {
+            public void onNext(Boolean pActivated) {
+                pView.setActivated(pActivated.booleanValue());
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+                Log.e("", "", pThrowable);
+            }
+        };
+    }
 
     public static <TParam, TResult> Func1<TParam, TResult> toConstant(final TResult pConstant) {
         return new Func1<TParam, TResult>() {
@@ -74,14 +109,110 @@ public class RxUI {
         });
     };
 
-    public static Observable<Void> fromClick(View view) {
-        final PublishSubject<Void> lSubject = PublishSubject.create();
-        view.setOnClickListener(new View.OnClickListener() {
+    public static RxOnClickEvent fromClick() {
+        return new RxOnClickEvent() {
+            PublishSubject<Void> lSubject = PublishSubject.create();
+
             public void onClick(View view) {
                 lSubject.onNext(null);
             }
-        });
-        return lSubject;
+
+            public Observable<Void> toObservable() {
+                return lSubject;
+            }
+
+            public Subscription subscribe(Observer<Void> pObserver) {
+                return lSubject.subscribe(pObserver);
+            }
+
+            public Subscription subscribe(Action1<Void> pAction) {
+                return lSubject.subscribe(pAction);
+            }
+        };
+    }
+
+    public static <TItem> RxOnListClickEvent<TItem> fromListClick(final ListView pListView) {
+        return new RxOnListClickEvent<TItem>() {
+            private PublishSubject<Integer> mSubject = PublishSubject.create();
+
+            @Override
+            public void onClick(View pView) {
+                int lPosition = pListView.getPositionForView(pView);
+                if (lPosition != AdapterView.INVALID_POSITION) {
+                    mSubject.onNext(Integer.valueOf(lPosition));
+                }
+            }
+
+            public Observable<Integer> positions() {
+                return mSubject;
+            }
+
+            public Observable<TItem> items() {
+                return mSubject.map(new Func1<Integer, TItem>() {
+                    @SuppressWarnings("unchecked")
+                    public TItem call(Integer pPosition) {
+                        return (TItem) pListView.getItemAtPosition(pPosition);
+                    }
+                });
+            }
+
+            public Subscription subscribe(Observer<Integer> pObserver) {
+                return mSubject.subscribe(pObserver);
+            }
+
+            public Subscription subscribe(Action1<Integer> pObserver) {
+                return mSubject.subscribe(pObserver);
+            }
+        };
+    }
+
+    public static Observer<Boolean> toItem(final ListView pListView) {
+        return new Observer<Boolean>() {
+            public void onNext(Boolean pActivated) {
+                View lItemView = findItem(null);
+                if (lItemView != null) {
+                    lItemView.setActivated(pActivated.booleanValue());
+                }
+            }
+
+            private View findItem(Object pItem) {
+                int lFirstPosition = pListView.getFirstVisiblePosition();
+                int lLastPosition = pListView.getLastVisiblePosition();
+                for (int lPosition = lFirstPosition; lPosition <= lLastPosition; ++lPosition) {
+                    if (pItem == pListView.getItemAtPosition(lPosition)) {
+                        return pListView.getChildAt(lPosition - lFirstPosition);
+                    }
+                }
+                return null;
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+                Log.e("", "", pThrowable);
+            }
+        };
+    }
+
+    public static <TItem, TView> Func1<TItem, TView> toListItem(final ListView pListView, final Class<TView> pClass) {
+        return new Func1<TItem, TView>() {
+            @SuppressWarnings("unchecked")
+            public TView call(TItem pItem) {
+                int lFirstPosition = pListView.getFirstVisiblePosition();
+                int lLastPosition = pListView.getLastVisiblePosition();
+                for (int lPosition = lFirstPosition; lPosition <= lLastPosition; ++lPosition) {
+                    if (pItem == pListView.getItemAtPosition(lPosition)) {
+                        TView lView = (TView) pListView.getChildAt(lPosition - lFirstPosition);
+                        // This check is just a security
+                        if (lView.getClass() == pClass) {
+                            return lView;
+                        }
+                    }
+                }
+                return null;
+            }
+        };
     }
 
     public static Observable<Void> fromOnMoreAction(PageAdapter<?> pPageAdapter) {
@@ -116,25 +247,6 @@ public class RxUI {
         };
     }
 
-    // public static <TItem> Observer<Page<? extends TItem>> toListView(final PageAdapter<TItem> pAdapter) {
-    // return new Observer<Page<? extends TItem>>() {
-    // public void onNext(Page<? extends TItem> pPage) {
-    // // mTimeline.delete(pTweetPageResponse.initialGap());
-    // pAdapter.append(pPage);
-    // // pAdapter.insert(new TimeGapPage(pTweetPageResponse.remainingGap()));
-    // // mTimeline.add(pTweetPageResponse.tweetPage());
-    // // mTimeline.add(pTweetPageResponse.remainingGap());
-    // pAdapter.notifyDataSetChanged();
-    // }
-    //
-    // public void onCompleted() {
-    // }
-    //
-    // public void onError(Throwable pThrowable) {
-    // }
-    // };
-    // }
-    //
     public static <TItem> Observer<Page<? extends TItem>> toListView(final BaseAdapter pAdapter) {
         return new Observer<Page<? extends TItem>>() {
             public void onNext(Page<? extends TItem> pPage) {
@@ -177,17 +289,10 @@ public class RxUI {
         };
     }
 
-    public static Observer<Boolean> toActivated(final View pView) {
-        return new Observer<Boolean>() {
-            public void onNext(Boolean pActivated) {
-                pView.setActivated(pActivated.booleanValue());
-            }
-
-            public void onCompleted() {
-            }
-
-            public void onError(Throwable pThrowable) {
-                Log.e("", "", pThrowable);
+    public static <TView extends View> Func1<TView, TView> self() {
+        return new Func1<TView, TView>() {
+            public TView call(TView pView) {
+                return pView;
             }
         };
     }
@@ -196,6 +301,20 @@ public class RxUI {
         return new Observer<Boolean>() {
             public void onNext(Boolean pActivated) {
                 pView.setEnabled(pActivated.booleanValue());
+            }
+
+            public void onCompleted() {
+            }
+
+            public void onError(Throwable pThrowable) {
+            }
+        };
+    }
+
+    public static Observer<Boolean> toDisabled(final View pView) {
+        return new Observer<Boolean>() {
+            public void onNext(Boolean pActivated) {
+                pView.setEnabled(!pActivated.booleanValue());
             }
 
             public void onCompleted() {

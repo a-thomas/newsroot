@@ -1,8 +1,9 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,23 +20,26 @@ public class NewsTweetItem extends RelativeLayout {
     private TextView mUINewsText;
     private TextView mUINewsCreatedAt;
 
+    public static NewsTweetItem create(Activity pActivity, ViewGroup pParent) {
+        return (NewsTweetItem) pActivity.getLayoutInflater().inflate(R.layout.item_news, pParent, false);
+    }
+
     public NewsTweetItem(Context pContext, AttributeSet pAttrSet, int pDefStyle) {
         super(pContext, pAttrSet, pDefStyle);
-        initialize(pContext);
     }
 
     public NewsTweetItem(Context pContext, AttributeSet pAttrSet) {
         super(pContext, pAttrSet);
-        initialize(pContext);
     }
 
     public NewsTweetItem(Context pContext) {
         super(pContext);
-        initialize(pContext);
     }
 
-    protected void initialize(Context pContext) {
-        LayoutInflater.from(pContext).inflate(R.layout.item_news, this, true);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
         mUINewsName = (TextView) findViewById(R.id.item_news_name);
         mUINewsScreenName = (TextView) findViewById(R.id.item_news_screenname);
         mUINewsText = (TextView) findViewById(R.id.item_news_text);

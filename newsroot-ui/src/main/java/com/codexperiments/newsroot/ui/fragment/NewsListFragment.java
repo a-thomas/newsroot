@@ -1,12 +1,18 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
+import rx.Observer;
+import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
+import rx.util.functions.Action0;
 import rx.util.functions.Action1;
+import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +23,8 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
+import com.codexperiments.newsroot.common.rx.ListProperty;
+import com.codexperiments.newsroot.common.rx.RxOnListClickEvent;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
@@ -29,6 +37,7 @@ import com.codexperiments.newsroot.domain.twitter.Tweet;
 import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class NewsListFragment extends Fragment {
@@ -44,8 +53,14 @@ public class NewsListFragment extends Fragment {
 
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
+    private RxOnListClickEvent<News> mOnListClickEvent;
+
     private CompositeSubscription mSubcriptions;
+    // private Property<Boolean> mSelectedProperty;
+    // private Command<Integer, Integer> mSelectCommand;
+    // private Property<Tweet> mTweetChangedObservable;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
+    private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
 
     public static final NewsListFragment forUser(String pScreenName) {
         NewsListFragment lFragment = new NewsListFragment();
@@ -66,7 +81,7 @@ public class NewsListFragment extends Fragment {
         // Domain.
         PageIndex<News> lIndex = new TreePageIndex<News>();
         mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
-        mTweets = RxPageIndex.newPageIndex();
+        mTweets = RxPageIndex.newPageIndex(lIndex);
         mTimeRange = null;
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
 
@@ -81,20 +96,28 @@ public class NewsListFragment extends Fragment {
         return lUIFragment;
     }
 
+    public void onInitializeInstanceState(Bundle pBundle) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle pBundle) {
+    }
+
     protected PageAdapter<News> createAdapter(final LayoutInflater pLayoutInflater, final PageIndex<News> pIndex) {
         return new PageAdapter<News>(pIndex) {
             private boolean mHasMore = true;
 
             @Override
             public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
+                super.getView(pPosition, pConvertView, pParent);
                 if (isLastItem(pPosition) && mHasMore) {
-                    return createMoreItem((NewsMoreItem) pConvertView);
+                    return recycleMoreItem((NewsMoreItem) pConvertView);
                 } else {
                     Object lItem = getItem(pPosition);
                     if (lItem.getClass() == TimeGap.class) {
-                        return createTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem);
+                        return recycleTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
                     } else if (lItem.getClass() == Tweet.class) {
-                        return createTweetItem((NewsTweetItem) pConvertView, (Tweet) lItem);
+                        return recycleTweetItem((NewsTweetItem) pConvertView, (Tweet) lItem, pParent);
                     }
                 }
                 throw new IllegalStateException();
@@ -121,32 +144,35 @@ public class NewsListFragment extends Fragment {
                 if (isLastItem(pPosition) && mHasMore) return 0;
 
                 Object lItem = getItem(pPosition);
-                if (lItem.getClass() == NewsTimeGapItem.class) return 1;
-                else if (lItem.getClass() == NewsTimeGapItem.class) return 2;
+                if (lItem.getClass() == Tweet.class) return 1;
+                else if (lItem.getClass() == TimeGap.class) return 2;
                 else throw new IllegalStateException();
             }
         };
     }
 
-    protected NewsMoreItem createMoreItem(NewsMoreItem pMoreItem) {
+    protected NewsMoreItem recycleMoreItem(NewsMoreItem pMoreItem) {
         if (pMoreItem == null) {
             pMoreItem = new NewsMoreItem(getActivity());
+            // pMoreItem.setOnClickListener(mClickListener);
         }
         pMoreItem.setContent();
         return pMoreItem;
     }
 
-    protected NewsTimeGapItem createTimeGapItem(NewsTimeGapItem pTimeGapItem, TimeGap pTimeGap) {
+    protected NewsTimeGapItem recycleTimeGapItem(NewsTimeGapItem pTimeGapItem, TimeGap pTimeGap, ViewGroup pParent) {
         if (pTimeGapItem == null) {
-            pTimeGapItem = new NewsTimeGapItem(getActivity());
+            pTimeGapItem = NewsTimeGapItem.create(getActivity(), pParent);
+            pTimeGapItem.setOnClickListener(mOnListClickEvent);
         }
         pTimeGapItem.setContent(pTimeGap);
         return pTimeGapItem;
     }
 
-    protected NewsTweetItem createTweetItem(NewsTweetItem pTweetItem, Tweet pTweet) {
+    protected NewsTweetItem recycleTweetItem(NewsTweetItem pTweetItem, Tweet pTweet, ViewGroup pParent) {
         if (pTweetItem == null) {
-            pTweetItem = new NewsTweetItem(getActivity());
+            pTweetItem = NewsTweetItem.create(getActivity(), pParent);
+            pTweetItem.setOnClickListener(mOnListClickEvent);
         }
         pTweetItem.setContent(pTweet);
         return pTweetItem;
@@ -154,11 +180,11 @@ public class NewsListFragment extends Fragment {
 
     protected void bind() {
         mSubcriptions = Subscriptions.create();
-        mFindMoreCommand = AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
-            public Observable<TweetPageResponse> call(Void pVoid) {
-                return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
-            }
-        });
+        mFindMoreCommand = createFindMoreCommand();
+        mFindGapCommand = createFindGapCommand();
+        // mTweetChangedObservable = Property.create(null);
+        mOnListClickEvent = RxUI.fromListClick(mUIList);
+
         mSubcriptions.add(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
                 TweetPage lPage = pTweetPageResponse.tweetPage();
@@ -169,20 +195,148 @@ public class NewsListFragment extends Fragment {
                     long id = lPage.tweets().get(15).getId() - 1;
                     mTweets.insert(new NewsPage(new TimeGap(id, id - 1)));
                 }
-
+                Log.e("aaaaaaaa", "sfsdfqsdfsdfq");
             }
         }));
-
         mSubcriptions.add(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
         mSubcriptions.add(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
+
+        // mSelectCommand = Command.create();
+        // mSubcriptions.add(mItemClickEvent.subscribe(mSelectCommand));
+        // mSubcriptions.add(mSelectCommand.subscribe(Property.toggle(mSelectedProperty)));
+
+        Observable<News> lSelectedNews = mOnListClickEvent.items();
+        Observable<Tweet> lTweetSelected = lSelectedNews.ofType(Tweet.class);
+        Observable<Boolean> lSelected = lTweetSelected.map(new Func1<Tweet, Boolean>() {
+            public Boolean call(Tweet pTweet) {
+                boolean lNewValue = !pTweet.isSelected();
+                pTweet.setSelected(lNewValue);
+                return Boolean.valueOf(lNewValue);
+            }
+        });
+        Observable<View> lViews = lTweetSelected.map(RxUI.toListItem(mUIList, NewsTweetItem.class))
+                                                .map(new Func1<NewsTweetItem, View>() {
+                                                    public View call(NewsTweetItem pNewsTweetItem) {
+                                                        return (View) pNewsTweetItem.findViewById(R.id.item_news_name)
+                                                                                    .getParent();
+                                                    }
+                                                });
+        lSelected.subscribe(RxUI.toActivated(lViews));
+
+        // RxUI.toListActivated2(lSelected, lViews);
+        // Observable.combineLatest(lSelected, lViews, new Func2<Boolean, View, Boolean>() {
+        // public Boolean call(Boolean pValue, View pView) {
+        // pView.setActivated(pValue);
+        // return pValue;
+        // }
+        // }).subscribe(new Action1<Object>() {
+        // public void call(Object pT1) {
+        // }
+        // });
+
+        // Observable<NewsTweetItem> lTweetSelected = lSelectedNews.ofType(Tweet.class)
+        // .map(doSetSelected())
+        // .map(RxUI.toListItem(mUIList, NewsTweetItem.class))
+        // .map(selectedProperty())
+        // .subscribe(RxUI.toActivated(this));
+        ListProperty<Tweet, View> lTweetItemProperty;
+        lTweetItemProperty = ListProperty.create(mUIList, /*
+                                                           * new Func1<NewsTweetItem, View>() { public View call(NewsTweetItem
+                                                           * pView) { return pView; } }
+                                                           */RxUI.self(), new Action2<Tweet, View>() {
+            public void call(Tweet pTweet, View pInnerView) {
+                pInnerView.setActivated(pTweet.isSelected());
+            }
+        });
+        Observer<Boolean> lActivated = RxUI.toActivated(mUIList);
+        lSelectedNews.ofType(Tweet.class).map(doSetSelected()).subscribe(lTweetItemProperty);
+
+        // lSelectedNews.ofType(Tweet.class).subscribe(new Action1<Tweet>() {
+        // public void call(Tweet pTweet) {
+        // pTweet.setSelected(!pTweet.isSelected());
+        // mTweets.update(pTweet);
+        // // mSelectedProperty.onNext(pTweet.isSelected());
+        // }
+        // });
+        lSelectedNews.ofType(TimeGap.class).subscribe(mFindGapCommand);
+        // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toActivated(this)));
+        // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toDisabled(this)));
+
+        // mSelectedProperty = isSelectedProperty();
+        // mSubcriptions.add(RxUI.fromClick(mUIList).subscribe(Property.toggle(mSelectedProperty)));
+        // mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
     }
 
-    public void onInitializeInstanceState(Bundle pBundle) {
+    private Func1<Tweet, Tweet> doSetSelected() {
+        return new Func1<Tweet, Tweet>() {
+            public Tweet call(Tweet pTweet) {
+                pTweet.setSelected(!pTweet.isSelected());
+                return pTweet;
+            }
+        };
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle pBundle) {
+    private Func1<Tweet, Boolean> selectedProperty() {
+        return new Func1<Tweet, Boolean>() {
+            public Boolean call(Tweet pTweet) {
+                return Boolean.valueOf(pTweet.isSelected());
+            }
+        };
     }
+
+    protected AsyncCommand<Void, TweetPageResponse> createFindMoreCommand() {
+        return AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
+            public Observable<TweetPageResponse> call(Void pVoid) {
+                return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
+            }
+        });
+    }
+
+    protected AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
+        return AsyncCommand.create(new Func1<TimeGap, Observable<TweetPageResponse>>() {
+            public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
+                return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+                    public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+                        AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+                            public void call() {
+                                try {
+                                    Thread.sleep(5000);
+                                    pObserver.onNext(null);
+                                    pObserver.onCompleted();
+                                } catch (InterruptedException e) {
+                                }
+                            }
+                        });
+                        return Subscriptions.empty();
+                    }
+                });
+            }
+        });
+    }
+
+    // protected Property<Boolean> isSelectedProperty() {
+    // return Property.create(new PropertyAccess<Boolean>() {
+    // public Boolean get() {
+    // return mTweet.isSelected();
+    // }
+    //
+    // public void set(Boolean pValue) {
+    // mTweet.setSelected(pValue);
+    // }
+    // });
+    // }
+
+    // protected Property<Boolean> isSelectedProperty() {
+    // return Property.create(new PropertyAccess<Boolean>() {
+    // public Boolean get() {
+    // return mTweet.isSelected();
+    // }
+    //
+    // public void set(Boolean pValue) {
+    // mTweet.setSelected(pValue);
+    // }
+    // });
+    // }
 
     @Override
     public void onStart() {

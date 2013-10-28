@@ -1,8 +1,9 @@
 package com.codexperiments.newsroot.ui.fragment;
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,23 +19,26 @@ public class NewsTimeGapItem extends RelativeLayout {
 
     // private CompositeSubscription mSubcriptions;
 
+    public static NewsTimeGapItem create(FragmentActivity pActivity, ViewGroup pParent) {
+        return (NewsTimeGapItem) pActivity.getLayoutInflater().inflate(R.layout.item_news_timegap, pParent, false);
+    }
+
     public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet, int pDefStyle) {
         super(pContext, pAttrSet, pDefStyle);
-        initialize(pContext);
     }
 
     public NewsTimeGapItem(Context pContext, AttributeSet pAttrSet) {
         super(pContext, pAttrSet);
-        initialize(pContext);
     }
 
     public NewsTimeGapItem(Context pContext) {
         super(pContext);
-        initialize(pContext);
     }
 
-    protected void initialize(Context pContext) {
-        LayoutInflater.from(pContext).inflate(R.layout.item_news_timegap, this, true);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_timegap);
     }
 

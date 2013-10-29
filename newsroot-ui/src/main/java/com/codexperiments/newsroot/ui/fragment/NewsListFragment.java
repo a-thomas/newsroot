@@ -52,7 +52,7 @@ public class NewsListFragment extends Fragment {
 
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
-    private RxOnListClickEvent<News> mOnListClickEvent;
+    private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
 
     private CompositeSubscription mSubcriptions;
     // private Property<Boolean> mSelectedProperty;
@@ -184,7 +184,6 @@ public class NewsListFragment extends Fragment {
         mFindMoreCommand = createFindMoreCommand();
         mFindGapCommand = createFindGapCommand();
         // mTweetChangedObservable = Property.create(null);
-        mOnListClickEvent = RxUI.fromListClick(mUIList);
 
         mSubcriptions.add(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
@@ -207,30 +206,29 @@ public class NewsListFragment extends Fragment {
         // mSubcriptions.add(mSelectCommand.subscribe(Property.toggle(mSelectedProperty)));
         RxRecycleCallback<News> lRecycling = RxUI.fromRecycleListItem(News.class);
         mUIListAdapter.setRecycleCallback(lRecycling);
-        Observable<View> lSelectedViewsRecycle = lRecycling.toViews();
-        lRecycling.toItems().ofType(Tweet.class).map(new Func1<Tweet, Boolean>() {
+        Observable<NewsTweetItem> lSelectedViewsRecycle = lRecycling.toViews().ofType(NewsTweetItem.class);
+        Observable<Boolean> recycleSelected = lRecycling.toItems().ofType(Tweet.class).map(new Func1<Tweet, Boolean>() {
             public Boolean call(Tweet pTweet) {
                 return Boolean.valueOf(pTweet.isSelected());
             }
-        }).subscribe(RxUI.toActivated(lSelectedViewsRecycle.ofType(NewsTweetItem.class)));
+        });
+        // .subscribe(RxUI.toActivated(lSelectedViewsRecycle.ofType(NewsTweetItem.class)));
 
-        Observable<News> lSelectedNews = mOnListClickEvent.items();
-        Observable<Tweet> lTweetSelected = lSelectedNews.ofType(Tweet.class);
-        Observable<Boolean> lSelected = lTweetSelected.map(new Func1<Tweet, Boolean>() {
+        mOnListClickEvent = RxUI.fromListClick(mUIList, Tweet.class, NewsTweetItem.class);
+        Observable<Boolean> lSelected = mOnListClickEvent.items().map(new Func1<Tweet, Boolean>() {
             public Boolean call(Tweet pTweet) {
                 boolean lNewValue = !pTweet.isSelected();
                 pTweet.setSelected(lNewValue);
                 return Boolean.valueOf(lNewValue);
             }
         });
-        Observable<View> lViews = lTweetSelected.map(RxUI.toListItem(mUIList, NewsTweetItem.class))
-                                                .map(new Func1<NewsTweetItem, View>() {
-                                                    public View call(NewsTweetItem pNewsTweetItem) {
-                                                        return (View) pNewsTweetItem.findViewById(R.id.item_news_name)
-                                                                                    .getParent();
-                                                    }
-                                                });
-        lSelected.subscribe(RxUI.toActivated(lViews));
+        Observable<View> lViews = mOnListClickEvent.views().map(new Func1<NewsTweetItem, View>() {
+            public View call(NewsTweetItem pNewsTweetItem) {
+                return (View) pNewsTweetItem.findViewById(R.id.item_news_name).getParent();
+            }
+        });
+        Observable.merge(recycleSelected, lSelected).subscribe(RxUI.toActivated(Observable.merge(lViews, lSelectedViewsRecycle)));
+        // lSelectedNews.ofType(TimeGap.class).subscribe(mFindGapCommand);
 
         // RxUI.toListActivated2(lSelected, lViews);
         // Observable.combineLatest(lSelected, lViews, new Func2<Boolean, View, Boolean>() {
@@ -267,7 +265,6 @@ public class NewsListFragment extends Fragment {
         // // mSelectedProperty.onNext(pTweet.isSelected());
         // }
         // });
-        lSelectedNews.ofType(TimeGap.class).subscribe(mFindGapCommand);
         // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toActivated(this)));
         // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toDisabled(this)));
 

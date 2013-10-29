@@ -4,6 +4,7 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.observables.ConnectableObservable;
 import rx.subjects.PublishSubject;
 import rx.util.functions.Action1;
 import rx.util.functions.Func1;
@@ -132,10 +133,19 @@ public class RxUI {
         };
     }
 
-    public static <TItem> RxOnListClickEvent<TItem> fromListClick(final ListView pListView) {
-        return new RxOnListClickEvent<TItem>() {
-            private PublishSubject<Integer> mSubject = PublishSubject.create();
+    public static <TItem, TView> RxOnListClickEvent<TItem, TView> fromListClick(final ListView pListView,
+                                                                                final Class<TItem> pItemClass,
+                                                                                final Class<TView> pItemView)
+    {
+        final PublishSubject<Integer> mSubject = PublishSubject.create();
+        final ConnectableObservable<TItem> mItems = mSubject.map(new Func1<Integer, Object>() {
+            public Object call(Integer pPosition) {
+                return pListView.getItemAtPosition(pPosition);
+            }
+        }).ofType(pItemClass).publish();
+        mItems.connect();
 
+        return new RxOnListClickEvent<TItem, TView>() {
             @Override
             public void onClick(View pView) {
                 int lPosition = pListView.getPositionForView(pView);
@@ -148,13 +158,13 @@ public class RxUI {
                 return mSubject;
             }
 
+            @Override
+            public Observable<TView> views() {
+                return mItems.map(RxUI.toListItem(pListView, pItemView))/* .ofType(pItemView) */;
+            }
+
             public Observable<TItem> items() {
-                return mSubject.map(new Func1<Integer, TItem>() {
-                    @SuppressWarnings("unchecked")
-                    public TItem call(Integer pPosition) {
-                        return (TItem) pListView.getItemAtPosition(pPosition);
-                    }
-                });
+                return mItems;
             }
 
             public Subscription subscribe(Observer<Integer> pObserver) {
@@ -234,7 +244,8 @@ public class RxUI {
                 int lFirstPosition = pListView.getFirstVisiblePosition();
                 int lLastPosition = pListView.getLastVisiblePosition();
                 for (int lPosition = lFirstPosition; lPosition <= lLastPosition; ++lPosition) {
-                    if (pItem == pListView.getItemAtPosition(lPosition)) {
+                    Object lItem = pListView.getItemAtPosition(lPosition);
+                    if (pItem == lItem) {
                         TView lView = (TView) pListView.getChildAt(lPosition - lFirstPosition);
                         // This check is just a security
                         if (lView.getClass() == pClass) {

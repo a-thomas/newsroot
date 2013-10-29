@@ -6,8 +6,10 @@ import rx.Subscription;
 import rx.util.functions.Action1;
 import android.view.View.OnClickListener;
 
-public interface RxOnListClickEvent<TItem> extends OnClickListener {
+public interface RxOnListClickEvent<TItem, TView> extends OnClickListener {
     public Observable<Integer> positions();
+
+    public Observable<TView> views();
 
     public Observable<TItem> items();
 

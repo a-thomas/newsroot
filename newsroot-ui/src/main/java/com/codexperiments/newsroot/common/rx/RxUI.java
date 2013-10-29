@@ -164,7 +164,7 @@ public class RxUI {
             }
 
             public Observable<TItem> items() {
-                return mItems;
+                return mItems;//
             }
 
             public Subscription subscribe(Observer<Integer> pObserver) {

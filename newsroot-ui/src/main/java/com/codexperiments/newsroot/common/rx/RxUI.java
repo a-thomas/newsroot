@@ -21,12 +21,13 @@ import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
+import com.codexperiments.newsroot.ui.fragment.PageAdapter.RxRecycleCallback;
 
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
     public static final Void[] VOID_SIGNALS = new Void[] { null };
 
-    public static Observer<Boolean> toActivated(final Observable<View> pViews) {
+    public static Observer<Boolean> toActivated(final Observable<? extends View> pViews) {
         PublishSubject<Boolean> lProperty = PublishSubject.create();
         Observable.zip(lProperty, pViews, new Func2<Boolean, View, Boolean>() {
             public Boolean call(Boolean pActivated, View pView) {
@@ -162,6 +163,37 @@ public class RxUI {
 
             public Subscription subscribe(Action1<Integer> pObserver) {
                 return mSubject.subscribe(pObserver);
+            }
+        };
+    }
+
+    public static <TItem> RxRecycleCallback<TItem> fromRecycleListItem(Class<TItem> pClass) {
+        return new RxRecycleCallback<TItem>() {
+            private PublishSubject<TItem> mSubjectItems = PublishSubject.create();
+            private PublishSubject<View> mSubjectViews = PublishSubject.create();
+
+            @Override
+            public void onRecycle(TItem pItem, View pView) {
+                mSubjectItems.onNext(pItem);
+                mSubjectViews.onNext(pView);
+            }
+
+            public Subscription subscribe(Observer<TItem> pObserver) {
+                return mSubjectItems.subscribe(pObserver);
+            }
+
+            public Subscription subscribe(Action1<TItem> pObserver) {
+                return mSubjectItems.subscribe(pObserver);
+            }
+
+            @Override
+            public Observable<TItem> toItems() {
+                return mSubjectItems;
+            }
+
+            @Override
+            public Observable<View> toViews() {
+                return mSubjectViews;
             }
         };
     }

@@ -64,6 +64,7 @@ public class NewsTweetItem extends RelativeLayout {
         mUINewsText.setText(pTweet.getText());
         mUINewsCreatedAt.setText(String.valueOf(pTweet.getCreatedAt()));
 
+        // setActivated(pTweet.isSelected());
         // mSelectedProperty.reset();
     }
 

@@ -8,7 +8,6 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import rx.util.functions.Action1;
-import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +22,6 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
-import com.codexperiments.newsroot.common.rx.ListProperty;
 import com.codexperiments.newsroot.common.rx.RxOnListClickEvent;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
@@ -239,17 +237,17 @@ public class NewsListFragment extends Fragment {
         // .map(RxUI.toListItem(mUIList, NewsTweetItem.class))
         // .map(selectedProperty())
         // .subscribe(RxUI.toActivated(this));
-        ListProperty<Tweet, View> lTweetItemProperty;
-        lTweetItemProperty = ListProperty.create(mUIList, /*
-                                                           * new Func1<NewsTweetItem, View>() { public View call(NewsTweetItem
-                                                           * pView) { return pView; } }
-                                                           */RxUI.self(), new Action2<Tweet, View>() {
-            public void call(Tweet pTweet, View pInnerView) {
-                pInnerView.setActivated(pTweet.isSelected());
-            }
-        });
-        Observer<Boolean> lActivated = RxUI.toActivated(mUIList);
-        lSelectedNews.ofType(Tweet.class).map(doSetSelected()).subscribe(lTweetItemProperty);
+        // ListProperty<Tweet, View> lTweetItemProperty;
+        // lTweetItemProperty = ListProperty.create(mUIList, /*
+        // * new Func1<NewsTweetItem, View>() { public View call(NewsTweetItem
+        // * pView) { return pView; } }
+        // */RxUI.self(), new Action2<Tweet, View>() {
+        // public void call(Tweet pTweet, View pInnerView) {
+        // pInnerView.setActivated(pTweet.isSelected());
+        // }
+        // });
+        // Observer<Boolean> lActivated = RxUI.toActivated(mUIList);
+        // lSelectedNews.ofType(Tweet.class).map(doSetSelected()).subscribe(lTweetItemProperty);
 
         // lSelectedNews.ofType(Tweet.class).subscribe(new Action1<Tweet>() {
         // public void call(Tweet pTweet) {

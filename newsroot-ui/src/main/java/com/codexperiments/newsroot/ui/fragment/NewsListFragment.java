@@ -8,6 +8,7 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import rx.util.functions.Action1;
+import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,9 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
-import com.codexperiments.newsroot.common.rx.RxOnListClickEvent;
+import com.codexperiments.newsroot.common.rx.ListClickEvent;
+import com.codexperiments.newsroot.common.rx.RxListClickListener;
+import com.codexperiments.newsroot.common.rx.RxListProperty;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
@@ -52,7 +55,9 @@ public class NewsListFragment extends Fragment {
 
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
-    private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
+    // private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
+    private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
+    private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
 
     private CompositeSubscription mSubcriptions;
     // private Property<Boolean> mSelectedProperty;
@@ -164,7 +169,7 @@ public class NewsListFragment extends Fragment {
     protected NewsTimeGapItem recycleTimeGapItem(NewsTimeGapItem pTimeGapItem, TimeGap pTimeGap, ViewGroup pParent) {
         if (pTimeGapItem == null) {
             pTimeGapItem = NewsTimeGapItem.create(getActivity(), pParent);
-            pTimeGapItem.setOnClickListener(mOnListClickEvent);
+            pTimeGapItem.setOnClickListener(mTweetItemEvent);
         }
         pTimeGapItem.setContent(pTimeGap);
         return pTimeGapItem;
@@ -173,7 +178,7 @@ public class NewsListFragment extends Fragment {
     protected NewsTweetItem recycleTweetItem(NewsTweetItem pTweetItem, Tweet pTweet, ViewGroup pParent) {
         if (pTweetItem == null) {
             pTweetItem = NewsTweetItem.create(getActivity(), pParent);
-            pTweetItem.setOnClickListener(mOnListClickEvent);
+            pTweetItem.setOnClickListener(mTweetItemEvent);
         }
         pTweetItem.setContent(pTweet);
         return pTweetItem;
@@ -214,20 +219,35 @@ public class NewsListFragment extends Fragment {
         });
         // .subscribe(RxUI.toActivated(lSelectedViewsRecycle.ofType(NewsTweetItem.class)));
 
-        mOnListClickEvent = RxUI.fromListClick(mUIList, Tweet.class, NewsTweetItem.class);
-        Observable<Boolean> lSelected = mOnListClickEvent.items().map(new Func1<Tweet, Boolean>() {
-            public Boolean call(Tweet pTweet) {
-                boolean lNewValue = !pTweet.isSelected();
-                pTweet.setSelected(lNewValue);
-                return Boolean.valueOf(lNewValue);
+        mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
+        mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
+        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListClickEvent<NewsTweetItem, Tweet>>() {
+            public void call(ListClickEvent<NewsTweetItem, Tweet> pEvent) {
+                Tweet pTweet = pEvent.getItem();
+                pTweet.setSelected(!pTweet.isSelected());
+                mTweetItemProperty.onNext(pTweet);
+            }
+        }));
+        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
+            public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
+                pNewsTweetItem.setSelected(pTweet.isSelected());
             }
         });
-        Observable<View> lViews = mOnListClickEvent.views().map(new Func1<NewsTweetItem, View>() {
-            public View call(NewsTweetItem pNewsTweetItem) {
-                return (View) pNewsTweetItem.findViewById(R.id.item_news_name).getParent();
-            }
-        });
-        Observable.merge(recycleSelected, lSelected).subscribe(RxUI.toActivated(Observable.merge(lViews, lSelectedViewsRecycle)));
+        recycleSelected.subscribe(RxUI.toActivated(lSelectedViewsRecycle));
+        // map(new Func1<ListClickEvent<NewsTweetItem, Tweet>, Boolean>() {
+        // public Boolean call(ListClickEvent<NewsTweetItem, Tweet> pEvent) {
+        // Tweet pTweet = pEvent.getItem();
+        // pTweet.setSelected(!pTweet.isSelected());
+        // return Boolean.valueOf(pTweet.isSelected());
+        // }
+        // });
+        // Observable<View> lViews = mOnListClickEvent.views().map(new Func1<NewsTweetItem, View>() {
+        // public View call(NewsTweetItem pNewsTweetItem) {
+        // return (View) pNewsTweetItem.findViewById(R.id.item_news_name).getParent();
+        // }
+        // });
+        // Observable.merge(recycleSelected, lSelected).subscribe(RxUI.toActivated(Observable.merge(lViews,
+        // lSelectedViewsRecycle)));
         // lSelectedNews.ofType(TimeGap.class).subscribe(mFindGapCommand);
 
         // RxUI.toListActivated2(lSelected, lViews);

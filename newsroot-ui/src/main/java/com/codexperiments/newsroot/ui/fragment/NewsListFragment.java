@@ -23,7 +23,8 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
-import com.codexperiments.newsroot.common.rx.ListClickEvent;
+import com.codexperiments.newsroot.common.rx.ListEvent;
+import com.codexperiments.newsroot.common.rx.RxListBindListener;
 import com.codexperiments.newsroot.common.rx.RxListClickListener;
 import com.codexperiments.newsroot.common.rx.RxListProperty;
 import com.codexperiments.newsroot.common.rx.RxUI;
@@ -39,7 +40,6 @@ import com.codexperiments.newsroot.domain.twitter.TweetPage;
 import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter.RxRecycleCallback;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class NewsListFragment extends Fragment {
@@ -56,6 +56,7 @@ public class NewsListFragment extends Fragment {
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
     // private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
+    private RxListBindListener mListBindListener;
     private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
     private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
 
@@ -125,7 +126,7 @@ public class NewsListFragment extends Fragment {
                         pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (Tweet) lItem, pParent);
                     }
                 }
-                doRecycly((News) lItem, pConvertView);
+                doRecycly(pPosition, pConvertView, lItem);
                 return pConvertView;
             }
 
@@ -206,91 +207,30 @@ public class NewsListFragment extends Fragment {
         mSubcriptions.add(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
         mSubcriptions.add(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
 
-        // mSelectCommand = Command.create();
-        // mSubcriptions.add(mItemClickEvent.subscribe(mSelectCommand));
-        // mSubcriptions.add(mSelectCommand.subscribe(Property.toggle(mSelectedProperty)));
-        RxRecycleCallback<News> lRecycling = RxUI.fromRecycleListItem(News.class);
-        mUIListAdapter.setRecycleCallback(lRecycling);
-        Observable<NewsTweetItem> lSelectedViewsRecycle = lRecycling.toViews().ofType(NewsTweetItem.class);
-        Observable<Boolean> recycleSelected = lRecycling.toItems().ofType(Tweet.class).map(new Func1<Tweet, Boolean>() {
-            public Boolean call(Tweet pTweet) {
-                return Boolean.valueOf(pTweet.isSelected());
-            }
-        });
-        // .subscribe(RxUI.toActivated(lSelectedViewsRecycle.ofType(NewsTweetItem.class)));
-
+        mListBindListener = RxListBindListener.create(mUIList);
         mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
         mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
-        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListClickEvent<NewsTweetItem, Tweet>>() {
-            public void call(ListClickEvent<NewsTweetItem, Tweet> pEvent) {
+
+        mListBindListener.register(NewsTweetItem.class, Tweet.class) //
+                         .subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+                             public void call(ListEvent<NewsTweetItem, Tweet> pBindEvent) {
+                                 mTweetItemProperty.onNext(pBindEvent.getItem());
+                             }
+                         });
+        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+            public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
                 Tweet pTweet = pEvent.getItem();
                 pTweet.setSelected(!pTweet.isSelected());
                 mTweetItemProperty.onNext(pTweet);
             }
         }));
-        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
+        mTweetItemProperty.subscribe(new Action2<NewsTweetItem, Tweet>() {
             public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
                 pNewsTweetItem.setSelected(pTweet.isSelected());
             }
         });
-        recycleSelected.subscribe(RxUI.toActivated(lSelectedViewsRecycle));
-        // map(new Func1<ListClickEvent<NewsTweetItem, Tweet>, Boolean>() {
-        // public Boolean call(ListClickEvent<NewsTweetItem, Tweet> pEvent) {
-        // Tweet pTweet = pEvent.getItem();
-        // pTweet.setSelected(!pTweet.isSelected());
-        // return Boolean.valueOf(pTweet.isSelected());
-        // }
-        // });
-        // Observable<View> lViews = mOnListClickEvent.views().map(new Func1<NewsTweetItem, View>() {
-        // public View call(NewsTweetItem pNewsTweetItem) {
-        // return (View) pNewsTweetItem.findViewById(R.id.item_news_name).getParent();
-        // }
-        // });
-        // Observable.merge(recycleSelected, lSelected).subscribe(RxUI.toActivated(Observable.merge(lViews,
-        // lSelectedViewsRecycle)));
-        // lSelectedNews.ofType(TimeGap.class).subscribe(mFindGapCommand);
 
-        // RxUI.toListActivated2(lSelected, lViews);
-        // Observable.combineLatest(lSelected, lViews, new Func2<Boolean, View, Boolean>() {
-        // public Boolean call(Boolean pValue, View pView) {
-        // pView.setActivated(pValue);
-        // return pValue;
-        // }
-        // }).subscribe(new Action1<Object>() {
-        // public void call(Object pT1) {
-        // }
-        // });
-
-        // Observable<NewsTweetItem> lTweetSelected = lSelectedNews.ofType(Tweet.class)
-        // .map(doSetSelected())
-        // .map(RxUI.toListItem(mUIList, NewsTweetItem.class))
-        // .map(selectedProperty())
-        // .subscribe(RxUI.toActivated(this));
-        // ListProperty<Tweet, View> lTweetItemProperty;
-        // lTweetItemProperty = ListProperty.create(mUIList, /*
-        // * new Func1<NewsTweetItem, View>() { public View call(NewsTweetItem
-        // * pView) { return pView; } }
-        // */RxUI.self(), new Action2<Tweet, View>() {
-        // public void call(Tweet pTweet, View pInnerView) {
-        // pInnerView.setActivated(pTweet.isSelected());
-        // }
-        // });
-        // Observer<Boolean> lActivated = RxUI.toActivated(mUIList);
-        // lSelectedNews.ofType(Tweet.class).map(doSetSelected()).subscribe(lTweetItemProperty);
-
-        // lSelectedNews.ofType(Tweet.class).subscribe(new Action1<Tweet>() {
-        // public void call(Tweet pTweet) {
-        // pTweet.setSelected(!pTweet.isSelected());
-        // mTweets.update(pTweet);
-        // // mSelectedProperty.onNext(pTweet.isSelected());
-        // }
-        // });
-        // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toActivated(this)));
-        // mSubcriptions.add(mFindGapCommand.isRunning().subscribe(RxUI.toDisabled(this)));
-
-        // mSelectedProperty = isSelectedProperty();
-        // mSubcriptions.add(RxUI.fromClick(mUIList).subscribe(Property.toggle(mSelectedProperty)));
-        // mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
+        mUIListAdapter.setRecycleCallback(mListBindListener);
     }
 
     private Func1<Tweet, Tweet> doSetSelected() {

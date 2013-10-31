@@ -11,7 +11,7 @@ public class RxListClickListener<TView extends View, TItem> implements OnClickLi
     private final ListView mListView;
     private final Class<TView> mViewClass;
     private final Class<TItem> mItemClass;
-    private final PublishSubject<ListClickEvent<TView, TItem>> mSubject = PublishSubject.create();
+    private final PublishSubject<ListEvent<TView, TItem>> mSubject = PublishSubject.create();
 
     public static <TView extends View, TItem> //
     RxListClickListener<TView, TItem> create(ListView pListView, Class<TView> pViewClass, Class<TItem> pItemClass)
@@ -25,7 +25,7 @@ public class RxListClickListener<TView extends View, TItem> implements OnClickLi
         mItemClass = pItemClass;
     }
 
-    public Observable<ListClickEvent<TView, TItem>> onClick() {
+    public Observable<ListEvent<TView, TItem>> onClick() {
         return mSubject;
     }
 
@@ -37,7 +37,7 @@ public class RxListClickListener<TView extends View, TItem> implements OnClickLi
             if (lPosition != AdapterView.INVALID_POSITION) {
                 TItem lItem = getItem(lPosition);
                 if (lItem != null) {
-                    mSubject.onNext(new ListClickEvent<TView, TItem>(lPosition, lView, lItem));
+                    mSubject.onNext(new ListEvent<TView, TItem>(lPosition, lView, lItem));
                 }
             }
         }

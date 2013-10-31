@@ -27,7 +27,7 @@ public class RxListProperty<TView extends View, TItem> implements Observer<Objec
         mActions = new ArrayList<Action2<? super TView, ? super TItem>>();
     }
 
-    public RxListProperty<TView, TItem> register(Action2<? super TView, ? super TItem> pAction) {
+    public RxListProperty<TView, TItem> subscribe(Action2<? super TView, ? super TItem> pAction) {
         mActions.add(pAction);
         return this;
     }

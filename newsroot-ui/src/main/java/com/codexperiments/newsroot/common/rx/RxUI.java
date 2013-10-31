@@ -22,7 +22,6 @@ import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter.RxRecycleCallback;
 
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
@@ -177,36 +176,36 @@ public class RxUI {
         };
     }
 
-    public static <TItem> RxRecycleCallback<TItem> fromRecycleListItem(Class<TItem> pClass) {
-        return new RxRecycleCallback<TItem>() {
-            private PublishSubject<TItem> mSubjectItems = PublishSubject.create();
-            private PublishSubject<View> mSubjectViews = PublishSubject.create();
-
-            @Override
-            public void onRecycle(TItem pItem, View pView) {
-                mSubjectItems.onNext(pItem);
-                mSubjectViews.onNext(pView);
-            }
-
-            public Subscription subscribe(Observer<TItem> pObserver) {
-                return mSubjectItems.subscribe(pObserver);
-            }
-
-            public Subscription subscribe(Action1<TItem> pObserver) {
-                return mSubjectItems.subscribe(pObserver);
-            }
-
-            @Override
-            public Observable<TItem> toItems() {
-                return mSubjectItems;
-            }
-
-            @Override
-            public Observable<View> toViews() {
-                return mSubjectViews;
-            }
-        };
-    }
+    // public static <TItem> RxRecycleCallback<TItem> fromRecycleListItem(Class<TItem> pClass) {
+    // return new RxRecycleCallback<TItem>() {
+    // private PublishSubject<TItem> mSubjectItems = PublishSubject.create();
+    // private PublishSubject<View> mSubjectViews = PublishSubject.create();
+    //
+    // @Override
+    // public void onRecycle(TItem pItem, View pView) {
+    // mSubjectItems.onNext(pItem);
+    // mSubjectViews.onNext(pView);
+    // }
+    //
+    // public Subscription subscribe(Observer<TItem> pObserver) {
+    // return mSubjectItems.subscribe(pObserver);
+    // }
+    //
+    // public Subscription subscribe(Action1<TItem> pObserver) {
+    // return mSubjectItems.subscribe(pObserver);
+    // }
+    //
+    // @Override
+    // public Observable<TItem> toItems() {
+    // return mSubjectItems;
+    // }
+    //
+    // @Override
+    // public Observable<View> toViews() {
+    // return mSubjectViews;
+    // }
+    // };
+    // }
 
     public static Observer<Boolean> toItem(final ListView pListView) {
         return new Observer<Boolean>() {

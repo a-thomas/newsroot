@@ -1,9 +1,5 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.util.functions.Action1;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,7 +8,7 @@ import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.domain.twitter.News;
 
 public abstract class PageAdapter<TItem> extends BaseAdapter {
-    private RxRecycleCallback<TItem> mRecycleCallback;
+    private RxRecycleCallback mRecycleCallback;
     private RefreshCallback mRefreshCallback;
     private MoreCallback mMoreCallback;
 
@@ -62,11 +58,11 @@ public abstract class PageAdapter<TItem> extends BaseAdapter {
         return mIndex.find(mIndexSize - pPosition - 1, 1).get(0);
     }
 
-    public void doRecycly(TItem pItem, View pView) {
-        mRecycleCallback.onRecycle(pItem, pView);
+    public void doRecycly(int pPosition, View pView, Object pItem) {
+        mRecycleCallback.onRecycle(pPosition, pView, pItem);
     }
 
-    public void setRecycleCallback(RxRecycleCallback<TItem> pRecycleCallback) {
+    public void setRecycleCallback(RxRecycleCallback pRecycleCallback) {
         mRecycleCallback = pRecycleCallback;
     }
 
@@ -78,16 +74,8 @@ public abstract class PageAdapter<TItem> extends BaseAdapter {
         mMoreCallback = pMoreCallback;
     }
 
-    public interface RxRecycleCallback<TItem> {
-        void onRecycle(TItem pItem, View pView);
-
-        Observable<TItem> toItems();
-
-        Observable<View> toViews();
-
-        Subscription subscribe(Observer<TItem> pObserver);
-
-        Subscription subscribe(Action1<TItem> pAction);
+    public interface RxRecycleCallback {
+        void onRecycle(int pPosition, View pView, Object pItem);
     }
 
     public interface RefreshCallback {

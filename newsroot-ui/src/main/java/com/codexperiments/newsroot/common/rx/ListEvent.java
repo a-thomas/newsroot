@@ -1,11 +1,11 @@
 package com.codexperiments.newsroot.common.rx;
 
-public class ListClickEvent<TView, TItem> {
+public class ListEvent<TView, TItem> {
     private int mPosition;
     private TView mView;
     private TItem mItem;
 
-    public ListClickEvent(int pPosition, TView pView, TItem pItem) {
+    public ListEvent(int pPosition, TView pView, TItem pItem) {
         super();
         mPosition = pPosition;
         mView = pView;

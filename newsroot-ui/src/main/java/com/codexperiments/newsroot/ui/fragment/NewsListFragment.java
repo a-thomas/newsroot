@@ -61,12 +61,13 @@ public class NewsListFragment extends Fragment {
     private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
     private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
 
-    private CompositeSubscription mSubcriptions;
+    private CompositeSubscription mSubcriptions = Subscriptions.from();
     // private Property<Boolean> mSelectedProperty;
     // private Command<Integer, Integer> mSelectCommand;
     // private Property<Tweet> mTweetChangedObservable;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
+    private Command<ListEvent<NewsTweetItem, Tweet>> mSelectCommand = Command.create();
 
     public static final NewsListFragment forUser(String pScreenName) {
         NewsListFragment lFragment = new NewsListFragment();
@@ -187,10 +188,8 @@ public class NewsListFragment extends Fragment {
     }
 
     protected void bind() {
-        mSubcriptions = Subscriptions.create();
         mFindMoreCommand = createFindMoreCommand();
         mFindGapCommand = createFindGapCommand();
-        // mTweetChangedObservable = Property.create(null);
 
         mSubcriptions.add(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
@@ -212,35 +211,20 @@ public class NewsListFragment extends Fragment {
         mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
         mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
 
-        mSubcriptions.add(mListBindListener.register(NewsTweetItem.class, Tweet.class) //
-                                           .subscribe(mTweetItemProperty));
-        // .subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-        // public void call(ListEvent<NewsTweetItem, Tweet> pBindEvent) {
-        // mTweetItemProperty.onNext(pBindEvent.getView(), pBindEvent.getItem());
-        // }
-        // }));
-        Command<ListEvent<NewsTweetItem, Tweet>, ListEvent<NewsTweetItem, Tweet>> lSelectCommand = Command.create();
-        lSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
+            public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
+                pNewsTweetItem.setSelected(pTweet.isSelected());
+            }
+        });
+        mSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
             public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
                 Tweet pTweet = pEvent.getItem();
                 pTweet.setSelected(!pTweet.isSelected());
                 mTweetItemProperty.onNext(pEvent);
             }
         });
-        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(lSelectCommand));
-        // mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
-        // Tweet pTweet = pEvent.getItem();
-        // pTweet.setSelected(!pTweet.isSelected());
-        // // mTweetItemProperty.onNext(pTweet);
-        // mTweetItemProperty.onNext(pEvent);
-        // }
-        // }));
-        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
-            public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
-                pNewsTweetItem.setSelected(pTweet.isSelected());
-            }
-        });
+        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(mSelectCommand));
+        mSubcriptions.add(mListBindListener.register(NewsTweetItem.class, Tweet.class).subscribe(mTweetItemProperty));
 
         mUIListAdapter.setRecycleCallback(mListBindListener);
     }

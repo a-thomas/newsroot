@@ -23,6 +23,7 @@ import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
+import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.rx.ListEvent;
 import com.codexperiments.newsroot.common.rx.RxListBindListener;
 import com.codexperiments.newsroot.common.rx.RxListClickListener;
@@ -211,20 +212,31 @@ public class NewsListFragment extends Fragment {
         mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
         mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
 
-        mListBindListener.register(NewsTweetItem.class, Tweet.class) //
-                         .subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-                             public void call(ListEvent<NewsTweetItem, Tweet> pBindEvent) {
-                                 mTweetItemProperty.onNext(pBindEvent.getItem());
-                             }
-                         });
-        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        mSubcriptions.add(mListBindListener.register(NewsTweetItem.class, Tweet.class) //
+                                           .subscribe(mTweetItemProperty));
+        // .subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        // public void call(ListEvent<NewsTweetItem, Tweet> pBindEvent) {
+        // mTweetItemProperty.onNext(pBindEvent.getView(), pBindEvent.getItem());
+        // }
+        // }));
+        Command<ListEvent<NewsTweetItem, Tweet>, ListEvent<NewsTweetItem, Tweet>> lSelectCommand = Command.create();
+        lSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
             public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
                 Tweet pTweet = pEvent.getItem();
                 pTweet.setSelected(!pTweet.isSelected());
-                mTweetItemProperty.onNext(pTweet);
+                mTweetItemProperty.onNext(pEvent);
             }
-        }));
-        mTweetItemProperty.subscribe(new Action2<NewsTweetItem, Tweet>() {
+        });
+        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(lSelectCommand));
+        // mSubcriptions.add(mTweetItemEvent.onClick().subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
+        // Tweet pTweet = pEvent.getItem();
+        // pTweet.setSelected(!pTweet.isSelected());
+        // // mTweetItemProperty.onNext(pTweet);
+        // mTweetItemProperty.onNext(pEvent);
+        // }
+        // }));
+        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
             public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
                 pNewsTweetItem.setSelected(pTweet.isSelected());
             }

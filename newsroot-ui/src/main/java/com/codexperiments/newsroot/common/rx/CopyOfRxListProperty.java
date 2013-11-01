@@ -8,49 +8,42 @@ import rx.util.functions.Action2;
 import android.view.View;
 import android.widget.ListView;
 
-public class RxListProperty<TView extends View, TItem> implements Observer<ListEvent<TView, TItem>> {
+public class CopyOfRxListProperty<TView extends View, TItem> implements Observer<Object> {
     private final ListView mListView;
     private final Class<TView> mViewClass;
     private final Class<TItem> mItemClass;
     private List<Action2<? super TView, ? super TItem>> mActions;
 
     public static <TView extends View, TItem> //
-    RxListProperty<TView, TItem> create(ListView pListView, Class<TView> pViewClass, Class<TItem> pItemClass)
+    CopyOfRxListProperty<TView, TItem> create(ListView pListView, Class<TView> pViewClass, Class<TItem> pItemClass)
     {
-        return new RxListProperty<TView, TItem>(pListView, pViewClass, pItemClass);
+        return new CopyOfRxListProperty<TView, TItem>(pListView, pViewClass, pItemClass);
     }
 
-    protected RxListProperty(ListView pListView, Class<TView> pViewClass, Class<TItem> pItemClass) {
+    protected CopyOfRxListProperty(ListView pListView, Class<TView> pViewClass, Class<TItem> pItemClass) {
         mListView = pListView;
         mViewClass = pViewClass;
         mItemClass = pItemClass;
         mActions = new ArrayList<Action2<? super TView, ? super TItem>>();
     }
 
-    public RxListProperty<TView, TItem> register(Action2<? super TView, ? super TItem> pAction) {
+    public CopyOfRxListProperty<TView, TItem> register(Action2<? super TView, ? super TItem> pAction) {
         mActions.add(pAction);
         return this;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void onNext(ListEvent<TView, TItem> pEvent) {
-        if (mViewClass.isInstance(pEvent.getView()) && mItemClass.isInstance(pEvent.getItem())) {
-            TItem lItem = pEvent.getItem();
-            TView lView = pEvent.getView();
-            for (Action2<? super TView, ? super TItem> lAction : mActions) {
-                lAction.call(lView, lItem);
+    public void onNext(Object pItem) {
+        if (mItemClass.isInstance(pItem)) {
+            TItem lItem = (TItem) pItem;
+            TView lView = getItemView(lItem);
+            if (lView != null) {
+                for (Action2<? super TView, ? super TItem> lAction : mActions) {
+                    lAction.call(lView, lItem);
+                }
             }
         }
-        // if (mItemClass.isInstance(pItem)) {
-        // TItem lItem = (TItem) pItem;
-        // TView lView = getItemView(lItem);
-        // if (lView != null) {
-        // for (Action2<? super TView, ? super TItem> lAction : mActions) {
-        // lAction.call(lView, lItem);
-        // }
-        // }
-        // }
     }
 
     @SuppressWarnings("unchecked")

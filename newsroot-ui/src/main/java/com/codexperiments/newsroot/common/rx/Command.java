@@ -14,7 +14,7 @@ public class Command<TParam, TResult> extends Observable<TResult> implements Obs
         return new Command<TParam, TResult>(pCommand);
     }
 
-    public static <TParam, TResult> Command<TParam, TParam> create() {
+    public static <TParam> Command<TParam, TParam> create() {
         // TODO Seems inefficient.
         return new Command<TParam, TParam>(new Func1<TParam, TParam>() {
             public TParam call(TParam pParam) {

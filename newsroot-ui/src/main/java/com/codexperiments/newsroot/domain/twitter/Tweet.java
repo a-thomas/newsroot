@@ -1,7 +1,14 @@
 package com.codexperiments.newsroot.domain.twitter;
 
+import com.codexperiments.newsroot.common.rx.RxField;
 
 public class Tweet implements News {
+    public static RxField Name = RxField.ref();
+    public static RxField ScreenName = RxField.ref();
+    public static RxField Text = RxField.ref();
+    public static RxField CreatedAt = RxField.ref();
+    public static RxField Selected = RxField.ref();
+
     static int iiii = 0;
 
     private long mId;
@@ -70,8 +77,9 @@ public class Tweet implements News {
         return mSelected;
     }
 
-    public void setSelected(boolean pSelected) {
+    public Tweet setSelected(boolean pSelected) {
         mSelected = pSelected;
+        return this;
     }
 
     @Override

@@ -8,7 +8,6 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import rx.util.functions.Action1;
-import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +26,7 @@ import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.rx.ListEvent;
 import com.codexperiments.newsroot.common.rx.RxListBindListener;
 import com.codexperiments.newsroot.common.rx.RxListClickListener;
-import com.codexperiments.newsroot.common.rx.RxListProperty;
+import com.codexperiments.newsroot.common.rx.RxTodoProperty;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
@@ -59,7 +58,8 @@ public class NewsListFragment extends Fragment {
     // private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
     private RxListBindListener mListBindListener;
     private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
-    private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
+    // private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
+    private RxTodoProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
 
     private CompositeSubscription mSubcriptions = Subscriptions.from();
     // private Property<Boolean> mSelectedProperty;
@@ -209,18 +209,25 @@ public class NewsListFragment extends Fragment {
 
         mListBindListener = RxListBindListener.create(mUIList);
         mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
-        mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
+        // mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
+        mTweetItemProperty = RxTodoProperty.create();
 
-        mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
-            public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
-                pNewsTweetItem.setSelected(pTweet.isSelected());
+        mTweetItemProperty.whenAnyOrAll(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+            public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
+                pEvent.getView().setIsSelected(pEvent.getItem());
             }
         });
+        // mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
+        // public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
+        // pNewsTweetItem.setSelected(pTweet.isSelected());
+        // }
+        // });
         mSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
             public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
                 Tweet pTweet = pEvent.getItem();
                 pTweet.setSelected(!pTweet.isSelected());
-                mTweetItemProperty.onNext(pEvent);
+                mTweetItemProperty.update(pEvent, Tweet.Selected);
+                // mTweetItemProperty.onNext(pEvent);
             }
         });
         mSubcriptions.add(mTweetItemEvent.onClick().subscribe(mSelectCommand));

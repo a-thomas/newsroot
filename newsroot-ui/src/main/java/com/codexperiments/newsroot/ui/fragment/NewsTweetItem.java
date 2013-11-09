@@ -68,9 +68,8 @@ public class NewsTweetItem extends RelativeLayout {
         // mSelectedProperty.reset();
     }
 
-    @Override
-    public void setSelected(boolean pSelected) {
-        setActivated(pSelected);
+    public void setIsSelected(Tweet pTweet) {
+        setActivated(pTweet.isSelected());
     }
 
     // protected Property<Boolean> isSelectedProperty() {

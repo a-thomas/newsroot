@@ -212,7 +212,7 @@ public class NewsListFragment extends Fragment {
         // mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
         mTweetItemProperty = RxTodoProperty.create();
 
-        mTweetItemProperty.whenAnyOrAll(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        mTweetItemProperty.whenAnyOrWhole(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
             public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
                 pEvent.getView().setIsSelected(pEvent.getItem());
             }

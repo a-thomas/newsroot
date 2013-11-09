@@ -3,11 +3,11 @@ package com.codexperiments.newsroot.domain.twitter;
 import com.codexperiments.newsroot.common.rx.RxField;
 
 public class Tweet implements News {
-    public static RxField Name = RxField.ref();
-    public static RxField ScreenName = RxField.ref();
-    public static RxField Text = RxField.ref();
-    public static RxField CreatedAt = RxField.ref();
-    public static RxField Selected = RxField.ref();
+    public static final RxField Name = RxField.ref();
+    public static final RxField ScreenName = RxField.ref();
+    public static final RxField Text = RxField.ref();
+    public static final RxField CreatedAt = RxField.ref();
+    public static final RxField Selected = RxField.ref();
 
     static int iiii = 0;
 

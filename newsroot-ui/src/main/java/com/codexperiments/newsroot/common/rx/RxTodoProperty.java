@@ -32,7 +32,7 @@ public class RxTodoProperty<TItem> implements Observer<TItem> {
         mSource.onError(pThrowable);
     }
 
-    public Observable<TItem> whenAnyOrAll(final RxField pField) {
+    public Observable<TItem> whenAnyOrWhole(final RxField pField) {
         return Observable.create(new OnSubscribeFunc<TItem>() {
             public Subscription onSubscribe(final Observer<? super TItem> pItemObserver) {
                 return mSource.subscribe(new Observer<Event<TItem>>() {

@@ -8,6 +8,7 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import rx.util.functions.Action1;
+import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,10 +24,6 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
-import com.codexperiments.newsroot.common.rx.ListEvent;
-import com.codexperiments.newsroot.common.rx.RxListBindListener;
-import com.codexperiments.newsroot.common.rx.RxListClickListener;
-import com.codexperiments.newsroot.common.rx.RxTodoProperty;
 import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
@@ -41,6 +38,10 @@ import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
 import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
+import com.codexperiments.rx.RxClickListener;
+import com.codexperiments.rx.RxListBinder;
+import com.codexperiments.rx.RxProperty;
+import com.codexperiments.rx.RxUIN;
 
 public class NewsListFragment extends Fragment {
     private static final String ARG_SCREEN_NAME = "screenName";
@@ -56,10 +57,14 @@ public class NewsListFragment extends Fragment {
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
     // private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
-    private RxListBindListener mListBindListener;
-    private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
+    // private RxListBindListener mListBindListener;
+    private RxListBinder mListBinder;
+    // private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
+    private RxClickListener<NewsTweetItem> mTweetItemEvent;
     // private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
-    private RxTodoProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
+    // private RxTodoProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
+    // private RxProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
+    private RxProperty<Tweet> mTweetsProperty;
 
     private CompositeSubscription mSubcriptions = Subscriptions.from();
     // private Property<Boolean> mSelectedProperty;
@@ -67,7 +72,8 @@ public class NewsListFragment extends Fragment {
     // private Property<Tweet> mTweetChangedObservable;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
-    private Command<ListEvent<NewsTweetItem, Tweet>> mSelectCommand = Command.create();
+    // private Command<ListEvent<NewsTweetItem, Tweet>> mSelectCommand = Command.create();
+    private Command<NewsTweetItem> mSelectCommand2 = Command.create();
 
     public static final NewsListFragment forUser(String pScreenName) {
         NewsListFragment lFragment = new NewsListFragment();
@@ -191,7 +197,7 @@ public class NewsListFragment extends Fragment {
         mFindMoreCommand = createFindMoreCommand();
         mFindGapCommand = createFindGapCommand();
 
-        mSubcriptions.add(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
+        react(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
                 TweetPage lPage = pTweetPageResponse.tweetPage();
                 mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
@@ -204,36 +210,54 @@ public class NewsListFragment extends Fragment {
                 Log.e("aaaaaaaa", "sfsdfqsdfsdfq");
             }
         }));
-        mSubcriptions.add(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
-        mSubcriptions.add(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
+        react(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
+        react(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
 
-        mListBindListener = RxListBindListener.create(mUIList);
-        mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
+        // mListBindListener = RxListBindListener.create(mUIList);
+        mListBinder = RxListBinder.create(mUIList);
+        // mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
+        mTweetItemEvent = RxClickListener.create(RxUIN.convertToListViewItem(mUIList, NewsTweetItem.class));
         // mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
-        mTweetItemProperty = RxTodoProperty.create();
+        // mTweetItemProperty = RxProperty.create();
+        mTweetsProperty = RxProperty.create();
 
-        mTweetItemProperty.whenAnyOrWhole(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-            public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
-                pEvent.getView().setIsSelected(pEvent.getItem());
-            }
-        });
-        // mTweetItemProperty.register(new Action2<NewsTweetItem, Tweet>() {
-        // public void call(NewsTweetItem pNewsTweetItem, Tweet pTweet) {
-        // pNewsTweetItem.setSelected(pTweet.isSelected());
+        // react(mTweetItemProperty.whenAny(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
+        // pEvent.getView().setIsSelected(pEvent.getItem());
         // }
-        // });
-        mSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-            public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
-                Tweet pTweet = pEvent.getItem();
-                pTweet.setSelected(!pTweet.isSelected());
-                mTweetItemProperty.update(pEvent, Tweet.Selected);
-                // mTweetItemProperty.onNext(pEvent);
-            }
-        });
-        mSubcriptions.add(mTweetItemEvent.onClick().subscribe(mSelectCommand));
-        mSubcriptions.add(mListBindListener.register(NewsTweetItem.class, Tweet.class).subscribe(mTweetItemProperty));
+        // }));
 
-        mUIListAdapter.setRecycleCallback(mListBindListener);
+        react(mTweetsProperty.whenAny(Tweet.Selected) //
+                             .subscribe(RxUIN.toListViewItem(mUIList, NewsTweetItem.class, new Action2<Tweet, NewsTweetItem>() {
+                                 public void call(Tweet pTweet, NewsTweetItem pNewsTweetItem) {
+                                     pNewsTweetItem.setIsSelected(pTweet);
+                                 }
+                             })));
+        // react(mSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
+        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
+        // Tweet pTweet = pEvent.getItem();
+        // pTweet.setSelected(!pTweet.isSelected());
+        // mTweetItemProperty.notify(pEvent, Tweet.Selected);
+        // mTweetsProperty.notify(pTweet, Tweet.Selected);
+        // }
+        // }));
+        react(mSelectCommand2.subscribe(RxUIN.fromListViewItem(mUIList, Tweet.class, new Action2<Tweet, NewsTweetItem>() {
+            public void call(Tweet pTweet, NewsTweetItem pNewsTweetItem) {
+                pTweet.setSelected(!pTweet.isSelected());
+                mTweetsProperty.notify(pTweet, Tweet.Selected);
+            }
+        })));
+        // react(mTweetItemEvent.onClick().subscribe(mSelectCommand));
+        react(mTweetItemEvent.onClick().subscribe(mSelectCommand2));
+        react(mListBinder.register(NewsTweetItem.class)
+                         .map(RxUIN.fromListViewToItem(mUIList, Tweet.class))
+                         .subscribe(mTweetsProperty));
+
+        mUIListAdapter.setRecycleCallback(mListBinder);
+    }
+
+    protected void react(Subscription pSubscription) {
+        mSubcriptions.add(pSubscription);
     }
 
     private Func1<Tweet, Tweet> doSetSelected() {

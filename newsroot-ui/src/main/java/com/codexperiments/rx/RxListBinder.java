@@ -24,7 +24,7 @@ public class RxListBinder implements RxRecycleCallback {
         mRefs = new HashMap<Class<?>, Handler<?, ?>>();
     }
 
-    public <TView, TItem> Observable<ListEvent<TView, TItem>> register(Class<TView> pViewClass, Class<TItem> pItemClass) {
+    public <TView, TItem> Observable<TItem>> register(Class<TView> pViewClass, Class<TItem> pItemClass) {
         Handler<TView, TItem> lHandler = new Handler<TView, TItem>(pItemClass);
         mRefs.put(pViewClass, lHandler);
         return lHandler.mSubject;

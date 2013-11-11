@@ -14,10 +14,11 @@ import android.util.Log;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
+import com.codexperiments.newsroot.common.structure.TreePageIndex;
 
 public class PageIndexTest extends TestCase {
     // public final void testSomething() {
-    // PageIndex<Object> lPageIndex = new PageIndex<Object>();
+    // PageIndex<Object> lPageIndex = new TreePageIndex<Object>();
     // // for (int i = 1; i < 12; ++i) {
     // for (int i = 11; i > 0; --i) {
     // lPageIndex.insert(new MyPage(i, i, i + 10));
@@ -54,7 +55,7 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testInsert() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         List<Integer> lValues = new ArrayList<Integer>();
         int lSize = 0;
         assertThat(lIndex.size(), equalTo(lSize));
@@ -80,13 +81,13 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testFind_zeroElements_emptyIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         List<Integer> lInterval = lIndex.find(0, 0);
         assertThat(lInterval, hasSize(0));
     }
 
     public void testFind_zeroElements_singlePageIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         lIndex.insert(PAGE_1);
         List<Integer> lInterval = lIndex.find(0, 0);
         assertThat(lInterval, hasSize(0));
@@ -105,7 +106,7 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testFind_oneElement_emptyIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         List<Integer> lInterval1 = lIndex.find(0, 1);
         assertThat(lInterval1, hasSize(0));
 
@@ -114,7 +115,7 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testFind_oneElement_singlePageIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         lIndex.insert(new MyPage(10, 14, 5));
         List<Integer> lExpectedValues = sortedValues(PAGE_1);
 
@@ -141,7 +142,7 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testFind_severalElements_emptyIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         List<Integer> lInterval1 = lIndex.find(0, 5);
         assertThat(lInterval1, hasSize(0));
 
@@ -150,7 +151,7 @@ public class PageIndexTest extends TestCase {
     }
 
     public void testFind_severalElements_singlePageIndex() {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         lIndex.insert(new MyPage(10, 14, 5));
         List<Integer> lExpectedValues = sortedValues(PAGE_1);
 
@@ -211,7 +212,7 @@ public class PageIndexTest extends TestCase {
     }
 
     private PageIndex<Integer> makeIndex(List<MyPage> pPageSet) {
-        PageIndex<Integer> lIndex = new PageIndex<Integer>();
+        PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
         for (MyPage lPage : pPageSet) {
             lIndex.insert(lPage);
             Log.d("", "***************************************");
@@ -255,7 +256,7 @@ public class PageIndexTest extends TestCase {
         return lResult;
     }
 
-    private static class MyPage implements Page<Integer> {
+    private static class MyPage implements Page<Integer>, Iterable<Integer> {
         private long mLowerBound;
         private long mUpperBound;
         private int mSize;

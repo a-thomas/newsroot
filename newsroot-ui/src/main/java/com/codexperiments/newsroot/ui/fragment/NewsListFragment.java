@@ -249,9 +249,9 @@ public class NewsListFragment extends Fragment {
         })));
         // react(mTweetItemEvent.onClick().subscribe(mSelectCommand));
         react(mTweetItemEvent.onClick().subscribe(mSelectCommand2));
-        react(mListBinder.register(NewsTweetItem.class)
-                         .map(RxUIN.fromListViewToItem(mUIList, Tweet.class))
-                         .subscribe(mTweetsProperty));
+        // react(mListBinder.register(NewsTweetItem.class)
+        // .map(RxUIN.fromListViewToItem(mUIList, Tweet.class))
+        // .subscribe(mTweetsProperty));
 
         mUIListAdapter.setRecycleCallback(mListBinder);
     }

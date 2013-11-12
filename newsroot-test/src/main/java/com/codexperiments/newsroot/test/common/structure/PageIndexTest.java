@@ -17,25 +17,6 @@ import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
 
 public class PageIndexTest extends TestCase {
-    // public final void testSomething() {
-    // PageIndex<Object> lPageIndex = new TreePageIndex<Object>();
-    // // for (int i = 1; i < 12; ++i) {
-    // for (int i = 11; i > 0; --i) {
-    // lPageIndex.insert(new MyPage(i, i, i + 10));
-    // Log.e("", "");
-    // Log.e("", "*****************************");
-    // Log.e("", lPageIndex.toString());
-    // }
-    //
-    // Log.e("", "*****************************");
-    // int sum = 0;
-    // for (int i = 1; i < 12; ++i) {
-    // sum += i + 10;
-    // Log.e("", sum + " ");
-    // }
-    // }
-    //
-
     private static final MyPage PAGE_1 = new MyPage(10, 14, 5);
     // This page set represent the following values: [-10, -9, -6, -5, -4, -3, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16,
     // 17, 20, 21, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].

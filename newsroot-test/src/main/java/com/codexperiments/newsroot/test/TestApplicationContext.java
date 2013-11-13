@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test.common;
+package com.codexperiments.newsroot.test;
 
 import java.util.ArrayList;
 import java.util.List;

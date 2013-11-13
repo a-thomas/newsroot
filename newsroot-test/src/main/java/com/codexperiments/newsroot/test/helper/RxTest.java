@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test.common;
+package com.codexperiments.newsroot.test.helper;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 
-public class TestRx {
+public class RxTest {
     public static <T> void subscribeAndWait(final Observable<T> pObservable, final Observer<T> pObserver)
         throws InterruptedException
     {

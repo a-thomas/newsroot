@@ -1,6 +1,6 @@
-package com.codexperiments.newsroot.test.repository.twitter;
+package com.codexperiments.newsroot.repository.twitter;
 
-import static com.codexperiments.newsroot.test.common.TestRx.subscribeAndWait;
+import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWait;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasQueryParam;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasUrl;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.whenRequest;
@@ -21,10 +21,7 @@ import rx.Observer;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
-import com.codexperiments.newsroot.repository.twitter.TwitterQuery;
-import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
-import com.codexperiments.newsroot.test.common.MockServerTestCase;
+import com.codexperiments.newsroot.test.MockServerTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
 import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 

@@ -1,3 +1,4 @@
+package com.codexperiments.newsroot.ui;
 // package com.codexperiments.newsroot.test;
 //
 // import static com.codexperiments.newsroot.test.server.MockBackendMatchers.hasQueryParam;

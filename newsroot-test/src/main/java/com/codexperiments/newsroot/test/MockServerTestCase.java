@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test.common;
+package com.codexperiments.newsroot.test;
 
 import static org.mockito.Mockito.mock;
 import android.app.Application;

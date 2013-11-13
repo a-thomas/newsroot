@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test.common;
+package com.codexperiments.newsroot.test;
 
 import android.app.Activity;
 import android.app.Application;

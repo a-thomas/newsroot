@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.test.common.structure;
+package com.codexperiments.newsroot.common.structure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -13,8 +13,6 @@ import junit.framework.TestCase;
 import android.util.Log;
 
 import com.codexperiments.newsroot.common.Page;
-import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.common.structure.TreePageIndex;
 
 public class PageIndexTest extends TestCase {
     private static final MyPage PAGE_1 = new MyPage(10, 14, 5);

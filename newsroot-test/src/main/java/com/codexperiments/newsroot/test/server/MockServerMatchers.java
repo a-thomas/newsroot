@@ -1,12 +1,16 @@
 package com.codexperiments.newsroot.test.server;
 
+import static org.hamcrest.CoreMatchers.any;
+import static org.mockito.Matchers.argThat;
+
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.simpleframework.http.Query;
 import org.simpleframework.http.Request;
 
-public class MockBackendMatchers {
-    // Request pRequest
+public class MockServerMatchers {
     public static class RequestUrlMatcher extends BaseMatcher<Request> {
         private final String mValue;
 
@@ -97,5 +101,9 @@ public class MockBackendMatchers {
 
     public static RequestParamMatcher hasQueryParam(String pParam, long pValue) {
         return new RequestParamMatcher(pParam, Long.toString(pValue));
+    }
+
+    public static OngoingStubbing<String> whenRequest(MockServerHandler pHandler) {
+        return Mockito.when(pHandler.getResponseAsset(argThat(any(Request.class))));
     }
 }

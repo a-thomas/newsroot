@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.platform.honeycomb;
+package com.codexperiments.newsroot.common.platform.webview;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -6,12 +6,9 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
-import com.codexperiments.newsroot.platform.gingerbread.GingerbreadPlatform;
-
 @TargetApi(11)
-public class HoneycombPlatform extends GingerbreadPlatform
-{
-    public HoneycombPlatform(Context pContext) {
+public class HoneycombWebViewPlatform extends GingerbreadWebViewPlatform {
+    public HoneycombWebViewPlatform(Context pContext) {
         super(pContext);
     }
 

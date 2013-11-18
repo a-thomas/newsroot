@@ -1,9 +1,10 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import javax.inject.Inject;
+
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,22 +15,24 @@ import android.webkit.WebViewClient;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
+import com.codexperiments.newsroot.common.BaseFragment;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationCallback;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.robolabor.task.TaskManager;
 
-public class AuthorizationFragment extends Fragment {
+public class AuthorizationFragment extends BaseFragment {
     private static final String BUNDLE_REDIRECTION = "redirection";
 
-    private Platform mPlatform;
     private EventBus mEventBus;
     private TaskManager mTaskManager;
     private TwitterManager mTwitterManager;
 
     private TwitterAuthorizationCallback mRedirection;
 
+    @Inject
+    WebViewPlatform mWebViewPlatform;
     private WebView mUIWebView;
     private ProgressDialog mUIDialog;
 
@@ -40,10 +43,15 @@ public class AuthorizationFragment extends Fragment {
         return lFragment;
     }
 
+    // public AuthorizationFragment(WebViewPlatform pWebViewPlatform) {
+    // super();
+    // mWebViewPlatform = pWebViewPlatform;
+    // }
+
     @Override
     public View onCreateView(LayoutInflater pInflater, ViewGroup pContainer, Bundle pBundle) {
         super.onCreateView(pInflater, pContainer, pBundle);
-        mPlatform = BaseApplication.getServiceFrom(getActivity(), Platform.class);
+        mWebViewPlatform = BaseApplication.getServiceFrom(getActivity(), WebViewPlatform.class);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
@@ -51,7 +59,7 @@ public class AuthorizationFragment extends Fragment {
         View lUIFragment = pInflater.inflate(R.layout.fragment_authorization, pContainer, false);
 
         mUIWebView = (WebView) lUIFragment.findViewById(R.id.authorization_webview);
-        mPlatform.setupWebViewWithJavascript(mUIWebView, new WebChromeClient());
+        mWebViewPlatform.setupWebViewWithJavascript(mUIWebView, new WebChromeClient());
         mUIWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView pWebView, String pUrl) {
@@ -128,19 +136,19 @@ public class AuthorizationFragment extends Fragment {
         mEventBus.unregisterListener(this);
         mTaskManager.unmanage(this);
         mUIWebView.setWebViewClient(new WebViewClient());
-        mPlatform.stopWebView(mUIWebView);
+        mWebViewPlatform.stopWebView(mUIWebView);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mPlatform.pauseWebView(mUIWebView);
+        mWebViewPlatform.pauseWebView(mUIWebView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPlatform.resumeWebView(mUIWebView);
+        mWebViewPlatform.resumeWebView(mUIWebView);
     }
 
     protected void onConnectionError() {

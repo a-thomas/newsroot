@@ -1,13 +1,13 @@
 package com.codexperiments.newsroot.ui.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.codexperiments.newsroot.R;
+import com.codexperiments.newsroot.common.BaseActivity;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
@@ -16,7 +16,7 @@ import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
 import com.codexperiments.newsroot.ui.fragment.NewsListFragment;
 import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 
-public class HomeActivity extends FragmentActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
+public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
     private EventBus mEventBus;
     private TwitterManager mTweetManager;
 

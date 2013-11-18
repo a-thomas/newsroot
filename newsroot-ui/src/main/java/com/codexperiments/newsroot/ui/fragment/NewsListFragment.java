@@ -11,7 +11,6 @@ import rx.util.functions.Action1;
 import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import android.widget.ListView;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
+import com.codexperiments.newsroot.common.BaseFragment;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
@@ -43,7 +43,7 @@ import com.codexperiments.rx.RxListBinder;
 import com.codexperiments.rx.RxProperty;
 import com.codexperiments.rx.RxUIN;
 
-public class NewsListFragment extends Fragment {
+public class NewsListFragment extends BaseFragment {
     private static final String ARG_SCREEN_NAME = "screenName";
 
     private EventBus mEventBus;

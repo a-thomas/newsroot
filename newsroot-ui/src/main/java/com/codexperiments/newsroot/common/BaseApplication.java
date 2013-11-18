@@ -7,17 +7,31 @@ import android.app.Activity;
 import android.app.Application;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
+import com.codexperiments.newsroot.common.platform.PlatformModule;
 import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.platform.Platform;
 import com.codexperiments.newsroot.repository.twitter.TwitterDatabaseRepository;
 import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
+import com.codexperiments.newsroot.ui.NewsRootModule;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
 import com.codexperiments.robolabor.task.handler.Task;
 
+import dagger.ObjectGraph;
+
 public abstract class BaseApplication extends Application {
+    private ObjectGraph mInjector;
     private List<Object> mServices;
+
+    public static ObjectGraph injectorFrom(Activity pActivity) {
+        if (pActivity != null) {
+            Application lApplication = pActivity.getApplication();
+            if ((lApplication != null) && (lApplication instanceof BaseApplication)) {
+                return ((BaseApplication) lApplication).mInjector;
+            }
+        }
+        throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
+    }
 
     public static <TService> TService getServiceFrom(Activity activity, Class<TService> serviceType) {
         if (activity != null) {
@@ -51,7 +65,11 @@ public abstract class BaseApplication extends Application {
 
         TwitterDatabase lDatabase = new TwitterDatabase(this);
 
-        registerService(Platform.Factory.findCurrentPlatform(this));
+        // registerService(WebViewPlatform.Factory.findCurrentPlatform(this));
+        mInjector = ObjectGraph.create(new AndroidModule(this), //
+                                       new PlatformModule(),
+                                       new NewsRootModule());
+        // objectGraph.get(WebViewPlatform.class);
         registerService(new AndroidEventBus());
         registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
             @Override

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.platform;
+package com.codexperiments.newsroot.common.platform;
 
 public class PlatformNotSupported extends RuntimeException
 {

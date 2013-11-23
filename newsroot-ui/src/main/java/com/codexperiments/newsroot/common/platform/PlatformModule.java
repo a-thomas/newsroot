@@ -15,7 +15,7 @@ import dagger.Provides;
 /**
  * Class used to abstract platform-specific set-up, behaviour or anything else.
  */
-@Module(library = true, includes = { AndroidModule.class })
+@Module(library = true, includes = AndroidModule.class)
 public class PlatformModule {
     @Provides
     public WebViewPlatform provideWebViewPlatform(@Application Context pContext) {

@@ -31,8 +31,7 @@ public class AuthorizationFragment extends BaseFragment {
 
     private TwitterAuthorizationCallback mRedirection;
 
-    @Inject
-    WebViewPlatform mWebViewPlatform;
+    @Inject WebViewPlatform mWebViewPlatform;
     private WebView mUIWebView;
     private ProgressDialog mUIDialog;
 

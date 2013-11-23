@@ -15,25 +15,33 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.mockito.ArgumentCaptor;
 
 import rx.Observer;
 
+import com.codexperiments.newsroot.common.AndroidModule;
+import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.test.MockServerTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
 import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
 
+import dagger.ObjectGraph;
+
 public class TwitterRemoteRepositoryTest extends MockServerTestCase {
     private TwitterManager mTwitterManager;
     private TwitterRemoteRepository mTwitterRepository;
     private Observer<TweetPageResponse> mTweetPageObserver;
+    @Inject WebViewPlatform mWebViewPlatform;
 
     @Override
     @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
         super.setUp();
+        ObjectGraph.create(new AndroidModule(getApplication()), new TestModule()).inject(this);
         mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
         mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
         mTwitterRepository = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");

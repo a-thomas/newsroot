@@ -23,12 +23,19 @@ public abstract class BaseApplication extends Application {
     private ObjectGraph mInjector;
     private List<Object> mServices;
 
-    public static ObjectGraph injectorFrom(Activity pActivity) {
+    public static ObjectGraph getObjectGraphFrom(Activity pActivity) {
         if (pActivity != null) {
             Application lApplication = pActivity.getApplication();
             if ((lApplication != null) && (lApplication instanceof BaseApplication)) {
                 return ((BaseApplication) lApplication).mInjector;
             }
+        }
+        throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
+    }
+
+    public static ObjectGraph getObjectGraphFrom(Application pApplication) {
+        if ((pApplication != null) && (pApplication instanceof BaseApplication)) {
+            return ((BaseApplication) pApplication).mInjector;
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }

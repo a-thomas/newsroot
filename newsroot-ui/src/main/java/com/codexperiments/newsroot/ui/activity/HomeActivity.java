@@ -1,15 +1,20 @@
 package com.codexperiments.newsroot.ui.activity;
 
+import javax.inject.Inject;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+import butterknife.InjectView;
+import butterknife.Views;
 
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseActivity;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
+import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
@@ -19,8 +24,9 @@ import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
     private EventBus mEventBus;
     private TwitterManager mTweetManager;
+    @Inject WebViewPlatform mWebViewPlatform;
 
-    private Button mButton1;
+    @InjectView(R.id.button1) Button mButton1;
     private Button mButton2;
     private Button mButton3;
 
@@ -28,11 +34,13 @@ public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listen
     protected void onCreate(Bundle pBundle) {
         super.onCreate(pBundle);
         setContentView(R.layout.activity_home);
+        BaseApplication.getObjectGraphFrom(this).inject(this);
+        Views.inject(this);
 
         mEventBus = BaseApplication.getServiceFrom(this, EventBus.class);
         mTweetManager = BaseApplication.getServiceFrom(this, TwitterManager.class);
 
-        mButton1 = (Button) findViewById(R.id.button1);
+        // mButton1 = (Button) findViewById(R.id.button1);
         mButton1.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View pV) {

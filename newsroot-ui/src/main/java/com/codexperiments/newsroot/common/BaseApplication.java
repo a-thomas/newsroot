@@ -19,23 +19,23 @@ import com.codexperiments.robolabor.task.handler.Task;
 
 import dagger.ObjectGraph;
 
-public abstract class BaseApplication extends Application {
-    private ObjectGraph mInjector;
+public abstract class BaseApplication extends Application implements ApplicationContext {
+    private ObjectGraph mDependencies;
     private List<Object> mServices;
 
-    public static ObjectGraph getObjectGraphFrom(Activity pActivity) {
+    public static ApplicationContext from(Activity pActivity) {
         if (pActivity != null) {
             Application lApplication = pActivity.getApplication();
             if ((lApplication != null) && (lApplication instanceof BaseApplication)) {
-                return ((BaseApplication) lApplication).mInjector;
+                return ((ApplicationContext) lApplication);
             }
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    public static ObjectGraph getObjectGraphFrom(Application pApplication) {
+    public static ApplicationContext from(Application pApplication) {
         if ((pApplication != null) && (pApplication instanceof BaseApplication)) {
-            return ((BaseApplication) pApplication).mInjector;
+            return ((ApplicationContext) pApplication);
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
@@ -50,12 +50,12 @@ public abstract class BaseApplication extends Application {
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    protected static <TService> TService getServiceFrom(Application application, Class<TService> serviceType) {
-        if ((application != null) && (application instanceof BaseApplication)) {
-            return ((BaseApplication) application).getService(serviceType);
-        }
-        throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
-    }
+    // protected static <TService> TService getServiceFrom(Application application, Class<TService> serviceType) {
+    // if ((application != null) && (application instanceof BaseApplication)) {
+    // return ((BaseApplication) application).getService(serviceType);
+    // }
+    // throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
+    // }
 
     public BaseApplication() {
         super();
@@ -73,9 +73,8 @@ public abstract class BaseApplication extends Application {
         TwitterDatabase lDatabase = new TwitterDatabase(this);
 
         // registerService(WebViewPlatform.Factory.findCurrentPlatform(this));
-        mInjector = ObjectGraph.create(new AndroidModule(this), //
-                                       new PlatformModule(),
-                                       new NewsRootModule());
+        mDependencies = ObjectGraph.create(new PlatformModule(), //
+                                           new NewsRootModule(this));
         // objectGraph.get(WebViewPlatform.class);
         registerService(new AndroidEventBus());
         registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
@@ -106,6 +105,11 @@ public abstract class BaseApplication extends Application {
         }));
         registerService(new TwitterRemoteRepository(getService(TwitterManager.class), "https://api.twitter.com/"));
         registerService(new TwitterDatabaseRepository(this, lDatabase, getService(TwitterRemoteRepository.class)));
+    }
+
+    @Override
+    public ObjectGraph dependencies() {
+        return mDependencies;
     }
 
     public void registerService(Object service) {

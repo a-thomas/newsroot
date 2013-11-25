@@ -21,13 +21,14 @@ import org.mockito.ArgumentCaptor;
 
 import rx.Observer;
 
-import com.codexperiments.newsroot.common.AndroidModule;
+import com.codexperiments.newsroot.common.platform.PlatformModule;
 import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
 import com.codexperiments.newsroot.test.MockServerTestCase;
 import com.codexperiments.newsroot.test.data.TweetPageData;
 import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
+import com.codexperiments.newsroot.ui.NewsRootModule;
 
 import dagger.ObjectGraph;
 
@@ -41,7 +42,10 @@ public class TwitterRemoteRepositoryTest extends MockServerTestCase {
     @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
         super.setUp();
-        ObjectGraph.create(new AndroidModule(getApplication()), new TestModule()).inject(this);
+        inject(ObjectGraph.create(new PlatformModule(), //
+                                  new NewsRootModule(getApplication()),
+                                  new TestModule()));
+
         mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
         mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
         mTwitterRepository = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");

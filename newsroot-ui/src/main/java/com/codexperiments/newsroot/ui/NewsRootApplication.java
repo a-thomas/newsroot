@@ -1,95 +1,74 @@
 package com.codexperiments.newsroot.ui;
 
+import java.util.concurrent.CountDownLatch;
+
+import android.app.Activity;
+import android.app.Application;
+import android.os.Handler;
+
+import com.codexperiments.newsroot.common.ApplicationContext;
 import com.codexperiments.newsroot.common.BaseApplication;
+import com.codexperiments.newsroot.common.InternalException;
+import com.codexperiments.newsroot.common.platform.PlatformModule;
 
-public class NewsRootApplication extends BaseApplication
-{
-    // private Configuration configuration;
+import dagger.ObjectGraph;
 
-    // public static void start(Activity activity) {
-    // if (activity != null) {
-    // Application application = activity.getApplication();
-    // if ((application != null) && (application instanceof NewsRootApplication)) {
-    // ((NewsRootApplication) application).onStart();
-    // return;
-    // }
-    // }
-    // throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
-    // }
-    //
-    // public static void stop(Activity activity) {
-    // if (activity != null) {
-    // Application application = activity.getApplication();
-    // if ((application != null) && (application instanceof NewsRootApplication)) {
-    // ((NewsRootApplication) application).onStop();
-    // return;
-    // }
-    // }
-    // throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
-    // }
-    //
-    // public static Configuration getConfigurationFrom(Activity activity) {
-    // if (activity != null) {
-    // Application application = activity.getApplication();
-    // if ((application != null) && (application instanceof BaseApplication)) {
-    // return ((NewsRootApplication) application).configuration;
-    // }
-    // }
-    // throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
-    // }
+public class NewsRootApplication extends BaseApplication {
+    private boolean mReady;
+    private ObjectGraph mDependencies;
 
-    // public NewsRootApplication() {
-    // super();
-    // configuration = null;
-    // }
-
-    // protected abstract Configuration onCreateConfiguration();
-
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        // configuration = onCreateConfiguration();
-
-        // registerService(Platform.Factory.findCurrentPlatform(this));
-        // registerService(new URLService(this));
-        // registerService(new AuthenticationService(this));
-        // registerService(new FollowerService(this, getService(AuthenticationService.class)));
-        // registerService(new ImageService(this,
-        // getService(URLService.class),
-        // getResources().getDrawable(R.drawable.default_image),
-        // getResources().getDrawable(R.drawable.default_image),
-        // getResources().getDrawable(R.drawable.default_image)));
-        // registerService(new NotificationService(this));
-        // registerService(new QuizService(configuration));
-        // registerService(new RubricService(this, configuration));
-        // registerService(new PushService(this));
-        // registerService(ArticlesService.getInstance(this));
-        // try {
-        // registerService(OpenHelperManager.getHelper(this, ArticlesDatabaseHelper.class).getArticlesManager());
-        // } catch (SQLException eSQLException) {
-        // // TODO Handle application crash more properly.
-        // // Logger.error(this, eSQLException);
-        // }
-        //
-        // TODO Ugly. Put in ArticleService constructor!!
-        // getService(ArticlesService.class).setWebServicesUrl(configuration.getWebServicesUrl());
-
-        // onStart();
+    public static ApplicationContext from(Activity pActivity) {
+        if (pActivity != null) {
+            Application lApplication = pActivity.getApplication();
+            if ((lApplication != null) && (lApplication instanceof BaseApplication)) {
+                return ((ApplicationContext) lApplication);
+            }
+        }
+        throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    // public void onStart() {
-    // // Ensures the database is opened.
-    // try {
-    // OpenHelperManager.getHelper(this, ArticlesDatabaseHelper.class).getArticlesManager();
-    // } catch (SQLException eSQLException) {
-    // // Logger.error(this, eSQLException);
-    // }
-    // }
+    public static ApplicationContext from(Application pApplication) {
+        if ((pApplication != null) && (pApplication instanceof BaseApplication)) {
+            return ((ApplicationContext) pApplication);
+        }
+        throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
+    }
 
-    // public void onStop() {
-    // getServiceFrom(this, NotificationService.class).stop();
-    // getServiceFrom(this, URLService.class).purgeCache();
-    // OpenHelperManager.releaseHelper();
-    // }
+    public NewsRootApplication() {
+        super();
+        mReady = false;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mDependencies = ObjectGraph.create(new PlatformModule(), //
+                                           new NewsRootModule(this));
+        mReady = true;
+    }
+
+    @Override
+    public ObjectGraph dependencies() {
+        return mDependencies;
+    }
+
+    public void resetDependenciesForTestPurpose(final ObjectGraph pDependencies) {
+        final CountDownLatch lLatch = new CountDownLatch(1);
+        new Handler(this.getMainLooper()).post(new Runnable() {
+            public void run() {
+                if (!mReady) {
+                    resetDependenciesForTestPurpose(pDependencies);
+                } else {
+                    mDependencies = pDependencies;
+                    lLatch.countDown();
+                }
+            }
+        });
+        try {
+            lLatch.await();
+        } catch (InterruptedException eInterruptedException) {
+            throw new IllegalStateException(eInterruptedException);
+        }
+    }
 }

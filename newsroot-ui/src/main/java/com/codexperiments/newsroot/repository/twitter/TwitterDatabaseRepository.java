@@ -12,7 +12,6 @@ import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
-import android.app.Application;
 import android.database.Cursor;
 
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
@@ -39,7 +38,7 @@ public class TwitterDatabaseRepository implements TwitterRepository {
     private TimeGapDAO mTimeGapDAO;
     private ViewTimelineDAO mViewTimelineDAO;
 
-    public TwitterDatabaseRepository(Application pApplication, TwitterDatabase pDatabase, TwitterRepository pRepository) {
+    public TwitterDatabaseRepository(TwitterDatabase pDatabase, TwitterRepository pRepository) {
         super();
         mDatabase = pDatabase;
         mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);

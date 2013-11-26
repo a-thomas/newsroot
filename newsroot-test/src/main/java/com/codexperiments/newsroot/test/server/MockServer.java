@@ -36,7 +36,7 @@ import android.test.InstrumentationTestCase;
  * </pre>
  */
 public class MockServer {
-    private static final int PORT = 8378;
+    public static final int PORT = 8378;
 
     private Server server;
     private Connection connection;

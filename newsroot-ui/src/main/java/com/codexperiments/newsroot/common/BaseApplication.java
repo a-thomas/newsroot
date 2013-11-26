@@ -8,10 +8,6 @@ import android.app.Application;
 
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.platform.PlatformModule;
-import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
-import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.repository.twitter.TwitterDatabaseRepository;
-import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
 import com.codexperiments.newsroot.ui.NewsRootModule;
 import com.codexperiments.robolabor.task.android.AndroidTaskManager;
 import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
@@ -19,23 +15,23 @@ import com.codexperiments.robolabor.task.handler.Task;
 
 import dagger.ObjectGraph;
 
-public abstract class BaseApplication extends Application implements ApplicationContext {
+public abstract class BaseApplication extends Application {
     private ObjectGraph mDependencies;
     private List<Object> mServices;
 
-    public static ApplicationContext from(Activity pActivity) {
+    public static BaseApplication from(Activity pActivity) {
         if (pActivity != null) {
             Application lApplication = pActivity.getApplication();
             if ((lApplication != null) && (lApplication instanceof BaseApplication)) {
-                return ((ApplicationContext) lApplication);
+                return ((BaseApplication) lApplication);
             }
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
 
-    public static ApplicationContext from(Application pApplication) {
+    public static BaseApplication from(Application pApplication) {
         if ((pApplication != null) && (pApplication instanceof BaseApplication)) {
-            return ((ApplicationContext) pApplication);
+            return ((BaseApplication) pApplication);
         }
         throw InternalException.invalidConfiguration("Could not retrieve configuration from Activity");
     }
@@ -70,8 +66,6 @@ public abstract class BaseApplication extends Application implements Application
         // StrictMode.setVmPolicy(new VmPolicy.Builder().detectAll().build());
         // }
 
-        TwitterDatabase lDatabase = new TwitterDatabase(this);
-
         // registerService(WebViewPlatform.Factory.findCurrentPlatform(this));
         mDependencies = ObjectGraph.create(new PlatformModule(), //
                                            new NewsRootModule(this));
@@ -86,28 +80,9 @@ public abstract class BaseApplication extends Application implements Application
                 // return super.keepResultOnHold(pTask);
             }
         }));
-        registerService(new TwitterManager(this, new TwitterManager.Config() {
-            public String getHost() {
-                return "https://api.twitter.com/";
-            }
-
-            public String getConsumerKey() {
-                return "3Ng9QGTB7EpZCHDOIT2jg";
-            }
-
-            public String getConsumerSecret() {
-                return "OolXzfWdSF6uMdgt2mvLNpDl4HOA1JNlN487LvDUA4";
-            }
-
-            public String getCallbackURL() {
-                return "oauth://newsroot-callback";
-            }
-        }));
-        registerService(new TwitterRemoteRepository(getService(TwitterManager.class), "https://api.twitter.com/"));
-        registerService(new TwitterDatabaseRepository(this, lDatabase, getService(TwitterRemoteRepository.class)));
     }
 
-    @Override
+    // @Override
     public ObjectGraph dependencies() {
         return mDependencies;
     }

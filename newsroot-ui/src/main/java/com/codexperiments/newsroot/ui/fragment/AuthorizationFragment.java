@@ -27,7 +27,7 @@ public class AuthorizationFragment extends BaseFragment {
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
-    private TwitterManager mTwitterManager;
+    @Inject TwitterManager mTwitterManager;
 
     private TwitterAuthorizationCallback mRedirection;
 

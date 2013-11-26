@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
@@ -48,7 +50,7 @@ public class NewsListFragment extends BaseFragment {
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
-    private TwitterRepository mTwitterRepository;
+    @Inject TwitterRepository mTwitterRepository;
 
     private Timeline mTimeline;
     private RxPageIndex<News> mTweets;

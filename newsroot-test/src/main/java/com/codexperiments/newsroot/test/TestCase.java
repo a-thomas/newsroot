@@ -7,10 +7,11 @@ import android.test.InstrumentationTestCase;
 import com.codexperiments.newsroot.test.server.MockServer;
 import com.codexperiments.newsroot.test.server.MockServerHandler;
 import com.codexperiments.newsroot.ui.NewsRootApplication;
+import com.codexperiments.newsroot.ui.NewsRootModule;
 
 import dagger.ObjectGraph;
 
-public abstract class MockServerTestCase extends InstrumentationTestCase {
+public abstract class TestCase extends InstrumentationTestCase {
     private NewsRootApplication mApplication;
     private MockServerHandler mServerHandler;
     private MockServer mServer;
@@ -34,8 +35,13 @@ public abstract class MockServerTestCase extends InstrumentationTestCase {
         super.tearDown();
     }
 
-    protected void inject(ObjectGraph pDependencies) {
-        mApplication.resetDependenciesForTestPurpose(pDependencies);
+    protected void inject(Object... pModules) {
+        Object[] lModules = new Object[pModules.length + 1];
+        lModules[0] = new NewsRootModule(getApplication());
+        System.arraycopy(pModules, 0, lModules, 1, pModules.length);
+
+        ObjectGraph lDependencies = ObjectGraph.create(lModules);
+        mApplication.resetDependenciesForTestPurpose(lDependencies);
         mApplication.dependencies().inject(this);
     }
 

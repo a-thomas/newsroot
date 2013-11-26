@@ -13,9 +13,6 @@ import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Class used to abstract platform-specific set-up, behaviour or anything else.
- */
 @Module(library = true, //
         complete = false)
 public class PlatformModule {

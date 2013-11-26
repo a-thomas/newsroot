@@ -2,7 +2,7 @@ package com.codexperiments.newsroot.manager.twitter;
 
 import java.io.IOException;
 
-import android.app.Application;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 public class TwitterDatabase extends Database {
@@ -57,8 +57,8 @@ public class TwitterDatabase extends Database {
         TMG_TWT_OLDEST_ID
     }
 
-    public TwitterDatabase(Application pApplication) {
-        super(pApplication, DATABASE_NAME, DATABASE_VERSION);
+    public TwitterDatabase(Context pContext) {
+        super(pContext, DATABASE_NAME, DATABASE_VERSION);
     }
 
     @Override

@@ -14,7 +14,7 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
@@ -41,10 +41,10 @@ public class TwitterManager {
     private String mScreenName;
     private boolean mAuthorized;
 
-    public TwitterManager(Application pApplication, Config pConfig) {
+    public TwitterManager(Context pContext, Config pConfig) {
         super();
         mConfig = pConfig;
-        mPreferences = pApplication.getSharedPreferences(PREF_NAME, 0);
+        mPreferences = pContext.getSharedPreferences(PREF_NAME, 0);
         mJSONFactory = new JsonFactory();
 
         checkAuthorization();
@@ -57,9 +57,11 @@ public class TwitterManager {
                                              mConfig.getHost() + "oauth/authorize");
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (!mAuthorized) {
-            mPreferences.edit().putString(PREF_USER_TOKEN, "1272413971-6yoFhYjcCg7EJbYXIQNWv9wRh8vmPTRRwt29NXD")
-                            .putString(PREF_USER_SECRET, "341L0ANySNsvlhSVIj823SYN6j7oILuhRDvW8h7gDs")
-                            .putBoolean(PREF_USER_AUTHORIZED, true).apply();
+            mPreferences.edit()
+                        .putString(PREF_USER_TOKEN, "1272413971-6yoFhYjcCg7EJbYXIQNWv9wRh8vmPTRRwt29NXD")
+                        .putString(PREF_USER_SECRET, "341L0ANySNsvlhSVIj823SYN6j7oILuhRDvW8h7gDs")
+                        .putBoolean(PREF_USER_AUTHORIZED, true)
+                        .apply();
         }
         mAuthorized = mPreferences.getBoolean(PREF_USER_AUTHORIZED, false);
         if (mAuthorized) {

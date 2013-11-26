@@ -14,8 +14,8 @@ public class RxTest {
     {
         final CountDownLatch lCompleted = new CountDownLatch(1);
         pObservable.observeOn(AndroidScheduler.threadForUI()).subscribe(new Observer<T>() {
-            public void onNext(T pPageValue) {
-                pObserver.onNext(pPageValue);
+            public void onNext(T pValue) {
+                pObserver.onNext(pValue);
             }
 
             public void onCompleted() {

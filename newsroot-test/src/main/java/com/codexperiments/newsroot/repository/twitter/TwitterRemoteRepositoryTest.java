@@ -21,34 +21,38 @@ import org.mockito.ArgumentCaptor;
 
 import rx.Observer;
 
-import com.codexperiments.newsroot.common.platform.PlatformModule;
-import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.domain.twitter.TimeGap;
 import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.test.MockServerTestCase;
+import com.codexperiments.newsroot.test.TestCase;
+import com.codexperiments.newsroot.test.TestModule;
 import com.codexperiments.newsroot.test.data.TweetPageData;
-import com.codexperiments.newsroot.test.data.TwitterManagerTestConfig;
-import com.codexperiments.newsroot.ui.NewsRootModule;
+import com.codexperiments.newsroot.test.server.MockServer;
 
-import dagger.ObjectGraph;
+import dagger.Module;
+import dagger.Provides;
 
-public class TwitterRemoteRepositoryTest extends MockServerTestCase {
-    private TwitterManager mTwitterManager;
-    private TwitterRemoteRepository mTwitterRepository;
-    private Observer<TweetPageResponse> mTweetPageObserver;
-    @Inject WebViewPlatform mWebViewPlatform;
+public class TwitterRemoteRepositoryTest extends TestCase {
+    @Inject TwitterRepository mTwitterRepository;
+    @Inject Observer<TweetPageResponse> mTweetPageObserver;
+
+    @Module(includes = TestModule.class, injects = TwitterRemoteRepositoryTest.class, overrides = true)
+    static class LocalModule {
+        @Provides
+        public TwitterRepository provideTwitterRepository(TwitterManager pTwitterManager) {
+            return new TwitterRemoteRepository(pTwitterManager, "http://localhost:" + MockServer.PORT + "/");
+        }
+
+        @Provides
+        @SuppressWarnings("unchecked")
+        public Observer<TweetPageResponse> provideTweetPageObserver() {
+            return mock(Observer.class, withSettings().verboseLogging());
+        }
+    }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
         super.setUp();
-        inject(ObjectGraph.create(new PlatformModule(), //
-                                  new NewsRootModule(getApplication()),
-                                  new TestModule()));
-
-        mTweetPageObserver = mock(Observer.class, withSettings().verboseLogging());
-        mTwitterManager = new TwitterManager(getApplication(), new TwitterManagerTestConfig());
-        mTwitterRepository = new TwitterRemoteRepository(mTwitterManager, "http://localhost:8378/");
+        inject(new LocalModule());
     }
 
     public void testFindHomeTweets_noPage() throws Exception {

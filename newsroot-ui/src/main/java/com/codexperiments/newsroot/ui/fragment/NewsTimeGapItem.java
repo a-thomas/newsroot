@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
+import com.codexperiments.newsroot.domain.tweet.TimeGap;
 
 public class NewsTimeGapItem extends RelativeLayout {
     // private Property<Boolean> mLoadingProperty;

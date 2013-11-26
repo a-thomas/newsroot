@@ -30,14 +30,14 @@ import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.RxPageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TimeRange;
-import com.codexperiments.newsroot.domain.twitter.Timeline;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
-import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
-import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.domain.tweet.News;
+import com.codexperiments.newsroot.domain.tweet.TimeGap;
+import com.codexperiments.newsroot.domain.tweet.TimeRange;
+import com.codexperiments.newsroot.domain.tweet.Timeline;
+import com.codexperiments.newsroot.domain.tweet.Tweet;
+import com.codexperiments.newsroot.domain.tweet.TweetPage;
+import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
+import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.rx.RxClickListener;
@@ -50,7 +50,7 @@ public class NewsListFragment extends BaseFragment {
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
-    @Inject TwitterRepository mTwitterRepository;
+    @Inject TweetRepository mTweetRepository;
 
     private Timeline mTimeline;
     private RxPageIndex<News> mTweets;
@@ -91,11 +91,11 @@ public class NewsListFragment extends BaseFragment {
         // Services.
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
-        mTwitterRepository = BaseApplication.getServiceFrom(getActivity(), TwitterRepository.class);
+        mTweetRepository = BaseApplication.getServiceFrom(getActivity(), TweetRepository.class);
 
         // Domain.
         PageIndex<News> lIndex = new TreePageIndex<News>();
-        mTimeline = mTwitterRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
+        mTimeline = mTweetRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
         mTweets = RxPageIndex.newPageIndex(lIndex);
         mTimeRange = null;
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
@@ -282,7 +282,7 @@ public class NewsListFragment extends BaseFragment {
     protected AsyncCommand<Void, TweetPageResponse> createFindMoreCommand() {
         return AsyncCommand.create(new Func1<Void, Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call(Void pVoid) {
-                return mTwitterRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
+                return mTweetRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
             }
         });
     }

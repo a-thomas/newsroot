@@ -7,10 +7,10 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TimeRange;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.repository.twitter.TweetPageResponse;
+import com.codexperiments.newsroot.domain.tweet.TimeGap;
+import com.codexperiments.newsroot.domain.tweet.TimeRange;
+import com.codexperiments.newsroot.domain.tweet.Tweet;
+import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 
 public class TweetPageData {
     public static final int PAGE_SIZE = 20;

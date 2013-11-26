@@ -2,7 +2,7 @@ package com.codexperiments.newsroot.ui.fragment;
 
 import com.codexperiments.newsroot.common.event.BaseEvent;
 import com.codexperiments.newsroot.common.event.EventListener;
-import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationDeniedException;
+import com.codexperiments.newsroot.manager.tweet.TweetAuthorizationDeniedException;
 
 public class UnauthorizedEvent extends BaseEvent<UnauthorizedEvent.Listener>
 {
@@ -23,7 +23,7 @@ public class UnauthorizedEvent extends BaseEvent<UnauthorizedEvent.Listener>
     @Override
     protected void notify(Listener pListener)
     {
-        if ((mException instanceof TwitterAuthorizationDeniedException)) {
+        if ((mException instanceof TweetAuthorizationDeniedException)) {
             pListener.onAuthorizationDenied();
         } else {
             pListener.onAuthorizationFailed();

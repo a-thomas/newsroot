@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
+import com.codexperiments.newsroot.domain.tweet.Tweet;
 
 public class NewsTweetItem extends RelativeLayout {
     // private CompositeSubscription mSubcriptions;

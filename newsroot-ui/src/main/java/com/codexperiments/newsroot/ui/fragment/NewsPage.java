@@ -3,11 +3,11 @@ package com.codexperiments.newsroot.ui.fragment;
 import java.util.List;
 
 import com.codexperiments.newsroot.common.Page;
-import com.codexperiments.newsroot.domain.twitter.News;
-import com.codexperiments.newsroot.domain.twitter.TimeGap;
-import com.codexperiments.newsroot.domain.twitter.TimeRange;
-import com.codexperiments.newsroot.domain.twitter.Tweet;
-import com.codexperiments.newsroot.domain.twitter.TweetPage;
+import com.codexperiments.newsroot.domain.tweet.News;
+import com.codexperiments.newsroot.domain.tweet.TimeGap;
+import com.codexperiments.newsroot.domain.tweet.TimeRange;
+import com.codexperiments.newsroot.domain.tweet.Tweet;
+import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.google.common.collect.Lists;
 
 public class NewsPage implements Page<News> {

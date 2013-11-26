@@ -18,8 +18,8 @@ import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.BaseFragment;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
-import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationCallback;
-import com.codexperiments.newsroot.manager.twitter.TwitterManager;
+import com.codexperiments.newsroot.manager.tweet.TweetAuthorizationCallback;
+import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class AuthorizationFragment extends BaseFragment {
@@ -27,9 +27,9 @@ public class AuthorizationFragment extends BaseFragment {
 
     private EventBus mEventBus;
     private TaskManager mTaskManager;
-    @Inject TwitterManager mTwitterManager;
+    @Inject TweetManager mTweetManager;
 
-    private TwitterAuthorizationCallback mRedirection;
+    private TweetAuthorizationCallback mRedirection;
 
     @Inject WebViewPlatform mWebViewPlatform;
     private WebView mUIWebView;
@@ -53,7 +53,7 @@ public class AuthorizationFragment extends BaseFragment {
         mWebViewPlatform = BaseApplication.getServiceFrom(getActivity(), WebViewPlatform.class);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
-        mTwitterManager = BaseApplication.getServiceFrom(getActivity(), TwitterManager.class);
+        mTweetManager = BaseApplication.getServiceFrom(getActivity(), TweetManager.class);
 
         View lUIFragment = pInflater.inflate(R.layout.fragment_authorization, pContainer, false);
 
@@ -67,7 +67,7 @@ public class AuthorizationFragment extends BaseFragment {
                 mUIDialog.dismiss();
 
                 if (mRedirection == null) {
-                    requestAuthorizationTwitter();
+                    requestAuthorization();
                 }
             }
 
@@ -154,7 +154,7 @@ public class AuthorizationFragment extends BaseFragment {
         mEventBus.dispatch(new UnauthorizedEvent());
     }
 
-    private void requestAuthorizationTwitter() {
+    private void requestAuthorization() {
         // mTaskManager.execute(new TaskAdapter<Void, Void, TwitterAuthorizationCallback>() {
         // TwitterManager lTwitterManager = mTwitterManager;
         //

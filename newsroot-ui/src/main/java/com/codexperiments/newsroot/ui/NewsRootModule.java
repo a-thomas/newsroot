@@ -6,11 +6,11 @@ import android.content.Context;
 
 import com.codexperiments.newsroot.common.Application;
 import com.codexperiments.newsroot.common.platform.PlatformModule;
-import com.codexperiments.newsroot.manager.twitter.TwitterDatabase;
-import com.codexperiments.newsroot.manager.twitter.TwitterManager;
-import com.codexperiments.newsroot.repository.twitter.TwitterDatabaseRepository;
-import com.codexperiments.newsroot.repository.twitter.TwitterRemoteRepository;
-import com.codexperiments.newsroot.repository.twitter.TwitterRepository;
+import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
+import com.codexperiments.newsroot.manager.tweet.TweetManager;
+import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
+import com.codexperiments.newsroot.repository.tweet.TweetRemoteRepository;
+import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.NewsListFragment;
@@ -36,8 +36,8 @@ public class NewsRootModule {
 
     @Provides
     @Singleton
-    public TwitterManager provideTwitterManager(@Application Context pContext) {
-        return new TwitterManager(pContext, new TwitterManager.Config() {
+    public TweetManager provideTweetManager(@Application Context pContext) {
+        return new TweetManager(pContext, new TweetManager.Config() {
             public String getHost() {
                 return "https://api.twitter.com/";
             }
@@ -58,14 +58,14 @@ public class NewsRootModule {
 
     @Provides
     @Singleton
-    public TwitterDatabase provideTwitterDatabase(@Application Context pContext) {
-        return new TwitterDatabase(pContext);
+    public TweetDatabase provideTweetDatabase(@Application Context pContext) {
+        return new TweetDatabase(pContext);
     }
 
     @Provides
     @Singleton
-    public TwitterRepository provideTwitterRepository(TwitterManager pTwitterManager, TwitterDatabase pTwitterDatabase) {
-        TwitterRepository lRemoteRepository = new TwitterRemoteRepository(pTwitterManager, "https://api.twitter.com/");
-        return new TwitterDatabaseRepository(pTwitterDatabase, lRemoteRepository);
+    public TweetRepository provideTweetRepository(TweetManager pTweetManager, TweetDatabase pTweetDatabase) {
+        TweetRepository lRemoteRepository = new TweetRemoteRepository(pTweetManager, "https://api.twitter.com/");
+        return new TweetDatabaseRepository(pTweetDatabase, lRemoteRepository);
     }
 }

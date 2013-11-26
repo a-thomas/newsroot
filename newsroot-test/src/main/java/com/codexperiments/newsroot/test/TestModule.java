@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import android.content.Context;
 
 import com.codexperiments.newsroot.common.Application;
-import com.codexperiments.newsroot.manager.twitter.TwitterManager;
+import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.test.server.MockServer;
 import com.codexperiments.newsroot.ui.NewsRootModule;
 
@@ -18,8 +18,8 @@ import dagger.Provides;
 public class TestModule {
     @Provides
     @Singleton
-    public TwitterManager provideTwitterManager(@Application Context pContext) {
-        return new TwitterManager(pContext, new TwitterManager.Config() {
+    public TweetManager provideTweetManager(@Application Context pContext) {
+        return new TweetManager(pContext, new TweetManager.Config() {
             public String getHost() {
                 return "http://localhost:" + MockServer.PORT + "/";
             }

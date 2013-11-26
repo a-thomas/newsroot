@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.domain.twitter.News;
+import com.codexperiments.newsroot.domain.tweet.News;
 
 public abstract class PageAdapter<TItem> extends BaseAdapter {
     private RxRecycleCallback mRecycleCallback;

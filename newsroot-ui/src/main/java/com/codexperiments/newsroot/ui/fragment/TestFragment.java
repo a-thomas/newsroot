@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
-import com.codexperiments.newsroot.manager.twitter.TwitterAuthorizationCallback;
+import com.codexperiments.newsroot.manager.tweet.TweetAuthorizationCallback;
 import com.codexperiments.robolabor.task.TaskManager;
 
 public class TestFragment extends Fragment {
@@ -18,7 +18,7 @@ public class TestFragment extends Fragment {
     private EventBus mEventBus;
     private TaskManager mTaskManager;
 
-    private TwitterAuthorizationCallback mRedirection;
+    private TweetAuthorizationCallback mRedirection;
 
     public static final TestFragment authenticate() {
         TestFragment lFragment = new TestFragment();

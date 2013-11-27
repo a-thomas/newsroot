@@ -154,7 +154,7 @@ public class TweetDatabaseRepository implements TweetRepository {
         return mDatabase.endTransaction(lCachedTweetPages);
     }
 
-    private Observable<Tweet> cacheTweets2(final TweetPageResponse pTweetPageResponse,
+    private Observable<Tweet> cacheTweets3(final TweetPageResponse pTweetPageResponse,
                                            final Observer<? super TweetPageResponse> pPageObserver)
     {
         return Observable.create(new OnSubscribeFunc<Tweet>() {

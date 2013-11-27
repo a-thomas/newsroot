@@ -23,9 +23,9 @@ import com.codexperiments.newsroot.manager.tweet.ResultHandler;
 import com.codexperiments.newsroot.manager.tweet.TimeGapDAO;
 import com.codexperiments.newsroot.manager.tweet.TweetDAO;
 import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
-import com.codexperiments.newsroot.manager.tweet.ViewTimelineDAO;
 import com.codexperiments.newsroot.manager.tweet.TweetDatabase.COL_VIEW_TIMELINE;
 import com.codexperiments.newsroot.manager.tweet.TweetDatabase.DB_TWEET;
+import com.codexperiments.newsroot.manager.tweet.ViewTimelineDAO;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 
 public class TweetDatabaseRepository implements TweetRepository {
@@ -86,9 +86,9 @@ public class TweetDatabaseRepository implements TweetRepository {
                     public void call() {
                         try {
                             Query<DB_TWEET> lQuery = Query.on(DB_TWEET.values())
-                                                            .selectAll(DB_TWEET.VIEW_TIMELINE)
-                                                            .from(DB_TWEET.VIEW_TIMELINE)
-                                                            .limit(DEFAULT_PAGE_SIZE);
+                                                          .selectAll(DB_TWEET.VIEW_TIMELINE)
+                                                          .from(DB_TWEET.VIEW_TIMELINE)
+                                                          .limit(DEFAULT_PAGE_SIZE);
                             if (pTimeGap.isFutureGap()) {
                                 lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound());
                             } else if (pTimeGap.isPastGap()) {
@@ -132,7 +132,6 @@ public class TweetDatabaseRepository implements TweetRepository {
 
     private Observable<TweetPageResponse> cacheTweetPages(Observable<TweetPageResponse> pTweetPages) {
         final Observable<TweetPageResponse> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
-
         final Observable<TweetPageResponse> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pPageObserver) {
                 return lTweetPagesTransaction.subscribe(new Observer<TweetPageResponse>() {

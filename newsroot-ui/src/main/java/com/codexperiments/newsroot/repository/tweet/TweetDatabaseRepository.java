@@ -71,7 +71,7 @@ public class TweetDatabaseRepository implements TweetRepository {
         if (pTimeGap.isPastGap() && lHasMore == Boolean.TRUE) {
             return findCachedTweets(pTimeline, pTimeGap, pPageCount, pPageSize);
         } else {
-            return cacheTweetPages(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize));
+            return cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize));
         }
     }
 
@@ -118,7 +118,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                                 pObserver.onCompleted();
                             } else {
                                 mHasMore.put(pTimeline, Boolean.FALSE);
-                                cacheTweetPages(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
+                                cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
                             }
                         } catch (Exception eException) {
                             pObserver.onError(eException);
@@ -130,30 +130,15 @@ public class TweetDatabaseRepository implements TweetRepository {
         });
     }
 
-    private Observable<TweetPageResponse> cacheTweetPages(Observable<TweetPageResponse> pTweetPages) {
+    private Observable<TweetPageResponse> cacheTweets(Observable<TweetPageResponse> pTweetPages) {
         final Observable<TweetPageResponse> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
+
         final Observable<TweetPageResponse> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pPageObserver) {
                 return lTweetPagesTransaction.subscribe(new Observer<TweetPageResponse>() {
                     public void onNext(final TweetPageResponse pTweetPageResponse) {
-                        Observable.from(pTweetPageResponse.tweetPage()).subscribe(new Observer<Tweet>() {
-                            public void onNext(Tweet pTweet) {
-                                mTweetDAO.create(pTweet);
-                            }
-
-                            public void onCompleted() {
-                                mTimeGapDAO.delete(pTweetPageResponse.initialGap());
-                                TimeGap lRemainingTimeGap = pTweetPageResponse.remainingGap();
-                                if (lRemainingTimeGap != null) {
-                                    mTimeGapDAO.create(lRemainingTimeGap);
-                                }
-                                pPageObserver.onNext(pTweetPageResponse);
-                            }
-
-                            public void onError(Throwable pThrowable) {
-                                pPageObserver.onError(pThrowable);
-                            }
-                        });
+                        Observable.from(pTweetPageResponse.tweetPage()) //
+                                  .subscribe(cacheTweets(pTweetPageResponse, pPageObserver));
                     }
 
                     public void onCompleted() {
@@ -167,5 +152,39 @@ public class TweetDatabaseRepository implements TweetRepository {
             }
         });
         return mDatabase.endTransaction(lCachedTweetPages);
+    }
+
+    private Observable<Tweet> cacheTweets2(final TweetPageResponse pTweetPageResponse,
+                                           final Observer<? super TweetPageResponse> pPageObserver)
+    {
+        return Observable.create(new OnSubscribeFunc<Tweet>() {
+            public Subscription onSubscribe(Observer<? super Tweet> pObserver) {
+                return Observable.from(pTweetPageResponse.tweetPage()) //
+                                 .subscribe(cacheTweets(pTweetPageResponse, pPageObserver));
+            }
+        });
+    }
+
+    private Observer<Tweet> cacheTweets(final TweetPageResponse pTweetPageResponse,
+                                        final Observer<? super TweetPageResponse> pPageObserver)
+    {
+        return new Observer<Tweet>() {
+            public void onNext(Tweet pTweet) {
+                mTweetDAO.create(pTweet);
+            }
+
+            public void onCompleted() {
+                mTimeGapDAO.delete(pTweetPageResponse.initialGap());
+                TimeGap lRemainingTimeGap = pTweetPageResponse.remainingGap();
+                if (lRemainingTimeGap != null) {
+                    mTimeGapDAO.create(lRemainingTimeGap);
+                }
+                pPageObserver.onNext(pTweetPageResponse);
+            }
+
+            public void onError(Throwable pThrowable) {
+                pPageObserver.onError(pThrowable);
+            }
+        };
     }
 }

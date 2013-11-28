@@ -138,7 +138,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                 return lTweetPagesTransaction.subscribe(new Observer<TweetPageResponse>() {
                     public void onNext(final TweetPageResponse pTweetPageResponse) {
                         Observable.from(pTweetPageResponse.tweetPage()) //
-                                  .subscribe(cacheTweets(pTweetPageResponse, pPageObserver));
+                                  .subscribe(cacheTweetsObserver(pTweetPageResponse, pPageObserver));
                     }
 
                     public void onCompleted() {
@@ -154,19 +154,8 @@ public class TweetDatabaseRepository implements TweetRepository {
         return mDatabase.endTransaction(lCachedTweetPages);
     }
 
-    private Observable<Tweet> cacheTweets3(final TweetPageResponse pTweetPageResponse,
-                                           final Observer<? super TweetPageResponse> pPageObserver)
-    {
-        return Observable.create(new OnSubscribeFunc<Tweet>() {
-            public Subscription onSubscribe(Observer<? super Tweet> pObserver) {
-                return Observable.from(pTweetPageResponse.tweetPage()) //
-                                 .subscribe(cacheTweets(pTweetPageResponse, pPageObserver));
-            }
-        });
-    }
-
-    private Observer<Tweet> cacheTweets(final TweetPageResponse pTweetPageResponse,
-                                        final Observer<? super TweetPageResponse> pPageObserver)
+    private Observer<Tweet> cacheTweetsObserver(final TweetPageResponse pTweetPageResponse,
+                                                final Observer<? super TweetPageResponse> pPageObserver)
     {
         return new Observer<Tweet>() {
             public void onNext(Tweet pTweet) {
@@ -174,7 +163,7 @@ public class TweetDatabaseRepository implements TweetRepository {
             }
 
             public void onCompleted() {
-                mTimeGapDAO.delete(pTweetPageResponse.initialGap());
+                mTimeGapDAO.delete(pTweetPageResponse.initialGap()); // TODO Bug here? Done after transaction?
                 TimeGap lRemainingTimeGap = pTweetPageResponse.remainingGap();
                 if (lRemainingTimeGap != null) {
                     mTimeGapDAO.create(lRemainingTimeGap);

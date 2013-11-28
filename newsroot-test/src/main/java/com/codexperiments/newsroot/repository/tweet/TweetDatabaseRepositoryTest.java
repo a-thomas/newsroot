@@ -16,30 +16,39 @@ import static org.mockito.Mockito.withSettings;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.mockito.ArgumentCaptor;
 
 import rx.Observer;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
-import com.codexperiments.newsroot.manager.tweet.TweetManager;
+import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
 import com.codexperiments.newsroot.test.TestCase;
 import com.codexperiments.newsroot.test.TestModule;
 import com.codexperiments.newsroot.test.data.TweetPageData;
-import com.codexperiments.newsroot.test.server.MockServer;
 
 import dagger.Module;
 import dagger.Provides;
 
-public class TweetRemoteRepositoryTest extends TestCase {
+public class TweetDatabaseRepositoryTest extends TestCase {
     @Inject TweetRepository mTweetRepository;
+    @Inject @Named("wrapped") TweetRepository mWrappedTweetRepository;
     @Inject Observer<TweetPageResponse> mTweetPageObserver;
 
-    @Module(includes = TestModule.class, injects = TweetRemoteRepositoryTest.class, overrides = true)
+    @Module(includes = TestModule.class, injects = TweetDatabaseRepositoryTest.class, overrides = true)
     static class LocalModule {
         @Provides
-        public TweetRepository provideTweetRepository(TweetManager pTweetManager) {
-            return new TweetRemoteRepository(pTweetManager, "http://localhost:" + MockServer.PORT + "/");
+        public TweetRepository provideTweetRepository(TweetDatabase pTweetDatabase,
+                                                      @Named("wrapped") TweetRepository pTweetRepository)
+        {
+            return new TweetDatabaseRepository(pTweetDatabase, pTweetRepository);
+        }
+
+        @Provides
+        @Named("wrapped")
+        public TweetRepository provideWrappedTweetRepository() {
+            return mock(TweetRepository.class);
         }
 
         @Provides

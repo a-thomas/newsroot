@@ -49,7 +49,7 @@ public abstract class TestCase extends InstrumentationTestCase {
         return mApplication;
     }
 
-    public MockServerHandler getServer() {
+    public MockServerHandler server() {
         return mServerHandler;
     }
 }

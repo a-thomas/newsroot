@@ -103,7 +103,7 @@ public class MockServerMatchers {
         return new RequestParamMatcher(pParam, Long.toString(pValue));
     }
 
-    public static OngoingStubbing<String> whenRequest(MockServerHandler pHandler) {
+    public static OngoingStubbing<String> whenRequestOn(MockServerHandler pHandler) {
         return Mockito.when(pHandler.getResponseAsset(argThat(any(Request.class))));
     }
 }

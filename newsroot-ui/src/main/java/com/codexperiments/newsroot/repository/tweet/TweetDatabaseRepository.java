@@ -40,6 +40,7 @@ public class TweetDatabaseRepository implements TweetRepository {
 
     public TweetDatabaseRepository(TweetDatabase pDatabase, TweetRepository pRepository) {
         super();
+        mRepository = pRepository;
         mDatabase = pDatabase;
         mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
         mFollowing = new HashMap<String, Timeline>();
@@ -54,8 +55,10 @@ public class TweetDatabaseRepository implements TweetRepository {
     @Override
     public Timeline findTimeline(String pUsername) {
         Timeline lTimeline = mFollowing.get(pUsername);
-        if (lTimeline != null) {
+        if (lTimeline == null) {
             lTimeline = new Timeline(pUsername);
+            mFollowing.put(pUsername, lTimeline);
+            mHasMore.put(lTimeline, Boolean.TRUE);
         }
         return lTimeline;
     }

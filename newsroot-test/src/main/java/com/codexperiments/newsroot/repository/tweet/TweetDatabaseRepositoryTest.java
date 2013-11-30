@@ -32,22 +32,22 @@ import dagger.Module;
 import dagger.Provides;
 
 public class TweetDatabaseRepositoryTest extends TestCase {
-    @Inject TweetRepository mTweetRepository;
-    @Inject @Named("wrapped") TweetRepository mWrappedTweetRepository;
+    @Inject TweetRepository mTweetDatabaseRepository;
+    @Inject @Named("wrapped") TweetRepository mTweetMockRepository;
     @Inject Observer<TweetPageResponse> mTweetPageObserver;
 
     @Module(includes = TestModule.class, injects = TweetDatabaseRepositoryTest.class, overrides = true)
     static class LocalModule {
         @Provides
-        public TweetRepository provideTweetRepository(TweetDatabase pTweetDatabase,
-                                                      @Named("wrapped") TweetRepository pTweetRepository)
+        public TweetRepository provideTweetDatabaseRepository(TweetDatabase pTweetDatabase,
+                                                              @Named("wrapped") TweetRepository pTweetRepository)
         {
             return new TweetDatabaseRepository(pTweetDatabase, pTweetRepository);
         }
 
         @Provides
         @Named("wrapped")
-        public TweetRepository provideWrappedTweetRepository() {
+        public TweetRepository provideTweetMockRepository() {
             return mock(TweetRepository.class);
         }
 
@@ -72,7 +72,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
 
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_empty.json");
         // Run.
-        subscribeAndWait(mTweetRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTweetDatabaseRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -96,7 +96,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
 
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json");
         // Run.
-        subscribeAndWait(mTweetRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTweetDatabaseRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -122,7 +122,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
                                .thenReturn("twitter/ctx_tweet_02-2.json")
                                .thenReturn("twitter/ctx_tweet_02-3.json");
         // Run.
-        subscribeAndWait(mTweetRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTweetDatabaseRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),

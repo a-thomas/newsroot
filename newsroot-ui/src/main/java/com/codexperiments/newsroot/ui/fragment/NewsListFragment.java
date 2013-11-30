@@ -88,10 +88,11 @@ public class NewsListFragment extends BaseFragment {
     @Override
     public View onCreateView(final LayoutInflater pLayoutInflater, ViewGroup pContainer, Bundle pBundle) {
         super.onCreateView(pLayoutInflater, pContainer, pBundle);
+        BaseApplication.from(getActivity()).dependencies().inject(this);
+
         // Services.
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
-        mTweetRepository = BaseApplication.getServiceFrom(getActivity(), TweetRepository.class);
 
         // Domain.
         PageIndex<News> lIndex = new TreePageIndex<News>();

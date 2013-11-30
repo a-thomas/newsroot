@@ -97,50 +97,6 @@ public abstract class Database extends SQLiteOpenHelper {
         });
     }
 
-    // public <T> void apply(final Observable<T> pObservable) {
-    // pObservable.subscribe(new Observer<T>() {
-    // public void onNext(T pT) {
-    // }
-    //
-    // public void onCompleted() {
-    // }
-    //
-    // public void onError(Throwable pThrowable) {
-    // }
-    // });
-    // }
-    //
-    // public <T, TPage extends Iterable<T>> void run(final Observable<T> pObservable,
-    // final TPage pPage,
-    // final Observer<TPage> pPagedObserver)
-    // {
-    // pObservable.subscribe(new Observer<T>() {
-    // public void onNext(T pT) {
-    // }
-    //
-    // public void onCompleted() {
-    // pPagedObserver.onNext(pPage);
-    // }
-    //
-    // public void onError(Throwable pThrowable) {
-    // pPagedObserver.onError(pThrowable);
-    // }
-    // });
-    // }
-    // new Action1<T>() {
-    // public void call(T pValue) {
-    // try {
-    // mConnection.beginTransaction();
-    //
-    // // Once transaction is started, push data further into the pipeline.
-    // pObserver.onNext(pValue);
-    // } catch (SQLException eSQLException) {
-    // mConnection.endTransaction();
-    // pObserver.onError(eSQLException);
-    // throw eSQLException;
-    // }
-    // }
-    // }
     public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
         return Observable.create(new OnSubscribeFunc<T>() {
             public Subscription onSubscribe(final Observer<? super T> pObserver) {
@@ -190,56 +146,6 @@ public abstract class Database extends SQLiteOpenHelper {
             }
         });
     }
-
-    // public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
-    // return Observable.create(new OnSubscribeFunc<T>() {
-    // public Subscription onSubscribe(final Observer<? super T> pObserver) {
-    // return pObservable.buffer(Integer.MAX_VALUE)
-    // .observeOn(AndroidScheduler.threadPoolForDatabase())
-    // .subscribe(new Action1<List<T>>() {
-    // public void call(List<T> pValues) {
-    // try {
-    // mConnection.beginTransaction();
-    //
-    // // Once transaction is started, push data further into the pipeline.
-    // for (T value : pValues) {
-    // pObserver.onNext(value);
-    // }
-    // pObserver.onCompleted();
-    // } catch (SQLException eSQLException) {
-    // mConnection.endTransaction();
-    // pObserver.onError(eSQLException);
-    // throw eSQLException;
-    // }
-    // }
-    // });
-    // }
-    // });
-    // }
-
-    // public <T> Observable<T> endTransaction(final Observable<T> pObservable) {
-    // return Observable.create(new OnSubscribeFunc<T>() {
-    // public Subscription onSubscribe(final Observer<? super T> pObserver) {
-    // return pObservable.buffer(Integer.MAX_VALUE).subscribe(new Action1<List<T>>() {
-    // public void call(List<T> pValues) {
-    // try {
-    // mConnection.setTransactionSuccessful();
-    // mConnection.endTransaction();
-    //
-    // // Once data is committed, push data further into the pipeline.
-    // for (T value : pValues) {
-    // pObserver.onNext(value);
-    // }
-    // pObserver.onCompleted();
-    // } catch (SQLException eSQLException) {
-    // mConnection.endTransaction();
-    // pObserver.onError(eSQLException);
-    // }
-    // }
-    // });
-    // }
-    // });
-    // }
 
     public Database executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mContext);

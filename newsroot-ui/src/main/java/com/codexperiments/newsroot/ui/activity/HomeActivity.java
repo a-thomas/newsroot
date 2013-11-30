@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.ui.activity;
 
+import javax.inject.Inject;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +22,7 @@ import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
 
 public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
     private EventBus mEventBus;
-    private TweetManager mTweetManager;
+    @Inject TweetManager mTweetManager;
 
     @InjectView(R.id.button1) Button mButton1;
     @InjectView(R.id.button2) Button mButton2;
@@ -34,7 +36,6 @@ public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listen
         Views.inject(this);
 
         mEventBus = BaseApplication.getServiceFrom(this, EventBus.class);
-        mTweetManager = BaseApplication.getServiceFrom(this, TweetManager.class);
 
         mButton1.setOnClickListener(new OnClickListener() {
             @Override

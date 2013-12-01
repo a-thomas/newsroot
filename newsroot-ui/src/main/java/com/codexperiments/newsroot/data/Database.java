@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.data;
 
 import java.io.IOException;
 import java.io.InputStream;

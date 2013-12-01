@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.common.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.codexperiments.newsroot.manager.tweet.ResultHandler.Handle;
+import com.codexperiments.newsroot.common.data.ResultHandler.Handle;
 
 public class Query<TTable extends Enum<?> & Table>
 {

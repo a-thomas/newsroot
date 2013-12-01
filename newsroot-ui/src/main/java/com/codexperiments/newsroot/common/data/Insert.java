@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.common.data;
 
 import java.util.ArrayList;
 import java.util.List;

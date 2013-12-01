@@ -22,8 +22,8 @@ import org.mockito.ArgumentCaptor;
 
 import rx.Observer;
 
+import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
 import com.codexperiments.newsroot.test.TestCase;
 import com.codexperiments.newsroot.test.TestModule;
 import com.codexperiments.newsroot.test.data.TweetPageData;

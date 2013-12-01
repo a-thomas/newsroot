@@ -6,7 +6,7 @@ import android.content.Context;
 
 import com.codexperiments.newsroot.common.Application;
 import com.codexperiments.newsroot.common.platform.PlatformModule;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetRemoteRepository;

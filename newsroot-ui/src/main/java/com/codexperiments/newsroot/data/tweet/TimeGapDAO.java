@@ -1,9 +1,12 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.data.tweet;
 
+import com.codexperiments.newsroot.common.data.Insert;
+import com.codexperiments.newsroot.common.data.ResultHandler;
+import com.codexperiments.newsroot.common.data.Update;
+import com.codexperiments.newsroot.common.data.ResultHandler.Row;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TMG_TIMEGAP;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
-import com.codexperiments.newsroot.manager.tweet.ResultHandler.Row;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase.COL_TMG_TIMEGAP;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase.DB_TWEET;
 
 public class TimeGapDAO {
     private TweetDatabase mDatabase;

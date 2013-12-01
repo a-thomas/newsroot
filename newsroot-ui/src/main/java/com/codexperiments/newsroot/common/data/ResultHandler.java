@@ -1,29 +1,25 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.common.data;
 
 import android.database.Cursor;
 
-public class ResultHandler<TTable extends Enum<?> & Table>
-{
+public class ResultHandler<TTable extends Enum<?> & Table> {
     private TTable[] mTables;
     private boolean[] mSelectedTables;
     private int[][] mIndexes;
 
-    public ResultHandler(TTable[] pTables)
-    {
+    public ResultHandler(TTable[] pTables) {
         super();
         mTables = pTables;
         mSelectedTables = new boolean[pTables.length];
         mIndexes = new int[mTables.length][];
     }
 
-    public ResultHandler<TTable> select(TTable pTable)
-    {
+    public ResultHandler<TTable> select(TTable pTable) {
         mSelectedTables[pTable.ordinal()] = true;
         return this;
     }
 
-    public void parse(Cursor pCursor, Handle pHandle)
-    {
+    public void parse(Cursor pCursor, Handle pHandle) {
         // Build the index of columns to look for in the result set.
         int lTableCount = mTables.length;
         for (int i = 0; i < lTableCount; ++i) {
@@ -53,41 +49,34 @@ public class ResultHandler<TTable extends Enum<?> & Table>
         }
     }
 
-    public static class Row
-    {
+    public static class Row {
         private Cursor mCursor;
         private int[][] mIndexes;
 
-        protected Row(Cursor pCursor, int[][] pIndexes)
-        {
+        public Row(Cursor pCursor, int[][] pIndexes) {
             super();
             mCursor = pCursor;
             mIndexes = pIndexes;
         }
 
-        protected int getIndex(Enum<?> pTable, Enum<?> pColumn)
-        {
+        public int getIndex(Enum<?> pTable, Enum<?> pColumn) {
             return mIndexes[pTable.ordinal()][pColumn.ordinal()];
         }
 
-        protected int getInt(Enum<?> pTable, Enum<?> pColumn)
-        {
+        public int getInt(Enum<?> pTable, Enum<?> pColumn) {
             return mCursor.getInt(mIndexes[pTable.ordinal()][pColumn.ordinal()]);
         }
 
-        protected long getLong(Enum<?> pTable, Enum<?> pColumn)
-        {
+        public long getLong(Enum<?> pTable, Enum<?> pColumn) {
             return mCursor.getLong(mIndexes[pTable.ordinal()][pColumn.ordinal()]);
         }
 
-        protected String getString(Enum<?> pTable, Enum<?> pColumn)
-        {
+        public String getString(Enum<?> pTable, Enum<?> pColumn) {
             return mCursor.getString(mIndexes[pTable.ordinal()][pColumn.ordinal()]);
         }
     }
 
-    public interface Handle
-    {
+    public interface Handle {
         public abstract void handleRow(Row pRow, Cursor pCursor);
     }
 }

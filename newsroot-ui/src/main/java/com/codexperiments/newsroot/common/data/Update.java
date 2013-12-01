@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.manager.tweet;
+package com.codexperiments.newsroot.common.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,27 +6,50 @@ import java.util.List;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-public class Delete<TTable extends Enum<?> & Table> {
-    private StringBuilder mDelete;
+public class Update<TTable extends Enum<?> & Table> {
+    private StringBuilder mUpdate;
+    private StringBuilder mSet;
     private StringBuilder mWhere;
     private StringBuilder mOrderBy;
 
     private List<String> mParams;
     private SQLiteStatement mStatement;
 
-    public static <TTable extends Enum<?> & Table> Delete<TTable> on(TTable pTable) {
-        return new Delete<TTable>(pTable);
+    public static <TTable extends Enum<?> & Table> Update<TTable> on(TTable pTable) {
+        return new Update<TTable>(pTable);
     }
 
-    public Delete(TTable pTable) {
+    public Update(TTable pTable) {
         super();
 
-        mDelete = new StringBuilder("delete from ").append(pTable.name());
+        mUpdate = new StringBuilder("update ").append(pTable.name());
+        mSet = new StringBuilder();
         mWhere = new StringBuilder();
         mOrderBy = new StringBuilder();
 
         mParams = new ArrayList<String>();
         mStatement = null;
+    }
+
+    private void startSetClause() {
+        if (mSet.length() == 0) {
+            mSet.append(" set ");
+        } else {
+            mSet.append(", ");
+        }
+    }
+
+    public Update<TTable> set(Enum<?> pColumn, String pValue) {
+        if (mStatement == null) {
+            startSetClause();
+            mSet.append(pColumn.name()).append(" = ? ");
+        }
+        mParams.add(pValue);
+        return this;
+    }
+
+    public Update<TTable> set(Enum<?> pColumn, long pValue) {
+        return set(pColumn, Long.toString(pValue));
     }
 
     private void startWhere() {
@@ -37,19 +60,19 @@ public class Delete<TTable extends Enum<?> & Table> {
         }
     }
 
-    public Delete<TTable> whereEquals(Enum<?> pColumn, long pValue) {
+    public Update<TTable> whereEquals(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " = ", Long.toString(pValue));
     }
 
-    public Delete<TTable> whereGreater(Enum<?> pColumn, long pValue) {
+    public Update<TTable> whereGreater(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " > ", Long.toString(pValue));
     }
 
-    public Delete<TTable> whereLower(Enum<?> pColumn, long pValue) {
+    public Update<TTable> whereLower(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " < ", Long.toString(pValue));
     }
 
-    private Delete<TTable> whereCondition(Enum<?> pColumn, String pOperator, String pValue) {
+    private Update<TTable> whereCondition(Enum<?> pColumn, String pOperator, String pValue) {
         startWhere();
         mWhere.append(pColumn.name()).append(pOperator).append("?");
         mParams.add(pValue);
@@ -59,7 +82,7 @@ public class Delete<TTable extends Enum<?> & Table> {
     public int execute(SQLiteDatabase pConnection) {
         if (mStatement == null) {
             StringBuilder lQuery = new StringBuilder();
-            lQuery.append(mDelete).append(mWhere);
+            lQuery.append(mUpdate).append(mSet).append(mWhere);
             if (mOrderBy.length() > 0) {
                 lQuery.append(mOrderBy);
             }

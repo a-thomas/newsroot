@@ -14,18 +14,18 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import android.database.Cursor;
 
+import com.codexperiments.newsroot.common.data.Query;
+import com.codexperiments.newsroot.common.data.ResultHandler;
+import com.codexperiments.newsroot.data.tweet.TimeGapDAO;
+import com.codexperiments.newsroot.data.tweet.TweetDAO;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase;
+import com.codexperiments.newsroot.data.tweet.ViewTimelineDAO;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_VIEW_TIMELINE;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.Tweet;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
-import com.codexperiments.newsroot.manager.tweet.Query;
-import com.codexperiments.newsroot.manager.tweet.ResultHandler;
-import com.codexperiments.newsroot.manager.tweet.TimeGapDAO;
-import com.codexperiments.newsroot.manager.tweet.TweetDAO;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase.COL_VIEW_TIMELINE;
-import com.codexperiments.newsroot.manager.tweet.TweetDatabase.DB_TWEET;
-import com.codexperiments.newsroot.manager.tweet.ViewTimelineDAO;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 
 public class TweetDatabaseRepository implements TweetRepository {

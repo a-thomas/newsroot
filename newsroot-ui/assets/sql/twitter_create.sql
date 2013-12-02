@@ -9,7 +9,7 @@ create table TWT_TWEET (
 );
 
 create table TML_TIMELINE (
-    TML_ID BIGINT not null,
+    TML_ID bigint not null,
     TML_TWT_EARLIEST_ID bigint,
     TML_TWT_OLDEST_ID bigint,
     primary key (TML_ID)

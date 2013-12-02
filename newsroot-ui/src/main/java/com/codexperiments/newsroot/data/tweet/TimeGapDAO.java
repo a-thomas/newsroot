@@ -1,9 +1,7 @@
 package com.codexperiments.newsroot.data.tweet;
 
 import com.codexperiments.newsroot.common.data.Insert;
-import com.codexperiments.newsroot.common.data.ResultHandler;
 import com.codexperiments.newsroot.common.data.Update;
-import com.codexperiments.newsroot.common.data.ResultHandler.Row;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TMG_TIMEGAP;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -20,13 +18,13 @@ public class TimeGapDAO {
         mUpdateHolder = new ThreadLocal<Update<DB_TWEET>>();
     }
 
-    public TimeGap get(Row pRow) {
-        TimeGap lTimeGap = TimeGap.initialTimeGap();
-        lTimeGap.setId(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_ID));
-        lTimeGap.setEarliestBound(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID));
-        lTimeGap.setOldestBound(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID));
-        return lTimeGap;
-    }
+    // public TimeGap get(Row pRow) {
+    // TimeGap lTimeGap = TimeGap.initialTimeGap();
+    // lTimeGap.setId(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_ID));
+    // lTimeGap.setEarliestBound(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_EARLIEST_ID));
+    // lTimeGap.setOldestBound(pRow.getLong(DB_TWEET.TMG_TIMEGAP, COL_TMG_TIMEGAP.TMG_TWT_OLDEST_ID));
+    // return lTimeGap;
+    // }
 
     public void create(TimeGap pTimeGap) {
         Insert<DB_TWEET> lInsert = mInsertHolder.get();

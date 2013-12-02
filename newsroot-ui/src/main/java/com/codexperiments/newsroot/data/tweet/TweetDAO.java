@@ -1,9 +1,7 @@
 package com.codexperiments.newsroot.data.tweet;
 
 import com.codexperiments.newsroot.common.data.Insert;
-import com.codexperiments.newsroot.common.data.ResultHandler;
 import com.codexperiments.newsroot.common.data.Update;
-import com.codexperiments.newsroot.common.data.ResultHandler.Row;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -21,15 +19,15 @@ public class TweetDAO {
         mUpdateHolder = new ThreadLocal<Update<DB_TWEET>>();
     }
 
-    public Tweet get(Row pRow) {
-        Tweet lTweet = new Tweet();
-        lTweet.setId(pRow.getLong(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_ID));
-        lTweet.setName(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_NAME));
-        lTweet.setScreenName(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_SCREEN_NAME));
-        lTweet.setText(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_TEXT));
-        lTweet.setCreatedAt(pRow.getLong(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_CREATED_AT));
-        return lTweet;
-    }
+    // public Tweet get(Row pRow) {
+    // Tweet lTweet = new Tweet();
+    // lTweet.setId(pRow.getLong(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_ID));
+    // lTweet.setName(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_NAME));
+    // lTweet.setScreenName(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_SCREEN_NAME));
+    // lTweet.setText(pRow.getString(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_TEXT));
+    // lTweet.setCreatedAt(pRow.getLong(DB_TWEET.TWT_TWEET, COL_TWT_TWEET.TWT_CREATED_AT));
+    // return lTweet;
+    // }
 
     public void create(Tweet pTweet) {
         Insert<DB_TWEET> lInsert = mInsertHolder.get();

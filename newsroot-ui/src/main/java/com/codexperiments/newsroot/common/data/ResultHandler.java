@@ -1,7 +1,6 @@
 package com.codexperiments.newsroot.common.data;
 
 import android.database.Cursor;
-import android.inputmethodservice.Keyboard.Row;
 
 public class ResultHandler<TTable extends Enum<?> & Table> {
     // private TTable[] mTables;
@@ -38,11 +37,11 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
         // }
 
         // Iterate through the result set.
-        Row lRow = new Row(pCursor, mIndexes);
+        // Row lRow = new Row(pCursor, mIndexes);
         pCursor.moveToFirst();
         try {
             while (!pCursor.isAfterLast()) {
-                pHandle.handleRow(lRow, pCursor);
+                pHandle.handleRow(pCursor);
                 pCursor.moveToNext();
             }
         } finally {
@@ -78,6 +77,6 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
     // }
 
     public interface Handle {
-        public abstract void handleRow(Row pRow, Cursor pCursor);
+        public abstract void handleRow(Cursor pCursor);
     }
 }

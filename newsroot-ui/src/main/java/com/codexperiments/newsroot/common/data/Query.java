@@ -8,8 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.codexperiments.newsroot.common.data.ResultHandler.Handle;
 
-public class Query<TTable extends Enum<?> & Table>
-{
+public class Query<TTable extends Enum<?> & Table> {
     private StringBuilder mSelect;
     private StringBuilder mFrom;
     private StringBuilder mWhere;
@@ -22,13 +21,11 @@ public class Query<TTable extends Enum<?> & Table>
     private List<String> mParams;
     private ResultHandler<TTable> mResultHandler;
 
-    public static <TTable extends Enum<?> & Table> Query<TTable> on(TTable[] pTables)
-    {
+    public static <TTable extends Enum<?> & Table> Query<TTable> on(TTable[] pTables) {
         return new Query<TTable>(pTables);
     }
 
-    public Query(TTable[] pTables)
-    {
+    public Query(TTable[] pTables) {
         super();
 
         mSelect = new StringBuilder();
@@ -44,14 +41,12 @@ public class Query<TTable extends Enum<?> & Table>
         mResultHandler = new ResultHandler<TTable>(pTables);
     }
 
-    public Query<TTable> limit(int pCount)
-    {
+    public Query<TTable> limit(int pCount) {
         mLimit = pCount;
         return this;
     }
 
-    private void startSelect()
-    {
+    private void startSelect() {
         if (mSelect.length() == 0) {
             mSelect.append("select ");
             if (mDistinct) {
@@ -62,16 +57,14 @@ public class Query<TTable extends Enum<?> & Table>
         }
     }
 
-    public Query<TTable> selectAll(TTable pTable)
-    {
+    public Query<TTable> selectAll(TTable pTable) {
         startSelect();
         mSelect.append(pTable.name()).append(".*");
         mResultHandler.select(pTable);
         return this;
     }
 
-    private void startFrom()
-    {
+    private void startFrom() {
         if (mFrom.length() == 0) {
             mFrom.append(" from ");
         } else {
@@ -79,15 +72,13 @@ public class Query<TTable extends Enum<?> & Table>
         }
     }
 
-    public Query<TTable> from(TTable pTable)
-    {
+    public Query<TTable> from(TTable pTable) {
         startFrom();
         mFrom.append(pTable.name());
         return this;
     }
 
-    private void startWhere()
-    {
+    private void startWhere() {
         if (mWhere.length() == 0) {
             mWhere.append(" where ");
         } else {
@@ -95,31 +86,26 @@ public class Query<TTable extends Enum<?> & Table>
         }
     }
 
-    public Query<TTable> whereEquals(Enum<?> pColumn, long pValue)
-    {
+    public Query<TTable> whereEquals(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " = ", Long.toString(pValue));
     }
 
-    public Query<TTable> whereGreater(Enum<?> pColumn, long pValue)
-    {
+    public Query<TTable> whereGreater(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " > ", Long.toString(pValue));
     }
 
-    public Query<TTable> whereLower(Enum<?> pColumn, long pValue)
-    {
+    public Query<TTable> whereLower(Enum<?> pColumn, long pValue) {
         return whereCondition(pColumn, " < ", Long.toString(pValue));
     }
 
-    private Query<TTable> whereCondition(Enum<?> pColumn, String pOperator, String pValue)
-    {
+    private Query<TTable> whereCondition(Enum<?> pColumn, String pOperator, String pValue) {
         startWhere();
         mWhere.append(pColumn.name()).append(pOperator).append("?");
         mParams.add(pValue);
         return this;
     }
 
-    private void startOrderByClause()
-    {
+    private void startOrderByClause() {
         if (mOrderBy.length() == 0) {
             mOrderBy.append(" order by ");
         } else {
@@ -127,28 +113,24 @@ public class Query<TTable extends Enum<?> & Table>
         }
     }
 
-    public Query<TTable> orderBy(Enum<?> pColumn)
-    {
+    public Query<TTable> orderBy(Enum<?> pColumn) {
         startOrderByClause();
         mOrderBy.append(pColumn);
         mOrderBy.append(" ");
         return this;
     }
 
-    public Query<TTable> ascending()
-    {
+    public Query<TTable> ascending() {
         this.mAscending = true;
         return this;
     }
 
-    public Query<TTable> descending()
-    {
+    public Query<TTable> descending() {
         this.mAscending = false;
         return this;
     }
 
-    public void execute(SQLiteDatabase pConnection, Handle pHandle)
-    {
+    public void execute(SQLiteDatabase pConnection, Handle pHandle) {
         String[] lParams = mParams.toArray(new String[mParams.size()]);
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
@@ -165,6 +147,27 @@ public class Query<TTable extends Enum<?> & Table>
         }
 
         Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
+        mResultHandler.parse(lCursor, pHandle);
+    }
+
+    public void execute(SQLiteDatabase pConnection, Handle pHandle, RowHandler<?> pRowHandler) {
+        String[] lParams = mParams.toArray(new String[mParams.size()]);
+        StringBuilder lQuery = new StringBuilder();
+        lQuery.append(mSelect).append(mFrom).append(mWhere);
+        if (mOrderBy.length() > 0) {
+            lQuery.append(mOrderBy);
+            if (mAscending) {
+                lQuery.append(" asc");
+            } else {
+                lQuery.append(" desc");
+            }
+        }
+        if (mLimit > 0) {
+            lQuery.append(" limit ").append(Integer.toString(mLimit));
+        }
+
+        Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
+        pRowHandler.initialize(lCursor);
         mResultHandler.parse(lCursor, pHandle);
     }
 }

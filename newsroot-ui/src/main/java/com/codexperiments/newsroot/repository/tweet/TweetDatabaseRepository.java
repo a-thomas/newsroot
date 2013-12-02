@@ -19,9 +19,9 @@ import com.codexperiments.newsroot.common.data.ResultHandler;
 import com.codexperiments.newsroot.data.tweet.TimeGapDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
-import com.codexperiments.newsroot.data.tweet.ViewTimelineDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_VIEW_TIMELINE;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
+import com.codexperiments.newsroot.data.tweet.TweetHandler;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.Tweet;
@@ -36,7 +36,8 @@ public class TweetDatabaseRepository implements TweetRepository {
 
     private TweetDAO mTweetDAO;
     private TimeGapDAO mTimeGapDAO;
-    private ViewTimelineDAO mViewTimelineDAO;
+
+    // private ViewTimelineDAO mViewTimelineDAO;
 
     public TweetDatabaseRepository(TweetDatabase pDatabase, TweetRepository pRepository) {
         super();
@@ -47,7 +48,7 @@ public class TweetDatabaseRepository implements TweetRepository {
 
         mTweetDAO = new TweetDAO(mDatabase);
         mTimeGapDAO = new TimeGapDAO(mDatabase);
-        mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
+        // mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
 
         mDatabase.recreate();
     }
@@ -101,19 +102,20 @@ public class TweetDatabaseRepository implements TweetRepository {
                                       .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
                             }
 
+                            final TweetHandler lTweetHandler = new TweetHandler();
                             final List<Tweet> lTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
                             lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.Handle() {
-                                public void handleRow(ResultHandler.Row pRow, Cursor pCursor) {
-                                    switch (mViewTimelineDAO.getKind(pRow)) {
-                                    case TWEET:
-                                        lTweets.add(mViewTimelineDAO.getTweet(pRow));
-                                        break;
-                                    case TIMEGAP:
-                                        // pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
-                                        break;
-                                    }
+                                public void handleRow(Cursor pCursor) {
+                                    // switch (mViewTimelineDAO.getKind(null)) {
+                                    // case TWEET:
+                                    lTweets.add(lTweetHandler.parse(pCursor));
+                                    // break;
+                                    // case TIMEGAP:
+                                    // pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
+                                    // break;
+                                    // }
                                 }
-                            });
+                            }, lTweetHandler);
 
                             if (lTweets.size() > 0) {
                                 TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);

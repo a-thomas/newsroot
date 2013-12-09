@@ -81,7 +81,7 @@ public class TreePageIndex<TItem> implements PageIndex<TItem> {
     }
 
     public void insert(Page<? extends TItem> pPage) {
-        long lKey = pPage.lowerBound();
+        long lKey = pPage.upperBound();
         Node lX = mRoot;
         Node lY = NIL;
 
@@ -372,7 +372,9 @@ public class TreePageIndex<TItem> implements PageIndex<TItem> {
                 // parent's in-order successor).
                 mSuccessor = pParent.mSuccessor;
                 pParent.mSuccessor = NIL;
-            } else throw new IllegalArgumentException();
+            } else {
+                throw new IllegalArgumentException(Long.toString(pKey) + "==");
+            }
         }
 
         private Node successor() {

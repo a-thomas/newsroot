@@ -32,7 +32,7 @@ public class TimeGap implements News {
     }
 
     public static TimeGap pastTimeGap(TimeRange pTimeRange) {
-        return (pTimeRange != null) ? new TimeGap(pTimeRange.oldestBound(), Long.MIN_VALUE) : TimeGap.initialTimeGap();
+        return (pTimeRange != null) ? new TimeGap(pTimeRange.oldestBound() - 1, Long.MIN_VALUE) : TimeGap.initialTimeGap();
     }
 
     public static TimeGap futureTimeGap(List<Tweet> pTweets) {
@@ -40,7 +40,7 @@ public class TimeGap implements News {
     }
 
     public static TimeGap pastTimeGap(List<Tweet> pTweets) {
-        return new TimeGap(pTweets.get(pTweets.size() - 1).getId(), Long.MIN_VALUE);
+        return new TimeGap(pTweets.get(pTweets.size() - 1).getId() - 1, Long.MIN_VALUE);
     }
 
     private TimeGap() {
@@ -93,7 +93,7 @@ public class TimeGap implements News {
     // }
     public TimeGap remainingGap(TimeRange pTimeRange) {
         long lRangeEarliestBound = pTimeRange.earliestBound();
-        long lRangeOldestBound = pTimeRange.oldestBound();
+        long lRangeOldestBound = pTimeRange.oldestBound() - 1; // TODO Check bug because of -1
 
         if ((lRangeOldestBound < mOldestBound) || (lRangeEarliestBound > mEarliestBound)) {
             throw new IllegalArgumentException();

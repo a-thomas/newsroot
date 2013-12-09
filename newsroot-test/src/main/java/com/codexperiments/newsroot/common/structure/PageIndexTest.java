@@ -15,22 +15,22 @@ import android.util.Log;
 import com.codexperiments.newsroot.common.Page;
 
 public class PageIndexTest extends TestCase {
-    private static final MyPage PAGE_1 = new MyPage(10, 14, 5);
+    private static final TestPage PAGE_1 = new TestPage(10, 14, 5);
     // This page set represent the following values: [-10, -9, -6, -5, -4, -3, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16,
     // 17, 20, 21, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40].
-    private static final List<MyPage> PAGE_SET_1 = new ArrayList<MyPage>();
+    private static final List<TestPage> PAGE_SET_1 = new ArrayList<TestPage>();
 
     static {
-        PAGE_SET_1.add(new MyPage(15, 20, 4));
-        PAGE_SET_1.add(new MyPage(21, 30, 6));
-        PAGE_SET_1.add(new MyPage(0, 4, 5));
-        PAGE_SET_1.add(new MyPage(5, 9, 5));
-        PAGE_SET_1.add(new MyPage(10, 10, 1));
-        PAGE_SET_1.add(new MyPage(-10, -6, 3));
-        PAGE_SET_1.add(new MyPage(-5, -3, 3));
-        PAGE_SET_1.add(new MyPage(-2, -1, 0));
-        PAGE_SET_1.add(new MyPage(11, 14, 2));
-        PAGE_SET_1.add(new MyPage(31, 40, 10));
+        PAGE_SET_1.add(new TestPage(15, 20, 4));
+        PAGE_SET_1.add(new TestPage(21, 30, 6));
+        PAGE_SET_1.add(new TestPage(0, 4, 5));
+        PAGE_SET_1.add(new TestPage(5, 9, 5));
+        PAGE_SET_1.add(new TestPage(10, 10, 1));
+        PAGE_SET_1.add(new TestPage(-10, -6, 3));
+        PAGE_SET_1.add(new TestPage(-5, -3, 3));
+        PAGE_SET_1.add(new TestPage(-2, -1, 0));
+        PAGE_SET_1.add(new TestPage(11, 14, 2));
+        PAGE_SET_1.add(new TestPage(31, 40, 10));
     }
 
     public void testInsert() {
@@ -40,7 +40,7 @@ public class PageIndexTest extends TestCase {
         assertThat(lIndex.size(), equalTo(lSize));
 
         // Insert a new page during each iteration.
-        for (MyPage lPage : PAGE_SET_1) {
+        for (TestPage lPage : PAGE_SET_1) {
             lSize += lPage.size();
             lIndex.insert(lPage);
             lValues = addValuesSorted(lValues, lPage);
@@ -95,7 +95,7 @@ public class PageIndexTest extends TestCase {
 
     public void testFind_oneElement_singlePageIndex() {
         PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
-        lIndex.insert(new MyPage(10, 14, 5));
+        lIndex.insert(new TestPage(10, 14, 5));
         List<Integer> lExpectedValues = sortedValues(PAGE_1);
 
         for (int i = 0; i < lExpectedValues.size(); ++i) {
@@ -131,7 +131,7 @@ public class PageIndexTest extends TestCase {
 
     public void testFind_severalElements_singlePageIndex() {
         PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
-        lIndex.insert(new MyPage(10, 14, 5));
+        lIndex.insert(new TestPage(10, 14, 5));
         List<Integer> lExpectedValues = sortedValues(PAGE_1);
 
         List<Integer> lInterval1 = lIndex.find(0, lExpectedValues.size() - 1);
@@ -190,9 +190,9 @@ public class PageIndexTest extends TestCase {
         }
     }
 
-    private PageIndex<Integer> makeIndex(List<MyPage> pPageSet) {
+    private PageIndex<Integer> makeIndex(List<TestPage> pPageSet) {
         PageIndex<Integer> lIndex = new TreePageIndex<Integer>();
-        for (MyPage lPage : pPageSet) {
+        for (TestPage lPage : pPageSet) {
             lIndex.insert(lPage);
             Log.d("", "***************************************");
             Log.d("", lIndex.toString());
@@ -200,15 +200,15 @@ public class PageIndexTest extends TestCase {
         return lIndex;
     }
 
-    private List<Integer> sortedValues(MyPage pPage) {
-        List<MyPage> lPages = new ArrayList<MyPage>();
+    private List<Integer> sortedValues(TestPage pPage) {
+        List<TestPage> lPages = new ArrayList<TestPage>();
         lPages.add(pPage);
         return sortedValues(lPages);
     }
 
-    private List<Integer> sortedValues(List<MyPage> pPageSet) {
+    private List<Integer> sortedValues(List<TestPage> pPageSet) {
         List<Integer> lValues = new ArrayList<Integer>();
-        for (MyPage lPage : pPageSet) {
+        for (TestPage lPage : pPageSet) {
             for (Integer lValue : lPage) {
                 lValues.add(lValue);
             }
@@ -226,7 +226,7 @@ public class PageIndexTest extends TestCase {
         return lResult;
     }
 
-    private List<Integer> addValuesSorted(List<Integer> pValues, MyPage pPage) {
+    private List<Integer> addValuesSorted(List<Integer> pValues, TestPage pPage) {
         List<Integer> lResult = new ArrayList<Integer>(pValues);
         for (Integer lItem : pPage) {
             lResult.add(lItem);
@@ -235,13 +235,13 @@ public class PageIndexTest extends TestCase {
         return lResult;
     }
 
-    private static class MyPage implements Page<Integer>, Iterable<Integer> {
+    private static class TestPage implements Page<Integer>, Iterable<Integer> {
         private long mLowerBound;
         private long mUpperBound;
         private int mSize;
         private List<Integer> mItems;
 
-        public MyPage(int pLowerBound, int pUpperBound, int pSize) {
+        public TestPage(int pLowerBound, int pUpperBound, int pSize) {
             if ((pUpperBound - pLowerBound) < pSize - 1) throw new IllegalArgumentException();
 
             mLowerBound = pLowerBound;

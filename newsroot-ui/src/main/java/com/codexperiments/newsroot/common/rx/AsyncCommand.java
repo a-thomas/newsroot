@@ -147,6 +147,10 @@ public class AsyncCommand<TParam, TResult> extends Observable<TResult> implement
         return mIsRunning;
     }
 
+    public void execute() {
+        mCommand.onNext(null);
+    }
+
     @Override
     public void onNext(TParam pParam) {
         mCommand.onNext(pParam);

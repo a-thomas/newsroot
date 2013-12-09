@@ -117,11 +117,14 @@ public class TweetDatabaseRepository implements TweetRepository {
                                 }
                             }, lTweetHandler);
 
+                            // If data was found in database, return it.
                             if (lTweets.size() > 0) {
                                 TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
                                 pObserver.onNext(new TweetPageResponse(lTweetPage, pTimeGap));
                                 pObserver.onCompleted();
-                            } else {
+                            }
+                            // No data found in database, let's hope there are some in the cloud.
+                            else {
                                 mHasMore.put(pTimeline, Boolean.FALSE);
                                 cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
                             }

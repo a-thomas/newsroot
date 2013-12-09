@@ -36,7 +36,7 @@ public class TweetQuery {
 
     public TweetQuery withTimeGap(TimeGap pTimeGap) {
         if (!pTimeGap.isFutureGap()) {
-            withParam("max_id", pTimeGap.earliestBound() - 1);
+            withParam("max_id", pTimeGap.earliestBound());
         }
         if (!pTimeGap.isPastGap()) {
             withParam("since_id", pTimeGap.oldestBound());

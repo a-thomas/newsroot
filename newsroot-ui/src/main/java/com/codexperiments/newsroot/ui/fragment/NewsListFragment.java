@@ -13,7 +13,6 @@ import rx.util.functions.Action1;
 import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,7 @@ import com.codexperiments.newsroot.common.BaseFragment;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
-import com.codexperiments.newsroot.common.rx.RxUI;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.common.structure.RxPageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
 import com.codexperiments.newsroot.domain.tweet.News;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -39,6 +36,7 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.rx.RxClickListener;
 import com.codexperiments.rx.RxListBinder;
@@ -53,7 +51,7 @@ public class NewsListFragment extends BaseFragment {
     @Inject TweetRepository mTweetRepository;
 
     private Timeline mTimeline;
-    private RxPageIndex<News> mTweets;
+    private PageIndex<News> mTweets;
     private TimeRange mTimeRange;
 
     private PageAdapter<News> mUIListAdapter;
@@ -95,15 +93,14 @@ public class NewsListFragment extends BaseFragment {
         mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
 
         // Domain.
-        PageIndex<News> lIndex = new TreePageIndex<News>();
+        mTweets = new TreePageIndex<News>();
         mTimeline = mTweetRepository.findTimeline(getArguments().getString(ARG_SCREEN_NAME));
-        mTweets = RxPageIndex.newPageIndex(lIndex);
         mTimeRange = null;
         onInitializeInstanceState((pBundle != null) ? pBundle : getArguments());
 
         // UI.
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
-        mUIListAdapter = createAdapter(pLayoutInflater, lIndex);
+        mUIListAdapter = createAdapter(pLayoutInflater, mTweets);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
 
@@ -202,33 +199,18 @@ public class NewsListFragment extends BaseFragment {
 
         react(mFindMoreCommand.subscribe(new Action1<TweetPageResponse>() {
             public void call(TweetPageResponse pTweetPageResponse) {
-                TweetPage lPage = pTweetPageResponse.tweetPage();
-                mTimeRange = TimeRange.append(mTimeRange, lPage.tweets());
-                mTweets.insert(new NewsPage(lPage));
-                // XXX
-                if (lPage.size() > 15) {
-                    long id = lPage.tweets().get(15).getId() - 1;
-                    mTweets.insert(new NewsPage(new TimeGap(id, id - 1)));
-                }
-                Log.e("aaaaaaaa", "sfsdfqsdfsdfq");
+                onMoreData(pTweetPageResponse);
             }
         }));
-        react(RxUI.fromOnMoreAction(mUIListAdapter).subscribe(mFindMoreCommand));
-        react(mTweets.onInsert().subscribe(RxUI.toListView(mUIListAdapter)));
+        mUIListAdapter.setMoreCallback(new MoreCallback() {
+            public void onMore() {
+                mFindMoreCommand.execute();
+            }
+        });
 
-        // mListBindListener = RxListBindListener.create(mUIList);
         mListBinder = RxListBinder.create(mUIList);
-        // mTweetItemEvent = RxListClickListener.create(mUIList, NewsTweetItem.class, Tweet.class);
         mTweetItemEvent = RxClickListener.create(RxUIN.convertToListViewItem(mUIList, NewsTweetItem.class));
-        // mTweetItemProperty = RxListProperty.create(mUIList, NewsTweetItem.class, Tweet.class);
-        // mTweetItemProperty = RxProperty.create();
         mTweetsProperty = RxProperty.create();
-
-        // react(mTweetItemProperty.whenAny(Tweet.Selected).subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
-        // pEvent.getView().setIsSelected(pEvent.getItem());
-        // }
-        // }));
 
         react(mTweetsProperty.whenAny(Tweet.Selected) //
                              .subscribe(RxUIN.toListViewItem(mUIList, NewsTweetItem.class, new Action2<Tweet, NewsTweetItem>() {
@@ -236,31 +218,30 @@ public class NewsListFragment extends BaseFragment {
                                      pNewsTweetItem.setIsSelected(pTweet);
                                  }
                              })));
-        // react(mSelectCommand.subscribe(new Action1<ListEvent<NewsTweetItem, Tweet>>() {
-        // public void call(ListEvent<NewsTweetItem, Tweet> pEvent) {
-        // Tweet pTweet = pEvent.getItem();
-        // pTweet.setSelected(!pTweet.isSelected());
-        // mTweetItemProperty.notify(pEvent, Tweet.Selected);
-        // mTweetsProperty.notify(pTweet, Tweet.Selected);
-        // }
-        // }));
         react(mSelectCommand2.subscribe(RxUIN.fromListViewItem(mUIList, Tweet.class, new Action2<Tweet, NewsTweetItem>() {
             public void call(Tweet pTweet, NewsTweetItem pNewsTweetItem) {
                 pTweet.setSelected(!pTweet.isSelected());
                 mTweetsProperty.notify(pTweet, Tweet.Selected);
             }
         })));
-        // react(mTweetItemEvent.onClick().subscribe(mSelectCommand));
         react(mTweetItemEvent.onClick().subscribe(mSelectCommand2));
-        // react(mListBinder.register(NewsTweetItem.class)
-        // .map(RxUIN.fromListViewToItem(mUIList, Tweet.class))
-        // .subscribe(mTweetsProperty));
 
         mUIListAdapter.setRecycleCallback(mListBinder);
     }
 
     protected void react(Subscription pSubscription) {
         mSubcriptions.add(pSubscription);
+    }
+
+    protected void onMoreData(TweetPageResponse pTweetPageResponse) {
+        TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+        mTimeRange = TimeRange.append(mTimeRange, lTweetPage.tweets());
+        // mTweets.insert(new NewsPage(pTweetPageResponse.initialGap()));
+        mTweets.insert(new NewsPage(lTweetPage));
+
+        TimeGap lTimeGap = pTweetPageResponse.remainingGap();
+        mTweets.insert(new NewsPage(lTimeGap));
+        mUIListAdapter.notifyDataSetChanged();
     }
 
     private Func1<Tweet, Tweet> doSetSelected() {

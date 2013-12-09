@@ -14,6 +14,7 @@ import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
+import android.util.Log;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
@@ -146,6 +147,7 @@ public class TweetRemoteRepository implements TweetRepository {
                 break;
             }
         }
+        Log.e(TweetManager.class.getSimpleName(), lTweet.toString());
         return lTweet;
     }
 

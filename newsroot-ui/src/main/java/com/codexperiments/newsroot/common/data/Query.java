@@ -6,7 +6,7 @@ import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.codexperiments.newsroot.common.data.ResultHandler.Handle;
+import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
 
 public class Query<TTable extends Enum<?> & Table> {
     private StringBuilder mSelect;
@@ -130,7 +130,7 @@ public class Query<TTable extends Enum<?> & Table> {
         return this;
     }
 
-    public void execute(SQLiteDatabase pConnection, Handle pHandle) {
+    public void execute(SQLiteDatabase pConnection, RowHandler pRowHandler) {
         String[] lParams = mParams.toArray(new String[mParams.size()]);
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
@@ -147,10 +147,10 @@ public class Query<TTable extends Enum<?> & Table> {
         }
 
         Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
-        mResultHandler.parse(lCursor, pHandle);
+        mResultHandler.parse(lCursor, pRowHandler);
     }
 
-    public void execute(SQLiteDatabase pConnection, Handle pHandle, RowHandler<?> pRowHandler) {
+    public void execute(SQLiteDatabase pConnection, RowHandler pRowHandler, ObjectHandler<?> pObjectHandler) {
         String[] lParams = mParams.toArray(new String[mParams.size()]);
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
@@ -167,7 +167,7 @@ public class Query<TTable extends Enum<?> & Table> {
         }
 
         Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
-        pRowHandler.initialize(lCursor);
-        mResultHandler.parse(lCursor, pHandle);
+        pObjectHandler.initialize(lCursor);
+        mResultHandler.parse(lCursor, pRowHandler);
     }
 }

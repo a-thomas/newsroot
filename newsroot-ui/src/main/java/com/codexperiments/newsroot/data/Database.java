@@ -29,6 +29,10 @@ public abstract class Database extends SQLiteOpenHelper {
         super.getWritableDatabase();
     }
 
+    public SQLiteDatabase getConnection() {
+        return mConnection;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase pDatabase) {
         mConnection = pDatabase;

@@ -2,11 +2,11 @@ package com.codexperiments.newsroot.data.tweet;
 
 import android.database.Cursor;
 
-import com.codexperiments.newsroot.common.data.RowHandler;
+import com.codexperiments.newsroot.common.data.ObjectHandler;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
 import com.codexperiments.newsroot.domain.tweet.Tweet;
 
-public class TweetHandler implements RowHandler<Tweet> {
+public class TweetHandler implements ObjectHandler<Tweet> {
     private int mIdIndex;
     private int mNameIndex;
     private int mScreenNameIndex;

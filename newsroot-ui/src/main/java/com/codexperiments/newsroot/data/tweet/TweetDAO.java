@@ -1,8 +1,11 @@
 package com.codexperiments.newsroot.data.tweet;
 
 import com.codexperiments.newsroot.common.data.Insert;
+import com.codexperiments.newsroot.common.data.Query;
+import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
 import com.codexperiments.newsroot.common.data.Update;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_VIEW_TIMELINE;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Tweet;
@@ -59,5 +62,44 @@ public class TweetDAO {
     public void delete(TimeGap pTimeGap) {
         mDatabase.getWritableDatabase().execSQL("delete from TWT_TWEET where TWT_ID = ?",
                                                 new String[] { Long.toString(pTimeGap.getId()) });
+    }
+
+    public Find find() {
+        return new Find();
+    }
+
+    public class Find {
+        private Query<DB_TWEET> mQuery;
+
+        public Find() {
+            mQuery = Query.on(DB_TWEET.values()).from(DB_TWEET.TWT_TWEET);
+        }
+
+        public Find limitTo(int pPageSize) {
+            mQuery.limit(pPageSize);
+            return this;
+        }
+
+        public Find withTweets() {
+            mQuery.selectAll(DB_TWEET.TWT_TWEET);
+            return this;
+        }
+
+        public Find byTimeGap(TimeGap pTimeGap) {
+            // if (pTimeGap.isFutureGap()) {
+            // mQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound());
+            // } else if (pTimeGap.isPastGap()) {
+            // mQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
+            // } else
+            // if (!pTimeGap.isInitialGap()) {
+            mQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound())
+                  .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
+            // }
+            return this;
+        }
+
+        public void run(RowHandler pRowHandler) {
+            mQuery.execute(mDatabase.getConnection(), pRowHandler);
+        }
     }
 }

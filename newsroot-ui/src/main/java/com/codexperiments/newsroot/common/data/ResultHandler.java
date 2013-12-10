@@ -19,7 +19,7 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
         return this;
     }
 
-    public void parse(Cursor pCursor, Handle pHandle) {
+    public void parse(Cursor pCursor, RowHandler pRowHandler) {
         // Build the index of columns to look for in the result set.
         // int lTableCount = mTables.length;
         // for (int i = 0; i < lTableCount; ++i) {
@@ -41,7 +41,7 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
         pCursor.moveToFirst();
         try {
             while (!pCursor.isAfterLast()) {
-                pHandle.handleRow(pCursor);
+                pRowHandler.handleRow(pCursor);
                 pCursor.moveToNext();
             }
         } finally {
@@ -76,7 +76,7 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
     // }
     // }
 
-    public interface Handle {
+    public interface RowHandler {
         public abstract void handleRow(Cursor pCursor);
     }
 }

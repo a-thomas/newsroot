@@ -37,12 +37,11 @@ public class ResultHandler<TTable extends Enum<?> & Table> {
         // }
 
         // Iterate through the result set.
-        // Row lRow = new Row(pCursor, mIndexes);
-        pCursor.moveToFirst();
+        boolean lHasNext = pCursor.moveToFirst();
         try {
-            while (!pCursor.isAfterLast()) {
+            while (lHasNext) {
                 pRowHandler.handleRow(pCursor);
-                pCursor.moveToNext();
+                lHasNext = pCursor.moveToNext();
             }
         } finally {
             pCursor.close();

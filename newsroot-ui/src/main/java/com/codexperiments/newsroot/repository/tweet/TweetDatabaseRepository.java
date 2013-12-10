@@ -14,9 +14,10 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import android.database.Cursor;
 
-import com.codexperiments.newsroot.common.data.ResultHandler;
+import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
 import com.codexperiments.newsroot.data.tweet.TimeGapDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDAO;
+import com.codexperiments.newsroot.data.tweet.TweetDAO.QueryTweet;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.data.tweet.TweetHandler;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -88,47 +89,14 @@ public class TweetDatabaseRepository implements TweetRepository {
                         try {
                             final TweetHandler lTweetHandler = new TweetHandler();
                             final List<Tweet> lTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
-                            mTweetDAO.find() //
+                            QueryTweet lQuery = mTweetDAO.find() 
                                      .limitTo(DEFAULT_PAGE_SIZE)
-                                     .byTimeGap(pTimeGap)
-                                     .run(new ResultHandler.RowHandler() {
+                                     .byTimeGap(pTimeGap);
+                            lQuery.parse(new RowHandler() {
                                          public void handleRow(Cursor pCursor) {
-                                             // switch (mViewTimelineDAO.getKind(null)) {
-                                             // case TWEET:
                                              lTweets.add(lTweetHandler.parse(pCursor));
-                                             // break;
-                                             // case TIMEGAP:
-                                             // pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
-                                             // break;
-                                             // }
                                          }
-                                     }, lTweetHandler);
-                            // Query<DB_TWEET> lQuery = Query.on(DB_TWEET.values())
-                            // .selectAll(DB_TWEET.VIEW_TIMELINE)
-                            // .from(DB_TWEET.VIEW_TIMELINE)
-                            // .limit(DEFAULT_PAGE_SIZE);
-                            // if (pTimeGap.isFutureGap()) {
-                            // lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound());
-                            // } else if (pTimeGap.isPastGap()) {
-                            // lQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
-                            // } else if (!pTimeGap.isInitialGap()) {
-                            // lQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound())
-                            // .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
-                            // }
-
-                            // lQuery.execute(mDatabase.getWritableDatabase(), new ResultHandler.RoawHandler() {
-                            // public void handleRow(Cursor pCursor) {
-                            // // switch (mViewTimelineDAO.getKind(null)) {
-                            // // case TWEET:
-                            // lTweets.add(lTweetHandler.parse(pCursor));
-                            // // break;
-                            // // case TIMEGAP:
-                            // // pObserver.onNext(mViewTimelineDAO.getTimeGap(pRow));
-                            // // break;
-                            // // }
-                            // }
-                            // }, lTweetHandler);
-
+                                     });
                             // If data was found in database, return it.
                             if (lTweets.size() > 0) {
                                 TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);

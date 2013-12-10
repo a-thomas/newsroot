@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.data.tweet;
 
+import android.database.Cursor;
+
 import com.codexperiments.newsroot.common.data.Insert;
 import com.codexperiments.newsroot.common.data.Query;
 import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
@@ -64,28 +66,30 @@ public class TweetDAO {
                                                 new String[] { Long.toString(pTimeGap.getId()) });
     }
 
-    public Find find() {
-        return new Find();
+    public QueryTweet find() {
+        return new QueryTweet();
     }
 
-    public class Find {
+    public class QueryTweet {
+        private TweetHandler mTweetHandler;
         private Query<DB_TWEET> mQuery;
 
-        public Find() {
+        public QueryTweet() {
             mQuery = Query.on(DB_TWEET.values()).from(DB_TWEET.TWT_TWEET);
         }
 
-        public Find limitTo(int pPageSize) {
+        public QueryTweet limitTo(int pPageSize) {
             mQuery.limit(pPageSize);
             return this;
         }
 
-        public Find withTweets() {
+        public QueryTweet withTweets() {
+            mTweetHandler = new TweetHandler();
             mQuery.selectAll(DB_TWEET.TWT_TWEET);
             return this;
         }
 
-        public Find byTimeGap(TimeGap pTimeGap) {
+        public QueryTweet byTimeGap(TimeGap pTimeGap) {
             // if (pTimeGap.isFutureGap()) {
             // mQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound());
             // } else if (pTimeGap.isPastGap()) {
@@ -97,9 +101,17 @@ public class TweetDAO {
             // }
             return this;
         }
+        
+        protected void onRun() {
+            
+        }
 
-        public void run(RowHandler pRowHandler) {
-            mQuery.execute(mDatabase.getConnection(), pRowHandler);
+        public Cursor execute() {
+            return mQuery.execute(mDatabase.getConnection());
+        }
+
+        public void parse(RowHandler pRowHandler) {
+            mQuery.parse(mDatabase.getConnection(), pRowHandler, mTweetHandler);
         }
     }
 }

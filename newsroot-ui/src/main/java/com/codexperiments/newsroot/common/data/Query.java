@@ -130,7 +130,7 @@ public class Query<TTable extends Enum<?> & Table> {
         return this;
     }
 
-    public void execute(SQLiteDatabase pConnection, RowHandler pRowHandler) {
+    public Cursor execute(SQLiteDatabase pConnection) {
         String[] lParams = mParams.toArray(new String[mParams.size()]);
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
@@ -146,28 +146,17 @@ public class Query<TTable extends Enum<?> & Table> {
             lQuery.append(" limit ").append(Integer.toString(mLimit));
         }
 
-        Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
+        return pConnection.rawQuery(lQuery.toString(), lParams);
+    }
+
+    public void parse(SQLiteDatabase pConnection, RowHandler pRowHandler) {
+        Cursor lCursor = execute(pConnection);
         mResultHandler.parse(lCursor, pRowHandler);
     }
 
-    public void execute(SQLiteDatabase pConnection, RowHandler pRowHandler, ObjectHandler<?> pObjectHandler) {
-        String[] lParams = mParams.toArray(new String[mParams.size()]);
-        StringBuilder lQuery = new StringBuilder();
-        lQuery.append(mSelect).append(mFrom).append(mWhere);
-        if (mOrderBy.length() > 0) {
-            lQuery.append(mOrderBy);
-            if (mAscending) {
-                lQuery.append(" asc");
-            } else {
-                lQuery.append(" desc");
-            }
-        }
-        if (mLimit > 0) {
-            lQuery.append(" limit ").append(Integer.toString(mLimit));
-        }
-
-        Cursor lCursor = pConnection.rawQuery(lQuery.toString(), lParams);
-        pObjectHandler.initialize(lCursor);
+    public void parse(SQLiteDatabase pConnection, RowHandler pRowHandler, ObjectHandler<?> pObjectHandler) {
+        Cursor lCursor = execute(pConnection);
+        if (pObjectHandler != null) pObjectHandler.initialize(lCursor);
         mResultHandler.parse(lCursor, pRowHandler);
     }
 }

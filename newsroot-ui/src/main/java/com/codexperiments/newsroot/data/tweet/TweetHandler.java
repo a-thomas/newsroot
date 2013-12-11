@@ -4,9 +4,8 @@ import android.database.Cursor;
 
 import com.codexperiments.newsroot.common.data.ObjectHandler;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 
-public class TweetHandler implements ObjectHandler<Tweet> {
+public class TweetHandler implements ObjectHandler<TweetDTO> {
     private int mIdIndex;
     private int mNameIndex;
     private int mScreenNameIndex;
@@ -18,6 +17,11 @@ public class TweetHandler implements ObjectHandler<Tweet> {
     }
 
     @Override
+    public Class<TweetDTO> ofType() {
+        return TweetDTO.class;
+    }
+
+    @Override
     public void initialize(Cursor pCursor) {
         mIdIndex = pCursor.getColumnIndex(COL_TWT_TWEET.TWT_ID.name());
         mNameIndex = pCursor.getColumnIndex(COL_TWT_TWEET.TWT_NAME.name());
@@ -26,7 +30,8 @@ public class TweetHandler implements ObjectHandler<Tweet> {
         mCreatedAtIndex = pCursor.getColumnIndex(COL_TWT_TWEET.TWT_CREATED_AT.name());
     }
 
-    public TweetDTO parseDTO(Cursor pCursor) {
+    @Override
+    public TweetDTO parse(Cursor pCursor) {
         TweetDTO lTweetDTO = new TweetDTO();
         lTweetDTO.setId(pCursor.getLong(mIdIndex));
         lTweetDTO.setName(pCursor.getString(mNameIndex));
@@ -34,17 +39,6 @@ public class TweetHandler implements ObjectHandler<Tweet> {
         lTweetDTO.setText(pCursor.getString(mTextIndex));
         lTweetDTO.setCreatedAt(pCursor.getLong(mCreatedAtIndex));
         return lTweetDTO;
-    }
-
-    @Override
-    public Tweet parse(Cursor pCursor) {
-        Tweet lTweet = new Tweet();
-        lTweet.setId(pCursor.getLong(mIdIndex));
-        lTweet.setName(pCursor.getString(mNameIndex));
-        lTweet.setScreenName(pCursor.getString(mScreenNameIndex));
-        lTweet.setText(pCursor.getString(mTextIndex));
-        lTweet.setCreatedAt(pCursor.getLong(mCreatedAtIndex));
-        return lTweet;
     }
 
     public long getId(Cursor pCursor) {

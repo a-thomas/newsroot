@@ -1,7 +1,8 @@
-package com.codexperiments.newsroot.data;
+package com.codexperiments.newsroot.common.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.List;
 
 import rx.Observable;
@@ -10,6 +11,7 @@ import rx.Observer;
 import rx.Subscription;
 import rx.util.functions.Action1;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -17,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.google.common.collect.Lists;
 
 public abstract class Database extends SQLiteOpenHelper {
     private Context mContext;
@@ -151,6 +154,10 @@ public abstract class Database extends SQLiteOpenHelper {
         });
     }
 
+    public Cursor execute(Query pQuery) {
+        return mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
+    }
+
     public Database executeAssetScript(String pAssetPath) throws IOException {
         executeAssetScript(pAssetPath, mContext);
         return this;
@@ -196,5 +203,49 @@ public abstract class Database extends SQLiteOpenHelper {
             }
         }
         return this;
+    }
+
+    public <TEntity> void parse(Query pQuery, RowHandler pRowHandler) {
+        Cursor lCursor = execute(pQuery);
+        try {
+            int lResultSize = lCursor.getCount();
+            for (int i = lResultSize; i < lResultSize; ++i) {
+                lCursor.moveToNext();
+                pRowHandler.handleRow(lCursor);
+            }
+        } finally {
+            lCursor.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <TEntity> TEntity[] parseArray(Query pQuery, ObjectHandler<TEntity> pObjectHandler) {
+        Cursor lCursor = execute(pQuery);
+        try {
+            int lResultSize = lCursor.getCount();
+            TEntity[] lEntity = (TEntity[]) Array.newInstance(pObjectHandler.ofType(), lResultSize);
+            for (int i = lResultSize; i < lResultSize; ++i) {
+                lCursor.moveToNext();
+                lEntity[i] = pObjectHandler.parse(lCursor);
+            }
+            return lEntity;
+        } finally {
+            lCursor.close();
+        }
+    }
+
+    public <TEntity> List<TEntity> parseList(Query pQuery, ObjectHandler<TEntity> pObjectHandler) {
+        Cursor lCursor = execute(pQuery);
+        try {
+            int lResultSize = lCursor.getCount();
+            List<TEntity> lEntity = Lists.newArrayListWithCapacity(lResultSize);
+            for (int i = lResultSize; i < lResultSize; ++i) {
+                lCursor.moveToNext();
+                lEntity.set(i, pObjectHandler.parse(lCursor));
+            }
+            return lEntity;
+        } finally {
+            lCursor.close();
+        }
     }
 }

@@ -3,11 +3,6 @@ package com.codexperiments.newsroot.common.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
-
 public class Query<TTable extends Enum<?> & Table> {
     private StringBuilder mSelect;
     private StringBuilder mFrom;
@@ -130,8 +125,7 @@ public class Query<TTable extends Enum<?> & Table> {
         return this;
     }
 
-    public Cursor execute(SQLiteDatabase pConnection) {
-        String[] lParams = mParams.toArray(new String[mParams.size()]);
+    String toQuery() {
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
         if (mOrderBy.length() > 0) {
@@ -145,18 +139,10 @@ public class Query<TTable extends Enum<?> & Table> {
         if (mLimit > 0) {
             lQuery.append(" limit ").append(Integer.toString(mLimit));
         }
-
-        return pConnection.rawQuery(lQuery.toString(), lParams);
+        return lQuery.toString();
     }
 
-    public void parse(SQLiteDatabase pConnection, RowHandler pRowHandler) {
-        Cursor lCursor = execute(pConnection);
-        mResultHandler.parse(lCursor, pRowHandler);
-    }
-
-    public void parse(SQLiteDatabase pConnection, RowHandler pRowHandler, ObjectHandler<?> pObjectHandler) {
-        Cursor lCursor = execute(pConnection);
-        if (pObjectHandler != null) pObjectHandler.initialize(lCursor);
-        mResultHandler.parse(lCursor, pRowHandler);
+    String[] toParams() {
+        return mParams.toArray(new String[mParams.size()]);
     }
 }

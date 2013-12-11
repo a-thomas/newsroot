@@ -2,8 +2,8 @@ package com.codexperiments.newsroot.data.tweet;
 
 import java.io.IOException;
 
+import com.codexperiments.newsroot.common.data.Database;
 import com.codexperiments.newsroot.common.data.Table;
-import com.codexperiments.newsroot.data.Database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -1,10 +1,9 @@
 package com.codexperiments.newsroot.data.tweet;
 
-import android.database.Cursor;
+import java.util.List;
 
 import com.codexperiments.newsroot.common.data.Insert;
 import com.codexperiments.newsroot.common.data.Query;
-import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
 import com.codexperiments.newsroot.common.data.Update;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_VIEW_TIMELINE;
@@ -101,17 +100,13 @@ public class TweetDAO {
             // }
             return this;
         }
-        
-        protected void onRun() {
-            
+
+        public TweetDTO[] asArray() {
+            return mDatabase.parseArray(mQuery, mTweetHandler);
         }
 
-        public Cursor execute() {
-            return mQuery.execute(mDatabase.getConnection());
-        }
-
-        public void parse(RowHandler pRowHandler) {
-            mQuery.parse(mDatabase.getConnection(), pRowHandler, mTweetHandler);
+        public List<TweetDTO> asList() {
+            return mDatabase.parseList(mQuery, mTweetHandler);
         }
     }
 }

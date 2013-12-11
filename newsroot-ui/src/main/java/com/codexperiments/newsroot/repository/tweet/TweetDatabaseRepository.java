@@ -1,6 +1,5 @@
 package com.codexperiments.newsroot.repository.tweet;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +11,10 @@ import rx.Observer;
 import rx.Subscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
-import android.database.Cursor;
 
-import com.codexperiments.newsroot.common.data.ResultHandler.RowHandler;
 import com.codexperiments.newsroot.data.tweet.TimeGapDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDAO;
-import com.codexperiments.newsroot.data.tweet.TweetDAO.QueryTweet;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.data.tweet.TweetHandler;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -88,22 +85,14 @@ public class TweetDatabaseRepository implements TweetRepository {
                     public void call() {
                         try {
                             final TweetHandler lTweetHandler = new TweetHandler();
-                            final List<Tweet> lTweets = new ArrayList<Tweet>(DEFAULT_PAGE_SIZE);
-                            QueryTweet lQuery = mTweetDAO.find() 
-                                     .limitTo(DEFAULT_PAGE_SIZE)
-                                     .byTimeGap(pTimeGap);
-                            lQuery.parse(new RowHandler() {
-                                         public void handleRow(Cursor pCursor) {
-                                             lTweets.add(lTweetHandler.parse(pCursor));
-                                         }
-                                     });
-                            // If data was found in database, return it.
+                            List<TweetDTO> lTweets = mTweetDAO.find().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asList();
+                            // Some data was found in database.
                             if (lTweets.size() > 0) {
                                 TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
                                 pObserver.onNext(new TweetPageResponse(lTweetPage, pTimeGap));
                                 pObserver.onCompleted();
                             }
-                            // No data found in database, let's hope there are some in the cloud.
+                            // No data was found in database, let's hope there are some in the cloud.
                             else {
                                 mHasMore.put(pTimeline, Boolean.FALSE);
                                 cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);

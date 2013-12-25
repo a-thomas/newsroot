@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.codexperiments.newsroot.common.Application;
 import com.codexperiments.newsroot.common.platform.PlatformModule;
+import com.codexperiments.newsroot.data.tweet.TweetDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
@@ -64,8 +65,14 @@ public class NewsRootModule {
 
     @Provides
     @Singleton
-    public TweetRepository provideTweetRepository(TweetManager pTweetManager, TweetDatabase pTweetDatabase) {
+    public TweetDAO provideTweetDAO(TweetDatabase pTweetDatabase) {
+        return new TweetDAO(pTweetDatabase);
+    }
+
+    @Provides
+    @Singleton
+    public TweetRepository provideTweetRepository(TweetManager pTweetManager, TweetDatabase pTweetDatabase, TweetDAO pTweetDAO) {
         TweetRepository lRemoteRepository = new TweetRemoteRepository(pTweetManager, "https://api.twitter.com/");
-        return new TweetDatabaseRepository(pTweetDatabase, lRemoteRepository);
+        return new TweetDatabaseRepository(pTweetDatabase, pTweetDAO, lRemoteRepository);
     }
 }

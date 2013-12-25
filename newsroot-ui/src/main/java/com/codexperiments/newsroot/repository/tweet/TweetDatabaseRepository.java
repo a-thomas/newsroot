@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
@@ -29,19 +31,19 @@ public class TweetDatabaseRepository implements TweetRepository {
     private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
     private Map<String, Timeline> mFollowing;
 
-    private TweetDAO mTweetDAO;
+    @Inject TweetDAO mTweetDAO;
     private TimeGapDAO mTimeGapDAO;
 
     // private ViewTimelineDAO mViewTimelineDAO;
 
-    public TweetDatabaseRepository(TweetDatabase pDatabase, TweetRepository pRepository) {
+    public TweetDatabaseRepository(TweetDatabase pDatabase, TweetDAO pTweetDAO, TweetRepository pRepository) {
         super();
         mRepository = pRepository;
         mDatabase = pDatabase;
         mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
         mFollowing = new HashMap<String, Timeline>();
 
-        mTweetDAO = new TweetDAO(mDatabase);
+        mTweetDAO = pTweetDAO;
         mTimeGapDAO = new TimeGapDAO(mDatabase);
         // mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
 

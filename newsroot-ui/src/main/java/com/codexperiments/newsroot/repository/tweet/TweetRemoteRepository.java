@@ -16,9 +16,9 @@ import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import android.util.Log;
 
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.manager.tweet.TweetAccessException;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
@@ -91,7 +91,7 @@ public class TweetRemoteRepository implements TweetRepository {
 
     private TweetPage parseTweetPage(TimeGap pTimeGap, int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
         if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
-        List<Tweet> lTweets = new ArrayList<Tweet>(pPageSize);
+        List<TweetDTO> lTweets = new ArrayList<TweetDTO>(pPageSize);
 
         boolean lFinished = false;
         while (!lFinished) {
@@ -108,13 +108,13 @@ public class TweetRemoteRepository implements TweetRepository {
                 break;
             }
         }
-        return new TweetPage(lTweets, pPageSize);
+        return new TweetPage(lTweets.toArray(new TweetDTO[lTweets.size()]), pPageSize);
     }
 
-    private Tweet parseTweet(JsonParser pParser) throws JsonParseException, IOException {
+    private TweetDTO parseTweet(JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         String lField = "";
-        Tweet lTweet = new Tweet();
+        TweetDTO lTweet = new TweetDTO();
 
         while (!lFinished) {
             switch (pParser.nextToken()) {
@@ -151,7 +151,7 @@ public class TweetRemoteRepository implements TweetRepository {
         return lTweet;
     }
 
-    private Tweet parseUser(Tweet pStatus, JsonParser pParser) throws JsonParseException, IOException {
+    private TweetDTO parseUser(TweetDTO pStatus, JsonParser pParser) throws JsonParseException, IOException {
         boolean lFinished = false;
         String lField = "";
 

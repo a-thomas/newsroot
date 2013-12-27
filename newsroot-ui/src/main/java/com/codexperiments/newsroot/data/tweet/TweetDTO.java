@@ -1,6 +1,8 @@
 package com.codexperiments.newsroot.data.tweet;
 
-public class TweetDTO {
+import com.codexperiments.newsroot.domain.tweet.News;
+
+public class TweetDTO implements News {
     private long mId;
     private String mName;
     private String mScreenName;

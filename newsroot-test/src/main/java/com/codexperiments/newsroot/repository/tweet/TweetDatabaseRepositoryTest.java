@@ -19,11 +19,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
+import rx.Observable;
 import rx.Observer;
 
+import com.codexperiments.newsroot.data.tweet.TweetDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
+import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.test.TestCase;
 import com.codexperiments.newsroot.test.TestModule;
 import com.codexperiments.newsroot.test.data.TweetPageData;
@@ -33,16 +37,17 @@ import dagger.Provides;
 
 public class TweetDatabaseRepositoryTest extends TestCase {
     @Inject TweetRepository mTweetDatabaseRepository;
-    @Inject @Named("wrapped") TweetRepository mTweetMockRepository;
+    @Inject @Named("wrapped") TweetRepository mTweetInnerRepository;
     @Inject Observer<TweetPageResponse> mTweetPageObserver;
 
     @Module(includes = TestModule.class, injects = TweetDatabaseRepositoryTest.class, overrides = true)
     static class LocalModule {
         @Provides
         public TweetRepository provideTweetDatabaseRepository(TweetDatabase pTweetDatabase,
-                                                              @Named("wrapped") TweetRepository pTweetRepository)
+                                                              TweetDAO pTweetDAO,
+                                                              @Named("wrapped") TweetRepository pTweetInnerRepository)
         {
-            return new TweetDatabaseRepository(pTweetDatabase, pTweetRepository);
+            return new TweetDatabaseRepository(pTweetDatabase, pTweetDAO, pTweetInnerRepository);
         }
 
         @Provides
@@ -69,14 +74,16 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         final int lPageCount = 5;
         final int lPageSize = 20;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
+        final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
+        final Observable<TweetPageResponse> lResult = Observable.empty();
 
-        whenRequestOn(server()).thenReturn("twitter/ctx_tweet_empty.json");
+        Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize))
+               .thenReturn(lResult)
+               .thenReturn(lResult)
+               .thenReturn(lResult);
+        // Object toto = mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize);
         // Run.
-        subscribeAndWait(mTweetDatabaseRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
-        // Verify server calls.
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        not(hasQueryParam("max_id")))));
+        subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify empty page received.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
         verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());

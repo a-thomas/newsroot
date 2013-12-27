@@ -10,7 +10,6 @@ import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
 import rx.util.functions.Action1;
-import rx.util.functions.Action2;
 import rx.util.functions.Func1;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,11 +26,11 @@ import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.domain.tweet.News;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.TimeRange;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
@@ -64,7 +63,7 @@ public class NewsListFragment extends BaseFragment {
     // private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
     // private RxTodoProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
     // private RxProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
-    private RxProperty<Tweet> mTweetsProperty;
+    private RxProperty<TweetDTO> mTweetsProperty;
 
     private CompositeSubscription mSubcriptions = Subscriptions.from();
     // private Property<Boolean> mSelectedProperty;
@@ -130,8 +129,8 @@ public class NewsListFragment extends BaseFragment {
                     lItem = getItem(pPosition);
                     if (lItem.getClass() == TimeGap.class) {
                         pConvertView = recycleTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
-                    } else if (lItem.getClass() == Tweet.class) {
-                        pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (Tweet) lItem, pParent);
+                    } else if (lItem.getClass() == TweetDTO.class) {
+                        pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (TweetDTO) lItem, pParent);
                     }
                 }
                 doRecycly(pPosition, pConvertView, lItem);
@@ -159,7 +158,7 @@ public class NewsListFragment extends BaseFragment {
                 if (isLastItem(pPosition) && mHasMore) return 0;
 
                 Object lItem = getItem(pPosition);
-                if (lItem.getClass() == Tweet.class) return 1;
+                if (lItem.getClass() == TweetDTO.class) return 1;
                 else if (lItem.getClass() == TimeGap.class) return 2;
                 else throw new IllegalStateException();
             }
@@ -184,7 +183,7 @@ public class NewsListFragment extends BaseFragment {
         return pTimeGapItem;
     }
 
-    protected NewsTweetItem recycleTweetItem(NewsTweetItem pTweetItem, Tweet pTweet, ViewGroup pParent) {
+    protected NewsTweetItem recycleTweetItem(NewsTweetItem pTweetItem, TweetDTO pTweet, ViewGroup pParent) {
         if (pTweetItem == null) {
             pTweetItem = NewsTweetItem.create(getActivity(), pParent);
             pTweetItem.setOnClickListener(mTweetItemEvent);
@@ -212,18 +211,21 @@ public class NewsListFragment extends BaseFragment {
         mTweetItemEvent = RxClickListener.create(RxUIN.convertToListViewItem(mUIList, NewsTweetItem.class));
         mTweetsProperty = RxProperty.create();
 
-        react(mTweetsProperty.whenAny(Tweet.Selected) //
-                             .subscribe(RxUIN.toListViewItem(mUIList, NewsTweetItem.class, new Action2<Tweet, NewsTweetItem>() {
-                                 public void call(Tweet pTweet, NewsTweetItem pNewsTweetItem) {
-                                     pNewsTweetItem.setIsSelected(pTweet);
-                                 }
-                             })));
-        react(mSelectCommand2.subscribe(RxUIN.fromListViewItem(mUIList, Tweet.class, new Action2<Tweet, NewsTweetItem>() {
-            public void call(Tweet pTweet, NewsTweetItem pNewsTweetItem) {
-                pTweet.setSelected(!pTweet.isSelected());
-                mTweetsProperty.notify(pTweet, Tweet.Selected);
-            }
-        })));
+        // react(mTweetsProperty.whenAny(TweetDTO.Selected) //
+        // .subscribe(RxUIN.toListViewItem(mUIList,
+        // NewsTweetItem.class,
+        // new Action2<TweetDTO, NewsTweetItem>() {
+        // public void call(TweetDTO pTweet, NewsTweetItem pNewsTweetItem) {
+        // pNewsTweetItem.setIsSelected(pTweet);
+        // }
+        // })));
+        // react(mSelectCommand2.subscribe(RxUIN.fromListViewItem(mUIList, TweetDTO.class, new Action2<TweetDTO, NewsTweetItem>()
+        // {
+        // public void call(TweetDTO pTweet, NewsTweetItem pNewsTweetItem) {
+        // pTweet.setSelected(!pTweet.isSelected());
+        // mTweetsProperty.notify(pTweet, TweetDTO.Selected);
+        // }
+        // })));
         react(mTweetItemEvent.onClick().subscribe(mSelectCommand2));
 
         mUIListAdapter.setRecycleCallback(mListBinder);
@@ -244,18 +246,18 @@ public class NewsListFragment extends BaseFragment {
         mUIListAdapter.notifyDataSetChanged();
     }
 
-    private Func1<Tweet, Tweet> doSetSelected() {
-        return new Func1<Tweet, Tweet>() {
-            public Tweet call(Tweet pTweet) {
+    private Func1<TweetDTO, TweetDTO> doSetSelected() {
+        return new Func1<TweetDTO, TweetDTO>() {
+            public TweetDTO call(TweetDTO pTweet) {
                 pTweet.setSelected(!pTweet.isSelected());
                 return pTweet;
             }
         };
     }
 
-    private Func1<Tweet, Boolean> selectedProperty() {
-        return new Func1<Tweet, Boolean>() {
-            public Boolean call(Tweet pTweet) {
+    private Func1<TweetDTO, Boolean> selectedProperty() {
+        return new Func1<TweetDTO, Boolean>() {
+            public Boolean call(TweetDTO pTweet) {
                 return Boolean.valueOf(pTweet.isSelected());
             }
         };

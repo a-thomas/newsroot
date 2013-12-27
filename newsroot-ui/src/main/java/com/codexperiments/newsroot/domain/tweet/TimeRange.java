@@ -1,6 +1,6 @@
 package com.codexperiments.newsroot.domain.tweet;
 
-import java.util.List;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 
 public class TimeRange {
     private static final TimeRange EMPTY_TIMERANGE = new TimeRange();
@@ -8,21 +8,29 @@ public class TimeRange {
     private long mEarliestBound;
     private long mOldestBound;
 
-    public static TimeRange from(List<Tweet> pTweets) {
-        if (pTweets.size() > 0) {
-            return new TimeRange(pTweets.get(0).getId(), pTweets.get(pTweets.size() - 1).getId());
+    // public static TimeRange from(List<Tweet> pTweets) {
+    // if (pTweets.size() > 0) {
+    // return new TimeRange(pTweets.get(0).getId(), pTweets.get(pTweets.size() - 1).getId());
+    // } else {
+    // return EMPTY_TIMERANGE;
+    // }
+    // }
+    //
+    public static TimeRange from(TweetDTO[] pTweets) {
+        if (pTweets.length > 0) {
+            return new TimeRange(pTweets[0].getId(), pTweets[pTweets.length - 1].getId());
         } else {
             return EMPTY_TIMERANGE;
         }
     }
 
-    public static TimeRange append(TimeRange pTimeRange, List<Tweet> pTweets) {
-        int lSize = pTweets.size();
+    public static TimeRange append(TimeRange pTimeRange, TweetDTO[] pTweets) {
+        int lSize = pTweets.length;
         if (lSize <= 0) {
             return pTimeRange;
         } else {
-            long lEarliestBound = pTweets.get(0).getId();
-            long lOldestBound = pTweets.get(lSize - 1).getId();
+            long lEarliestBound = pTweets[0].getId();
+            long lOldestBound = pTweets[lSize - 1].getId();
             if (pTimeRange != null) {
                 if (lEarliestBound < pTimeRange.mEarliestBound) lEarliestBound = pTimeRange.mEarliestBound;
                 if (lOldestBound > pTimeRange.mOldestBound) lOldestBound = pTimeRange.mOldestBound;

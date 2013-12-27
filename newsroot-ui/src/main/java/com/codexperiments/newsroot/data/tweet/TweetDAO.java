@@ -6,10 +6,8 @@ import com.codexperiments.newsroot.common.data.Insert;
 import com.codexperiments.newsroot.common.data.Query;
 import com.codexperiments.newsroot.common.data.Update;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_TWT_TWEET;
-import com.codexperiments.newsroot.data.tweet.TweetDatabase.COL_VIEW_TIMELINE;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 
 public class TweetDAO {
     private TweetDatabase mDatabase;
@@ -33,7 +31,7 @@ public class TweetDAO {
     // return lTweet;
     // }
 
-    public void create(Tweet pTweet) {
+    public void create(TweetDTO pTweet) {
         Insert<DB_TWEET> lInsert = mInsertHolder.get();
         if (lInsert == null) {
             lInsert = Insert.on(DB_TWEET.TWT_TWEET);
@@ -47,7 +45,7 @@ public class TweetDAO {
                .execute(mDatabase.getWritableDatabase());
     }
 
-    public void update(Tweet pTweet) {
+    public void update(TweetDTO pTweet) {
         Update<DB_TWEET> lUpdate = mUpdateHolder.get();
         if (lUpdate == null) {
             lUpdate = Update.on(DB_TWEET.TWT_TWEET).whereEquals(COL_TWT_TWEET.TWT_ID, pTweet.getId());
@@ -95,8 +93,8 @@ public class TweetDAO {
             // mQuery.whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
             // } else
             // if (!pTimeGap.isInitialGap()) {
-            mQuery.whereGreater(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.oldestBound())
-                  .whereLower(COL_VIEW_TIMELINE.VIEW_TIMELINE_ID, pTimeGap.earliestBound());
+            mQuery.whereGreater(COL_TWT_TWEET.TWT_ID, pTimeGap.oldestBound()) //
+                  .whereLower(COL_TWT_TWEET.TWT_ID, pTimeGap.earliestBound());
             // }
             return this;
         }

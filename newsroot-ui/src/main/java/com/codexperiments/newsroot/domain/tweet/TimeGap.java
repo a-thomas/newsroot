@@ -1,6 +1,5 @@
 package com.codexperiments.newsroot.domain.tweet;
 
-import java.util.List;
 
 // TODO Make immutable
 public class TimeGap implements News {
@@ -35,13 +34,13 @@ public class TimeGap implements News {
         return (pTimeRange != null) ? new TimeGap(pTimeRange.oldestBound() - 1, Long.MIN_VALUE) : TimeGap.initialTimeGap();
     }
 
-    public static TimeGap futureTimeGap(List<Tweet> pTweets) {
-        return new TimeGap(Long.MAX_VALUE, pTweets.get(0).getId());
-    }
-
-    public static TimeGap pastTimeGap(List<Tweet> pTweets) {
-        return new TimeGap(pTweets.get(pTweets.size() - 1).getId() - 1, Long.MIN_VALUE);
-    }
+    // public static TimeGap futureTimeGap(List<Tweet> pTweets) {
+    // return new TimeGap(Long.MAX_VALUE, pTweets.get(0).getId());
+    // }
+    //
+    // public static TimeGap pastTimeGap(List<Tweet> pTweets) {
+    // return new TimeGap(pTweets.get(pTweets.size() - 1).getId() - 1, Long.MIN_VALUE);
+    // }
 
     private TimeGap() {
         super();

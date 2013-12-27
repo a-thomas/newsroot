@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 
 public class NewsTweetItem extends RelativeLayout {
     // private CompositeSubscription mSubcriptions;
@@ -56,7 +56,7 @@ public class NewsTweetItem extends RelativeLayout {
     // mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
     // }
 
-    public void setContent(Tweet pTweet) {
+    public void setContent(TweetDTO pTweet) {
         // mTweet = pTweet;
 
         mUINewsName.setText(pTweet.getName());
@@ -68,7 +68,7 @@ public class NewsTweetItem extends RelativeLayout {
         // mSelectedProperty.reset();
     }
 
-    public void setIsSelected(Tweet pTweet) {
+    public void setIsSelected(TweetDTO pTweet) {
         setActivated(pTweet.isSelected());
     }
 

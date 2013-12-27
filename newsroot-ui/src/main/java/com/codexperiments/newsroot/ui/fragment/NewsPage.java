@@ -1,32 +1,26 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import java.util.List;
-
 import com.codexperiments.newsroot.common.Page;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.domain.tweet.News;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.TimeRange;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
-import com.google.common.collect.Lists;
 
 public class NewsPage implements Page<News> {
-    private final List<News> mNews;
+    private final News[] mNews;
     private final TimeRange mTimeRange;
 
     public NewsPage(TimeGap pTimeGap) {
         super();
-        mNews = Lists.<News> newArrayList(pTimeGap);
+        mNews = new News[] { pTimeGap };
         mTimeRange = new TimeRange(pTimeGap.earliestBound(), pTimeGap.oldestBound());
     }
 
     public NewsPage(TweetPage pTweetPage) {
         super();
-        List<Tweet> lTweets = pTweetPage.tweets();
-        mNews = Lists.newArrayListWithCapacity(lTweets.size());
-        for (Tweet lTweet : lTweets) {
-            mNews.add(lTweet);
-        }
+        TweetDTO[] lTweets = pTweetPage.tweets();
+        mNews = lTweets;
         mTimeRange = pTweetPage.timeRange();
     }
 
@@ -34,7 +28,7 @@ public class NewsPage implements Page<News> {
         return mTimeRange;
     }
 
-    public List<? extends News> news() {
+    public News[] news() {
         return mNews;
     }
 
@@ -50,11 +44,11 @@ public class NewsPage implements Page<News> {
 
     @Override
     public News get(int pIndex) {
-        return mNews.get(pIndex);
+        return mNews[pIndex];
     }
 
     @Override
     public int size() {
-        return mNews.size();
+        return mNews.length;
     }
 }

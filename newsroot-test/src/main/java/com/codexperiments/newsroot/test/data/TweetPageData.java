@@ -2,14 +2,11 @@ package com.codexperiments.newsroot.test.data;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
-
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.TimeRange;
-import com.codexperiments.newsroot.domain.tweet.Tweet;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 
 public class TweetPageData {
@@ -25,51 +22,51 @@ public class TweetPageData {
     public static final long OLDEST_02_3 = 349443896905965600L;
 
     public static void checkTweetPage_empty(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
-        assertThat(lTweets, hasSize(0));
+        TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
+        assertThat(lTweets.length, equalTo(0));
         assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
         assertThat(pTweetPageResponse.remainingGap(), nullValue());
     }
 
     public static void checkTweetPage_02_1(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
-        assertThat(lTweets, hasSize(20));
+        TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
+        assertThat(lTweets.length, equalTo(20));
         assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
         assertThat(pTweetPageResponse.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
-        Tweet lFirstTweet = pTweetPageResponse.tweetPage().tweets().get(0);
+        TweetDTO lFirstTweet = pTweetPageResponse.tweetPage().tweets()[0];
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_1));
 
-        Tweet lLastTweet = pTweetPageResponse.tweetPage().tweets().get(19);
+        TweetDTO lLastTweet = pTweetPageResponse.tweetPage().tweets()[19];
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_1));
     }
 
     public static void checkTweetPage_02_2(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
-        assertThat(lTweets, hasSize(20));
+        TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
+        assertThat(lTweets.length, equalTo(20));
         assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
         assertThat(pTweetPageResponse.remainingGap(), equalTo(remainingGap(lTweets, pTimeGap)));
 
-        Tweet lFirstTweet = pTweetPageResponse.tweetPage().tweets().get(0);
+        TweetDTO lFirstTweet = pTweetPageResponse.tweetPage().tweets()[0];
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_2));
 
-        Tweet lLastTweet = pTweetPageResponse.tweetPage().tweets().get(19);
+        TweetDTO lLastTweet = pTweetPageResponse.tweetPage().tweets()[19];
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_2));
     }
 
     public static void checkTweetPage_02_3(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
-        List<Tweet> lTweets = pTweetPageResponse.tweetPage().tweets();
-        assertThat(pTweetPageResponse.tweetPage().tweets(), hasSize(19));
+        TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
+        assertThat(pTweetPageResponse.tweetPage().tweets().length, equalTo(19));
         assertThat(pTweetPageResponse.initialGap(), equalTo(pTimeGap));
         assertThat(pTweetPageResponse.remainingGap(), nullValue());
 
-        Tweet lFirstTweet = lTweets.get(0);
+        TweetDTO lFirstTweet = lTweets[0];
         assertThat(lFirstTweet.getId(), equalTo(EARLIEST_02_3));
-        Tweet lLastTweet = lTweets.get(18);
+        TweetDTO lLastTweet = lTweets[18];
         assertThat(lLastTweet.getId(), equalTo(OLDEST_02_3));
     }
 
-    private static final TimeGap remainingGap(List<Tweet> pTweets, TimeGap pTimeGap) {
-        return pTweets.size() >= PAGE_SIZE ? pTimeGap.remainingGap(TimeRange.from(pTweets)) : null;
+    private static final TimeGap remainingGap(TweetDTO[] pTweets, TimeGap pTimeGap) {
+        return pTweets.length >= PAGE_SIZE ? pTimeGap.remainingGap(TimeRange.from(pTweets)) : null;
     }
 }

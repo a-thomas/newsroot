@@ -1,19 +1,17 @@
 package com.codexperiments.newsroot.domain.tweet;
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.codexperiments.newsroot.common.Page;
+import com.codexperiments.newsroot.data.tweet.TweetDTO;
 
-public class TweetPage implements Page<Tweet>, Iterable<Tweet> {
-    private final List<Tweet> mTweets;
+public class TweetPage implements Page<TweetDTO>/* , Iterable<TweetDTO> */{
+    private final TweetDTO[] mTweets;
     private final TimeRange mTimeRange;
     private final boolean mIsFull;
 
-    public TweetPage(List<Tweet> pTweets, int pPageSize) {
+    public TweetPage(TweetDTO[] pTweets, int pPageSize) {
         super();
         mTweets = pTweets;
-        mIsFull = pTweets.size() >= pPageSize;
+        mIsFull = pTweets.length >= pPageSize;
         mTimeRange = TimeRange.from(pTweets);
     }
 
@@ -21,7 +19,7 @@ public class TweetPage implements Page<Tweet>, Iterable<Tweet> {
         return mTimeRange;
     }
 
-    public List<Tweet> tweets() {
+    public TweetDTO[] tweets() {
         return mTweets;
     }
 
@@ -40,19 +38,19 @@ public class TweetPage implements Page<Tweet>, Iterable<Tweet> {
     }
 
     @Override
-    public Tweet get(int pIndex) {
-        return mTweets.get(pIndex);
+    public TweetDTO get(int pIndex) {
+        return mTweets[pIndex];
     }
 
     @Override
     public int size() {
-        return mTweets.size();
+        return mTweets.length;
     }
 
-    @Override
-    public Iterator<Tweet> iterator() {
-        return mTweets.iterator();
-    }
+    // @Override
+    // public Iterator<TweetDTO> iterator() {
+    // return mTweets.iterator();
+    // }
 
     // @Override
     // public Iterator<Tweet> iterator() {

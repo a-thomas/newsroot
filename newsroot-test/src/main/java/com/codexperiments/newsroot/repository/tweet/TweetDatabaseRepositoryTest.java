@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -57,6 +58,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         }
 
         @Provides
+        @Singleton
         @SuppressWarnings("unchecked")
         public Observer<TweetPageResponse> provideTweetPageObserver() {
             return mock(Observer.class, withSettings().verboseLogging());
@@ -67,6 +69,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         inject(new LocalModule());
+        Mockito.reset(mTweetInnerRepository);
     }
 
     public void testFindHomeTweets_noPage() throws Exception {

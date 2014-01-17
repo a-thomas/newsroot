@@ -1,9 +1,12 @@
 package com.codexperiments.newsroot.test.helper;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
+import rx.concurrency.TestScheduler;
+import rx.util.functions.Action0;
 import android.util.Log;
 
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
@@ -30,5 +33,23 @@ public class RxTest {
             }
         });
         lCompleted.await();
+    }
+
+    public static <T> void scheduleOnNext(TestScheduler pScheduler, final Observer<T> observer, final T value, int delay) {
+        pScheduler.schedule(new Action0() {
+            @Override
+            public void call() {
+                observer.onNext(value);
+            }
+        }, delay, TimeUnit.MILLISECONDS);
+    }
+
+    public static void scheduleOnComplete(TestScheduler pScheduler, final Observer<?> observer, int delay) {
+        pScheduler.schedule(new Action0() {
+            @Override
+            public void call() {
+                observer.onCompleted();
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 }

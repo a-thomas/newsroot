@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.test;
 
 import static org.mockito.Mockito.mock;
+import rx.concurrency.TestScheduler;
 import android.app.Application;
 import android.test.InstrumentationTestCase;
 
@@ -15,6 +16,7 @@ public abstract class TestCase extends InstrumentationTestCase {
     private NewsRootApplication mApplication;
     private MockServerHandler mServerHandler;
     private MockServer mServer;
+    private TestScheduler mScheduler;
     private ObjectGraph mDependenciesBackup;
 
     @Override
@@ -24,6 +26,7 @@ public abstract class TestCase extends InstrumentationTestCase {
         mApplication = (NewsRootApplication) getInstrumentation().getTargetContext().getApplicationContext();
         mServerHandler = mock(MockServerHandler.class);
         mServer = new MockServer(this, mServerHandler);
+        mScheduler = new TestScheduler();
         mDependenciesBackup = mApplication.dependencies();
     }
 
@@ -51,5 +54,9 @@ public abstract class TestCase extends InstrumentationTestCase {
 
     public MockServerHandler server() {
         return mServerHandler;
+    }
+
+    public TestScheduler scheduler() {
+        return mScheduler;
     }
 }

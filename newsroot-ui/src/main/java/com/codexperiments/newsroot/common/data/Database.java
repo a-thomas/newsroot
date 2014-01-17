@@ -118,9 +118,12 @@ public abstract class Database extends SQLiteOpenHelper {
                     }
 
                     public void onCompleted() {
+                        pObserver.onCompleted();
                     }
 
                     public void onError(Throwable pThrowable) {
+                        Log.e(getClass().getSimpleName(), "Ending transaction", pThrowable);
+                        pObserver.onError(pThrowable);
                     }
                 });
             }

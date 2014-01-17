@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.repository.tweet;
 
+import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnComplete;
+import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnNext;
 import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWait;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasQueryParam;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasUrl;
@@ -14,6 +16,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,7 +26,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
+import rx.Subscription;
+import rx.subscriptions.Subscriptions;
 
 import com.codexperiments.newsroot.data.tweet.TweetDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
@@ -38,7 +44,7 @@ import dagger.Provides;
 
 public class TweetDatabaseRepositoryTest extends TestCase {
     @Inject TweetRepository mTweetDatabaseRepository;
-    @Inject @Named("wrapped") TweetRepository mTweetInnerRepository;
+    @Inject @Named("mock") TweetRepository mTweetInnerRepository;
     @Inject Observer<TweetPageResponse> mTweetPageObserver;
 
     @Module(includes = TestModule.class, injects = TweetDatabaseRepositoryTest.class, overrides = true)
@@ -46,14 +52,15 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         @Provides
         public TweetRepository provideTweetDatabaseRepository(TweetDatabase pTweetDatabase,
                                                               TweetDAO pTweetDAO,
-                                                              @Named("wrapped") TweetRepository pTweetInnerRepository)
+                                                              @Named("mock") TweetRepository pMockRepository)
         {
-            return new TweetDatabaseRepository(pTweetDatabase, pTweetDAO, pTweetInnerRepository);
+            return new TweetDatabaseRepository(pTweetDatabase, pTweetDAO, pMockRepository);
         }
 
         @Provides
-        @Named("wrapped")
-        public TweetRepository provideTweetMockRepository() {
+        @Singleton
+        @Named("mock")
+        public TweetRepository provideMockRepository() {
             return mock(TweetRepository.class);
         }
 
@@ -78,13 +85,16 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         final int lPageSize = 20;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
-        final Observable<TweetPageResponse> lResult = Observable.empty();
-
-        Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize))
-               .thenReturn(lResult)
-               .thenReturn(lResult)
-               .thenReturn(lResult);
-        // Object toto = mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize);
+        final Observable<TweetPageResponse> lInnerResult = Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
+                scheduleOnNext(scheduler(), pTweetPageResponseObserver, TweetPageResponse.emptyResponse(lTimeGap, lPageSize), 100);
+                scheduleOnComplete(scheduler(), pTweetPageResponseObserver, 200);
+                scheduler().advanceTimeTo(500, TimeUnit.MILLISECONDS);
+                return Subscriptions.empty();
+            }
+        });
+        Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize)) //
+               .thenReturn(lInnerResult);
         // Run.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
         // Verify empty page received.

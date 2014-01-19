@@ -2,7 +2,6 @@ package com.codexperiments.newsroot.repository.tweet;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
@@ -25,7 +24,7 @@ import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 public class TweetDatabaseRepository implements TweetRepository {
     private TweetRepository mRepository;
     private TweetDatabase mDatabase;
-    private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
+    // private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
     private Map<String, Timeline> mFollowing;
 
     @Inject TweetDAO mTweetDAO;
@@ -37,7 +36,7 @@ public class TweetDatabaseRepository implements TweetRepository {
         super();
         mRepository = pRepository;
         mDatabase = pDatabase;
-        mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
+        // mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
         mFollowing = new HashMap<String, Timeline>();
 
         mTweetDAO = pTweetDAO;
@@ -53,61 +52,65 @@ public class TweetDatabaseRepository implements TweetRepository {
         if (lTimeline == null) {
             lTimeline = new Timeline(pUsername);
             mFollowing.put(pUsername, lTimeline);
-            mHasMore.put(lTimeline, Boolean.TRUE);
+            // mHasMore.put(lTimeline, Boolean.TRUE);
         }
         return lTimeline;
     }
 
     @Override
-    public Observable<TweetPageResponse> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
-        Boolean lHasMore = mHasMore.get(pTimeline);
-        if (lHasMore) {
-            lHasMore = Boolean.TRUE;
-            mHasMore.put(pTimeline, lHasMore);
-        }
-
-        if (pTimeGap.isPastGap() && lHasMore == Boolean.TRUE) {
-            return findCachedTweets(pTimeline, pTimeGap, pPageCount, pPageSize);
-        } else {
-            return cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize));
-        }
-    }
-
-    private Observable<TweetPageResponse> findCachedTweets(final Timeline pTimeline,
-                                                           final TimeGap pTimeGap,
-                                                           final int pPageCount,
-                                                           final int pPageSize)
+    public Observable<TweetPageResponse> findTweets(final Timeline pTimeline,
+                                                    final TimeGap pTimeGap,
+                                                    final int pPageCount,
+                                                    final int pPageSize)
     {
         return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-                AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
-                    public void call() {
-                        try {
-                            // TODO final TweetHandler lTweetHandler = new TweetHandler();
-                            TweetDTO[] lTweets = mTweetDAO.find()
-                                                          .withTweets()
-                                                          .byTimeGap(pTimeGap)
-                                                          .limitTo(DEFAULT_PAGE_SIZE)
-                                                          .asArray();
-                            // Some data was found in database.
-                            if (lTweets.length > 0) {
-                                TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
-                                pObserver.onNext(new TweetPageResponse(lTweetPage, pTimeGap));
-                                pObserver.onCompleted();
-                            }
-                            // No data was found in database, let's hope there are some in the cloud.
-                            else {
-                                mHasMore.put(pTimeline, Boolean.FALSE);
-                                cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
-                            }
-                        } catch (Exception eException) {
-                            pObserver.onError(eException);
-                        }
-                    }
-                });
+                findCachedTweets(pObserver, pTimeline, pTimeGap, pPageCount, pPageSize, true);
                 return Subscriptions.empty();
             }
         });
+    }
+
+    private Subscription findCachedTweets(final Observer<? super TweetPageResponse> pObserver,
+                                          final Timeline pTimeline,
+                                          final TimeGap pTimeGap,
+                                          final int pPageCount,
+                                          final int pPageSize,
+                                          final boolean pFindFromSource)
+    {
+        AndroidScheduler.threadPoolForDatabase().schedule(new Action0() {
+            public void call() {
+                try {
+                    // TODO final TweetHandler lTweetHandler = new TweetHandler();
+                    TweetDTO[] lTweets = mTweetDAO.find().withTweets().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asArray();
+                    // Either we won't look for server data even if we have some (in which case we may an empty page)
+                    // or some data was found in database (because if not we will look for data from the server).
+                    if (!pFindFromSource || (lTweets.length > 0)) {
+                        TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
+                        TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, pTimeGap);
+                        pObserver.onNext(lTweetPageResponse);
+
+                        if ((pPageCount > 1) && (lTweets.length >= DEFAULT_PAGE_SIZE)) {
+                            findCachedTweets(pObserver,
+                                             pTimeline,
+                                             lTweetPageResponse.remainingGap(),
+                                             pPageCount - 1,
+                                             pPageSize,
+                                             false);
+                        } else {
+                            pObserver.onCompleted();
+                        }
+                    }
+                    // No data was found in database, let's hope there are some in the cloud.
+                    else {
+                        cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
+                    }
+                } catch (Exception eException) {
+                    pObserver.onError(eException);
+                }
+            }
+        });
+        return Subscriptions.empty();
     }
 
     private Observable<TweetPageResponse> cacheTweets(Observable<TweetPageResponse> pTweetPages) {

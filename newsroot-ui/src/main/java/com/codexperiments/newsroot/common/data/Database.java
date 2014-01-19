@@ -227,8 +227,9 @@ public abstract class Database extends SQLiteOpenHelper {
         Cursor lCursor = execute(pQuery);
         try {
             int lResultSize = lCursor.getCount();
+            pObjectHandler.initialize(lCursor);
             TEntity[] lEntity = (TEntity[]) Array.newInstance(pObjectHandler.ofType(), lResultSize);
-            for (int i = lResultSize; i < lResultSize; ++i) {
+            for (int i = 0; i < lResultSize; ++i) {
                 lCursor.moveToNext();
                 lEntity[i] = pObjectHandler.parse(lCursor);
             }

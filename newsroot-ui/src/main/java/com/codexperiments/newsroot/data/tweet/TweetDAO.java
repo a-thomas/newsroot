@@ -72,7 +72,10 @@ public class TweetDAO {
         private Query<DB_TWEET> mQuery;
 
         public QueryTweet() {
-            mQuery = Query.on(DB_TWEET.values()).from(DB_TWEET.TWT_TWEET);
+            mQuery = Query.on(DB_TWEET.values()) //
+                          .from(DB_TWEET.TWT_TWEET)
+                          .orderBy(COL_TWT_TWEET.TWT_ID)
+                          .descending();
         }
 
         public QueryTweet limitTo(int pPageSize) {

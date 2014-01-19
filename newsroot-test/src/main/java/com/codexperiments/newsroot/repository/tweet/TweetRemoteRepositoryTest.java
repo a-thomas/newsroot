@@ -6,6 +6,8 @@ import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasUrl;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.whenRequestOn;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -61,6 +63,7 @@ public class TweetRemoteRepositoryTest extends TestCase {
         final int lPageSize = 20;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
+        // Record.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_empty.json");
         // Run.
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
@@ -73,8 +76,9 @@ public class TweetRemoteRepositoryTest extends TestCase {
         verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
         verify(mTweetPageObserver).onCompleted();
 
-        TweetPageResponse lPageResponse = lTweetPageResponseCaptor.getAllValues().get(0);
-        TweetPageData.checkTweetPage_empty(lPageResponse, lTimeGap);
+        List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
+        assertThat(lTweetPageResponseArgs.size(), equalTo(1));
+        TweetPageData.checkTweetPage_empty(lTweetPageResponseArgs.get(0), lTimeGap);
 
         verifyNoMoreInteractions(server(), mTweetPageObserver);
     }
@@ -85,6 +89,7 @@ public class TweetRemoteRepositoryTest extends TestCase {
         final int lPageSize = 20; // More page available since returned page will be full.
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
+        // Record.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json");
         // Run.
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
@@ -109,6 +114,7 @@ public class TweetRemoteRepositoryTest extends TestCase {
         final int lPageSize = 20; // No more page available since last returned page will not be full.
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
+        // Record.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json")
                                .thenReturn("twitter/ctx_tweet_02-2.json")
                                .thenReturn("twitter/ctx_tweet_02-3.json");
@@ -129,10 +135,11 @@ public class TweetRemoteRepositoryTest extends TestCase {
         verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
         verify(mTweetPageObserver).onCompleted();
 
-        List<TweetPageResponse> lPageResponse = lTweetPageResponseCaptor.getAllValues();
-        TweetPageData.checkTweetPage_02_1(lPageResponse.get(0), lTimeGap);
-        TweetPageData.checkTweetPage_02_2(lPageResponse.get(1), lPageResponse.get(0).remainingGap());
-        TweetPageData.checkTweetPage_02_3(lPageResponse.get(2), lPageResponse.get(1).remainingGap());
+        List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
+        assertThat(lTweetPageResponseArgs.size(), equalTo(3));
+        TweetPageData.checkTweetPage_02_1(lTweetPageResponseCaptor.getAllValues().get(0), lTimeGap);
+        TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());
+        TweetPageData.checkTweetPage_02_3(lTweetPageResponseArgs.get(2), lTweetPageResponseArgs.get(1).remainingGap());
 
         verifyNoMoreInteractions(server(), mTweetPageObserver);
     }

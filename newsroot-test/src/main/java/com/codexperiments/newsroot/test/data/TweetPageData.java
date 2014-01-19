@@ -21,6 +21,14 @@ public class TweetPageData {
     public static final long EARLIEST_02_3 = 349452667745087500L;
     public static final long OLDEST_02_3 = 349443896905965600L;
 
+    public static void checkTweetPageResponse(TweetPageResponse pTweetPageResponse, TweetPageResponse pTweetPageResponseRef) {
+        TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
+        TweetDTO[] lTweetRefs = pTweetPageResponseRef.tweetPage().tweets();
+        assertThat(pTweetPageResponse.remainingGap(), equalTo(pTweetPageResponseRef.remainingGap()));
+        assertThat(pTweetPageResponse.initialGap(), equalTo(pTweetPageResponseRef.initialGap()));
+        assertThat(lTweets, equalTo(lTweetRefs));
+    }
+
     public static void checkTweetPage_empty(TweetPageResponse pTweetPageResponse, TimeGap pTimeGap) {
         TweetDTO[] lTweets = pTweetPageResponse.tweetPage().tweets();
         assertThat(lTweets.length, equalTo(0));

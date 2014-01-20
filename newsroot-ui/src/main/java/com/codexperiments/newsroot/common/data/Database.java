@@ -150,7 +150,9 @@ public abstract class Database extends SQLiteOpenHelper {
 
                     public void onError(Throwable pThrowable) {
                         Log.e(getClass().getSimpleName(), "Ending transaction", pThrowable);
-                        mConnection.endTransaction();
+                        if (mConnection.inTransaction()) {
+                            mConnection.endTransaction();
+                        }
                         pObserver.onError(pThrowable);
                     }
                 });

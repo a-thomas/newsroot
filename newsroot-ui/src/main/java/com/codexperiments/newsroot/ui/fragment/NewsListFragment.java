@@ -36,7 +36,6 @@ import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
 import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
-import com.codexperiments.robolabor.task.TaskManager;
 import com.codexperiments.rx.RxClickListener;
 import com.codexperiments.rx.RxListBinder;
 import com.codexperiments.rx.RxProperty;
@@ -46,7 +45,6 @@ public class NewsListFragment extends BaseFragment {
     private static final String ARG_SCREEN_NAME = "screenName";
 
     private EventBus mEventBus;
-    private TaskManager mTaskManager;
     @Inject TweetRepository mTweetRepository;
 
     private Timeline mTimeline;
@@ -55,23 +53,13 @@ public class NewsListFragment extends BaseFragment {
 
     private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
-    // private RxOnListClickEvent<Tweet, NewsTweetItem> mOnListClickEvent;
-    // private RxListBindListener mListBindListener;
     private RxListBinder mListBinder;
-    // private RxListClickListener<NewsTweetItem, Tweet> mTweetItemEvent;
     private RxClickListener<NewsTweetItem> mTweetItemEvent;
-    // private RxListProperty<NewsTweetItem, Tweet> mTweetItemProperty;
-    // private RxTodoProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
-    // private RxProperty<ListEvent<NewsTweetItem, Tweet>> mTweetItemProperty;
     private RxProperty<TweetDTO> mTweetsProperty;
 
     private CompositeSubscription mSubcriptions = Subscriptions.from();
-    // private Property<Boolean> mSelectedProperty;
-    // private Command<Integer, Integer> mSelectCommand;
-    // private Property<Tweet> mTweetChangedObservable;
     private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
     private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand;
-    // private Command<ListEvent<NewsTweetItem, Tweet>> mSelectCommand = Command.create();
     private Command<NewsTweetItem> mSelectCommand2 = Command.create();
 
     public static final NewsListFragment forUser(String pScreenName) {
@@ -89,7 +77,6 @@ public class NewsListFragment extends BaseFragment {
 
         // Services.
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
-        mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
 
         // Domain.
         mTweets = new TreePageIndex<News>();
@@ -321,13 +308,11 @@ public class NewsListFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         mEventBus.registerListener(this);
-        mTaskManager.manage(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mTaskManager.unmanage(this);
         mEventBus.unregisterListener(this);
     }
 }

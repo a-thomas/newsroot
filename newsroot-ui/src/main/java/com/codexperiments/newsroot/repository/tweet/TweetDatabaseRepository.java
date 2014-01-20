@@ -25,7 +25,7 @@ public class TweetDatabaseRepository implements TweetRepository {
     private TweetRepository mRepository;
     private TweetDatabase mDatabase;
     // private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
-    private Map<String, Timeline> mFollowing;
+    private Map<String, Timeline> mTimelines;
 
     @Inject TweetDAO mTweetDAO;
     private TimeGapDAO mTimeGapDAO;
@@ -37,7 +37,7 @@ public class TweetDatabaseRepository implements TweetRepository {
         mRepository = pRepository;
         mDatabase = pDatabase;
         // mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
-        mFollowing = new HashMap<String, Timeline>();
+        mTimelines = new HashMap<String, Timeline>();
 
         mTweetDAO = pTweetDAO;
         mTimeGapDAO = new TimeGapDAO(mDatabase);
@@ -48,10 +48,10 @@ public class TweetDatabaseRepository implements TweetRepository {
 
     @Override
     public Timeline findTimeline(String pUsername) {
-        Timeline lTimeline = mFollowing.get(pUsername);
+        Timeline lTimeline = mTimelines.get(pUsername);
         if (lTimeline == null) {
             lTimeline = new Timeline(pUsername);
-            mFollowing.put(pUsername, lTimeline);
+            mTimelines.put(pUsername, lTimeline);
             // mHasMore.put(lTimeline, Boolean.TRUE);
         }
         return lTimeline;

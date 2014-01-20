@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.test.data;
 
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnComplete;
+import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnError;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnNext;
 
 import java.io.IOException;
@@ -24,7 +25,8 @@ import com.codexperiments.newsroot.manager.tweet.TweetParser;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 
 public class TweetPageResponseData {
-    public static Observable<TweetPageResponse> observable(final TestScheduler pScheduler, final TweetPageResponse... pResponses)
+    public static Observable<TweetPageResponse> asObservable(final TestScheduler pScheduler,
+                                                             final TweetPageResponse... pResponses)
     {
         return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
@@ -35,6 +37,17 @@ public class TweetPageResponseData {
                 }
                 scheduleOnComplete(pScheduler, pTweetPageResponseObserver, lTimeDelay);
 
+                pScheduler.advanceTimeBy(lTimeDelay + 1, TimeUnit.MILLISECONDS);
+                return Subscriptions.empty();
+            }
+        });
+    }
+
+    public static Observable<TweetPageResponse> asThrowable(final TestScheduler pScheduler, final Throwable pThrowable) {
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
+                int lTimeDelay = 100;
+                scheduleOnError(pScheduler, pTweetPageResponseObserver, pThrowable, lTimeDelay);
                 pScheduler.advanceTimeBy(lTimeDelay + 1, TimeUnit.MILLISECONDS);
                 return Subscriptions.empty();
             }

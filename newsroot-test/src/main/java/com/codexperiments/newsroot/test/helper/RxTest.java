@@ -44,6 +44,19 @@ public class RxTest {
         }, delay, TimeUnit.MILLISECONDS);
     }
 
+    public static <TThrowable extends Throwable> void scheduleOnError(TestScheduler pScheduler,
+                                                                      final Observer<?> observer,
+                                                                      final TThrowable value,
+                                                                      int delay)
+    {
+        pScheduler.schedule(new Action0() {
+            @Override
+            public void call() {
+                observer.onError(value);
+            }
+        }, delay, TimeUnit.MILLISECONDS);
+    }
+
     public static void scheduleOnComplete(TestScheduler pScheduler, final Observer<?> observer, int delay) {
         pScheduler.schedule(new Action0() {
             @Override

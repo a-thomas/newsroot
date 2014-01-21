@@ -1,11 +1,14 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 import rx.util.functions.Action0;
@@ -16,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.codexperiments.newsroot.R;
@@ -24,6 +28,7 @@ import com.codexperiments.newsroot.common.BaseFragment;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
+import com.codexperiments.newsroot.common.rx.ListEvent;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
@@ -35,11 +40,10 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 import com.codexperiments.rx.RxClickListener;
-import com.codexperiments.rx.RxListBinder;
 import com.codexperiments.rx.RxProperty;
 import com.codexperiments.rx.RxUIN;
+import com.google.common.collect.Maps;
 
 public class NewsListFragment extends BaseFragment {
     private static final String ARG_SCREEN_NAME = "screenName";
@@ -51,9 +55,10 @@ public class NewsListFragment extends BaseFragment {
     private PageIndex<News> mTweets;
     private TimeRange mTimeRange;
 
-    private PageAdapter<News> mUIListAdapter;
     private ListView mUIList;
-    private RxListBinder mListBinder;
+
+    private PageAdapter mUIListAdapter;
+    // private RxListBinder mListBinder;
     private RxClickListener<NewsTweetItem> mTweetItemEvent;
     private RxProperty<TweetDTO> mTweetsProperty;
 
@@ -86,7 +91,7 @@ public class NewsListFragment extends BaseFragment {
 
         // UI.
         View lUIFragment = pLayoutInflater.inflate(R.layout.fragment_news_list, pContainer, false);
-        mUIListAdapter = createAdapter(pLayoutInflater, mTweets);
+        mUIListAdapter = new PageAdapter(); // createAdapter(pLayoutInflater, mTweets);
         mUIList = (ListView) lUIFragment.findViewById(android.R.id.list);
         mUIList.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
 
@@ -102,55 +107,55 @@ public class NewsListFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle pBundle) {
     }
 
-    protected PageAdapter<News> createAdapter(final LayoutInflater pLayoutInflater, final PageIndex<News> pIndex) {
-        return new PageAdapter<News>(pIndex) {
-            private boolean mHasMore = true;
-
-            @Override
-            public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-                super.getView(pPosition, pConvertView, pParent);
-                Object lItem = null;
-                if (isLastItem(pPosition) && mHasMore) {
-                    return recycleMoreItem((NewsMoreItem) pConvertView);
-                } else {
-                    lItem = getItem(pPosition);
-                    if (lItem.getClass() == TimeGap.class) {
-                        pConvertView = recycleTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
-                    } else if (lItem.getClass() == TweetDTO.class) {
-                        pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (TweetDTO) lItem, pParent);
-                    }
-                }
-                doRecycly(pPosition, pConvertView, lItem);
-                return pConvertView;
-            }
-
-            @Override
-            public int getCount() {
-                return (mHasMore) ? super.getCount() + 1 : getCount();
-            }
-
-            @Override
-            public long getItemId(int pPosition) {
-                if (isLastItem(pPosition) && mHasMore) return -1;
-                else return pPosition;
-            }
-
-            @Override
-            public int getViewTypeCount() {
-                return 3;
-            }
-
-            @Override
-            public int getItemViewType(int pPosition) {
-                if (isLastItem(pPosition) && mHasMore) return 0;
-
-                Object lItem = getItem(pPosition);
-                if (lItem.getClass() == TweetDTO.class) return 1;
-                else if (lItem.getClass() == TimeGap.class) return 2;
-                else throw new IllegalStateException();
-            }
-        };
-    }
+    // protected PageAdapter<News> createAdapter(final LayoutInflater pLayoutInflater, final PageIndex<News> pIndex) {
+    // return new PageAdapter<News>(pIndex) {
+    // private boolean mHasMore = true;
+    //
+    // @Override
+    // public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
+    // super.getView(pPosition, pConvertView, pParent);
+    // Object lItem = null;
+    // if (isLastItem(pPosition) && mHasMore) {
+    // return recycleMoreItem((NewsMoreItem) pConvertView);
+    // } else {
+    // lItem = getItem(pPosition);
+    // if (lItem.getClass() == TimeGap.class) {
+    // pConvertView = recycleTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
+    // } else if (lItem.getClass() == TweetDTO.class) {
+    // pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (TweetDTO) lItem, pParent);
+    // }
+    // }
+    // doRecycly(pPosition, pConvertView, lItem);
+    // return pConvertView;
+    // }
+    //
+    // @Override
+    // public int getCount() {
+    // return (mHasMore) ? super.getCount() + 1 : getCount();
+    // }
+    //
+    // @Override
+    // public long getItemId(int pPosition) {
+    // if (isLastItem(pPosition) && mHasMore) return -1;
+    // else return pPosition;
+    // }
+    //
+    // @Override
+    // public int getViewTypeCount() {
+    // return 3;
+    // }
+    //
+    // @Override
+    // public int getItemViewType(int pPosition) {
+    // if (isLastItem(pPosition) && mHasMore) return 0;
+    //
+    // Object lItem = getItem(pPosition);
+    // if (lItem.getClass() == TweetDTO.class) return 1;
+    // else if (lItem.getClass() == TimeGap.class) return 2;
+    // else throw new IllegalStateException();
+    // }
+    // };
+    // }
 
     protected NewsMoreItem recycleMoreItem(NewsMoreItem pMoreItem) {
         if (pMoreItem == null) {
@@ -188,13 +193,13 @@ public class NewsListFragment extends BaseFragment {
                 onMoreData(pTweetPageResponse);
             }
         }));
-        mUIListAdapter.setMoreCallback(new MoreCallback() {
-            public void onMore() {
-                mFindMoreCommand.execute();
-            }
-        });
+        // mUIListAdapter.setMoreCallback(new MoreCallback() {
+        // public void onMore() {
+        // mFindMoreCommand.execute();
+        // }
+        // });
 
-        mListBinder = RxListBinder.create(mUIList);
+        // mListBinder = RxListBinder.create(mUIList);
         mTweetItemEvent = RxClickListener.create(RxUIN.convertToListViewItem(mUIList, NewsTweetItem.class));
         mTweetsProperty = RxProperty.create();
 
@@ -215,11 +220,15 @@ public class NewsListFragment extends BaseFragment {
         // })));
         react(mTweetItemEvent.onClick().subscribe(mSelectCommand2));
 
-        mUIListAdapter.setRecycleCallback(mListBinder);
+        // mUIListAdapter.setRecycleCallback(mListBinder);
     }
 
     protected void react(Subscription pSubscription) {
         mSubcriptions.add(pSubscription);
+    }
+
+    protected void onMore() {
+        mFindMoreCommand.execute();
     }
 
     protected void onMoreData(TweetPageResponse pTweetPageResponse) {
@@ -314,5 +323,110 @@ public class NewsListFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
         mEventBus.unregisterListener(this);
+    }
+
+    private class PageAdapter extends BaseAdapter {
+        private int mIndexSize = 0;
+        private int mLastItemSeen = -1;
+        // private MoreCallback mMoreCallback = null;
+        private boolean mHasMore = true;
+        private Map<Class<?>, Handler<?, ?>> mRefs = Maps.newHashMap();
+
+        public boolean isLastItem(int pPosition) {
+            return (pPosition == getCount() - 1);
+        }
+
+        @Override
+        public void notifyDataSetChanged() {
+            mIndexSize = mTweets.size();
+            super.notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return (mHasMore) ? mIndexSize + 1 : mIndexSize;
+        }
+
+        @Override
+        public Object getItem(int pPosition) {
+            return mTweets.find(mIndexSize - pPosition - 1, 1).get(0);
+        }
+
+        @Override
+        public long getItemId(int pPosition) {
+            if (isLastItem(pPosition) && mHasMore) return -1;
+            else return pPosition;
+        }
+
+        @Override
+        public int getItemViewType(int pPosition) {
+            if (isLastItem(pPosition) && mHasMore) return 0;
+
+            Object lItem = getItem(pPosition);
+            if (lItem.getClass() == TweetDTO.class) return 1;
+            else if (lItem.getClass() == TimeGap.class) return 2;
+            else throw new IllegalStateException();
+        }
+
+        @Override
+        public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
+            if (isLastItem(pPosition) && (pPosition > mLastItemSeen)) {
+                // if (mMoreCallback != null) {
+                onMore();
+                // mMoreCallback.onMore();
+                // }
+                mLastItemSeen = pPosition;
+            }
+            Object lItem = null;
+            if (isLastItem(pPosition) && mHasMore) {
+                return recycleMoreItem((NewsMoreItem) pConvertView);
+            } else {
+                lItem = getItem(pPosition);
+                if (lItem.getClass() == TimeGap.class) {
+                    pConvertView = recycleTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
+                } else if (lItem.getClass() == TweetDTO.class) {
+                    pConvertView = recycleTweetItem((NewsTweetItem) pConvertView, (TweetDTO) lItem, pParent);
+                }
+            }
+            doRecycly(pPosition, pConvertView, lItem);
+            return pConvertView;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 3;
+        }
+
+        public void doRecycly(int pPosition, View pView, Object pItem) {
+            Handler<?, ?> lHandler = mRefs.get(pView.getClass());
+            if (lHandler != null) {
+                lHandler.bind(pPosition, pView, pItem);
+            }
+        }
+
+        // public void setMoreCallback(MoreCallback pMoreCallback) {
+        // mMoreCallback = pMoreCallback;
+        // }
+    }
+
+    private static final class Handler<TView, TItem> {
+        final Class<TItem> mItemClass;
+        final PublishSubject<ListEvent<TView, TItem>> mSubject;
+
+        Handler(Class<TItem> pItemClass) {
+            mItemClass = pItemClass;
+            mSubject = PublishSubject.create();
+        }
+
+        @SuppressWarnings("unchecked")
+        void bind(int pPosition, View pView, Object pItem) {
+            if (mItemClass.isInstance(pItem)) {
+                mSubject.onNext(new ListEvent<TView, TItem>(pPosition, (TView) pView, (TItem) pItem));
+            }
+        }
+    }
+
+    public interface MoreCallback {
+        void onMore();
     }
 }

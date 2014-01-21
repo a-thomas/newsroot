@@ -20,8 +20,6 @@ import android.widget.Toast;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.common.structure.PageIndex;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter;
-import com.codexperiments.newsroot.ui.fragment.PageAdapter.MoreCallback;
 
 public class RxUI {
     public static final Void VOID_SIGNAL = null;
@@ -257,15 +255,15 @@ public class RxUI {
         };
     }
 
-    public static Observable<Void> fromOnMoreAction(PageAdapter<?> pPageAdapter) {
-        final PublishSubject<Void> lPublisher = PublishSubject.create();
-        pPageAdapter.setMoreCallback(new MoreCallback() {
-            public void onMore() {
-                lPublisher.onNext(null);
-            }
-        });
-        return lPublisher;
-    }
+    // public static Observable<Void> fromOnMoreAction(PageAdapter<?> pPageAdapter) {
+    // final PublishSubject<Void> lPublisher = PublishSubject.create();
+    // pPageAdapter.setMoreCallback(new MoreCallback() {
+    // public void onMore() {
+    // lPublisher.onNext(null);
+    // }
+    // });
+    // return lPublisher;
+    // }
 
     public static Observer<Boolean> toDialogVisibleProp(final Dialog pDialog, final Activity pActivity) {
         return new Observer<Boolean>() {

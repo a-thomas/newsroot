@@ -1,7 +1,7 @@
 package com.codexperiments.newsroot.ui.fragment;
 
+import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -19,7 +19,7 @@ public class NewsTimeGapItem extends RelativeLayout {
 
     // private CompositeSubscription mSubcriptions;
 
-    public static NewsTimeGapItem create(FragmentActivity pActivity, ViewGroup pParent) {
+    public static NewsTimeGapItem create(Activity pActivity, ViewGroup pParent) {
         return (NewsTimeGapItem) pActivity.getLayoutInflater().inflate(R.layout.item_news_timegap, pParent, false);
     }
 

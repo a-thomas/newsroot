@@ -16,9 +16,9 @@ public class TimeRange {
     // }
     // }
     //
-    public static TimeRange from(TweetDTO[] pTweets) {
+    public static TimeRange from(News[] pTweets) {
         if (pTweets.length > 0) {
-            return new TimeRange(pTweets[0].getId(), pTweets[pTweets.length - 1].getId());
+            return new TimeRange(pTweets[0].getTimelineId(), pTweets[pTweets.length - 1].getTimelineId());
         } else {
             return EMPTY_TIMERANGE;
         }

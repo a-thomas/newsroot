@@ -2,7 +2,6 @@ package com.codexperiments.newsroot.ui.fragment;
 
 import javax.inject.Inject;
 
-import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
@@ -18,7 +17,6 @@ import android.widget.ListView;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.BaseFragment;
-import com.codexperiments.newsroot.common.rx.AsyncCommand;
 import com.codexperiments.newsroot.common.rx.Command;
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.common.structure.TreePageIndex;
@@ -40,7 +38,6 @@ public class NewsListFragment extends BaseFragment {
 
     @Inject TweetRepository mTweetRepository;
 
-    int toto = create();
     protected Timeline mTimeline;
     protected PageIndex<News> mTweets;
     protected TimeRange mTimeRange;
@@ -51,8 +48,8 @@ public class NewsListFragment extends BaseFragment {
     private RxProperty<TweetDTO> mTweetsProperty;
 
     private CompositeSubscription mSubcriptions = Subscriptions.from();
-    private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
-    private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand = AsyncCommand.create(mSubcriptions);
+    // private AsyncCommand<Void, TweetPageResponse> mFindMoreCommand;
+    // private AsyncCommand<TimeGap, TweetPageResponse> mFindGapCommand = AsyncCommand.create(mSubcriptions);
     private Command<NewsTweetItem> mSelectCommand2 = Command.create();
 
     public static final NewsListFragment forUser(String pScreenName) {
@@ -120,7 +117,7 @@ public class NewsListFragment extends BaseFragment {
     }
 
     protected void bind() {
-        mFindGapCommand = createFindGapCommand();
+        // mFindGapCommand = createFindGapCommand();
 
         mTweetItemEvent = RxClickListener.create(RxUIN.convertToListViewItem(mUIList, NewsTweetItem.class));
         mTweetsProperty = RxProperty.create();
@@ -147,44 +144,20 @@ public class NewsListFragment extends BaseFragment {
         mSubcriptions.add(pSubscription);
     }
 
-    int create() {
-        mSelectCommand2.toString();
-        return 0;
-    }
-
     protected void onMore() {
-        if (mFindMoreCommand == null) {
-            RxAndroid.from(mTweetRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20), this)
-                     .subscribe(new Action1<TweetPageResponse>() {
-                         public void call(TweetPageResponse pTweetPageResponse) {
-                             TweetPage lTweetPage = pTweetPageResponse.tweetPage();
-                             mTimeRange = TimeRange.append(mTimeRange, lTweetPage.tweets());
-                             // mTweets.insert(new NewsPage(pTweetPageResponse.initialGap()));
-                             mTweets.insert(new NewsPage(lTweetPage));
+        RxAndroid.from(mTweetRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20), this)
+                 .subscribe(new Action1<TweetPageResponse>() {
+                     public void call(TweetPageResponse pTweetPageResponse) {
+                         TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+                         mTimeRange = TimeRange.append(mTimeRange, lTweetPage.tweets());
+                         // mTweets.insert(new NewsPage(pTweetPageResponse.initialGap()));
+                         mTweets.insert(new NewsPage(lTweetPage));
 
-                             TimeGap lTimeGap = pTweetPageResponse.initialGap();
-                             mTweets.insert(new NewsPage(lTimeGap));
-                             mUIListAdapter.notifyDataSetChanged();
-                         }
-                     });
-            mFindMoreCommand.register(new Func1<Void, Observable<TweetPageResponse>>() {
-                public Observable<TweetPageResponse> call(Void pVoid) {
-                    return mTweetRepository.findTweets(mTimeline, TimeGap.pastTimeGap(mTimeRange), 1, 20);
-                }
-            }).subscribe(new Action1<TweetPageResponse>() {
-                public void call(TweetPageResponse pTweetPageResponse) {
-                    TweetPage lTweetPage = pTweetPageResponse.tweetPage();
-                    mTimeRange = TimeRange.append(mTimeRange, lTweetPage.tweets());
-                    // mTweets.insert(new NewsPage(pTweetPageResponse.initialGap()));
-                    mTweets.insert(new NewsPage(lTweetPage));
-
-                    TimeGap lTimeGap = pTweetPageResponse.initialGap();
-                    mTweets.insert(new NewsPage(lTimeGap));
-                    mUIListAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-        mFindMoreCommand.execute();
+                         TimeGap lTimeGap = pTweetPageResponse.initialGap();
+                         mTweets.insert(new NewsPage(lTimeGap));
+                         mUIListAdapter.notifyDataSetChanged();
+                     }
+                 });
     }
 
     private Func1<TweetDTO, TweetDTO> doSetSelected() {
@@ -204,28 +177,28 @@ public class NewsListFragment extends BaseFragment {
         };
     }
 
-    protected AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
-        // return AsyncCommand.create(null, new Func1<TimeGap, Observable<TweetPageResponse>>() {
-        // public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
-        // return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-        // public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-        // AndroidScheduler.threadPoolForIO().schedule(new Action0() {
-        // public void call() {
-        // try {
-        // Thread.sleep(5000);
-        // pObserver.onNext(null);
-        // pObserver.onCompleted();
-        // } catch (InterruptedException e) {
-        // }
-        // }
-        // });
-        // return Subscriptions.empty();
-        // }
-        // });
-        // }
-        // });
-        return null;
-    }
+    // protected AsyncCommand<TimeGap, TweetPageResponse> createFindGapCommand() {
+    // return AsyncCommand.create(null, new Func1<TimeGap, Observable<TweetPageResponse>>() {
+    // public Observable<TweetPageResponse> call(final TimeGap pTimeGap) {
+    // return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+    // public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+    // AndroidScheduler.threadPoolForIO().schedule(new Action0() {
+    // public void call() {
+    // try {
+    // Thread.sleep(5000);
+    // pObserver.onNext(null);
+    // pObserver.onCompleted();
+    // } catch (InterruptedException e) {
+    // }
+    // }
+    // });
+    // return Subscriptions.empty();
+    // }
+    // });
+    // }
+    // });
+    // return null;
+    // }
 
     // protected Property<Boolean> isSelectedProperty() {
     // return Property.create(new PropertyAccess<Boolean>() {

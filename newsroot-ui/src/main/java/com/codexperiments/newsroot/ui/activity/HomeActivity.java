@@ -15,10 +15,10 @@ import com.codexperiments.newsroot.common.BaseActivity;
 import com.codexperiments.newsroot.common.BaseApplication;
 import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
-import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
-import com.codexperiments.newsroot.ui.fragment.AuthorizedEvent;
-import com.codexperiments.newsroot.ui.fragment.NewsListFragment;
-import com.codexperiments.newsroot.ui.fragment.UnauthorizedEvent;
+import com.codexperiments.newsroot.ui.fragment.authorization.AuthorizationFragment;
+import com.codexperiments.newsroot.ui.fragment.authorization.AuthorizedEvent;
+import com.codexperiments.newsroot.ui.fragment.authorization.UnauthorizedEvent;
+import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragment;
 
 public class HomeActivity extends BaseActivity implements AuthorizedEvent.Listener, UnauthorizedEvent.Listener {
     private EventBus mEventBus;

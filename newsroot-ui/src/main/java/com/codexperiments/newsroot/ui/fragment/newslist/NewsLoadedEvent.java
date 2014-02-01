@@ -1,11 +1,11 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.newslist;
 
 import com.codexperiments.newsroot.common.event.BaseEvent;
 import com.codexperiments.newsroot.common.event.EventListener;
 
-public class AuthorizedEvent extends BaseEvent<AuthorizedEvent.Listener>
+public class NewsLoadedEvent extends BaseEvent<NewsLoadedEvent.Listener>
 {
-    public AuthorizedEvent()
+    public NewsLoadedEvent()
     {
         super();
     }
@@ -13,12 +13,12 @@ public class AuthorizedEvent extends BaseEvent<AuthorizedEvent.Listener>
     @Override
     protected void notify(Listener pListener)
     {
-        pListener.onAuthorized();
+        pListener.onNewsLoaded();
     }
 
 
     public interface Listener extends EventListener
     {
-        void onAuthorized();
+        void onNewsLoaded();
     }
 }

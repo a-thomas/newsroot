@@ -9,7 +9,7 @@ import rx.concurrency.TestScheduler;
 import rx.util.functions.Action0;
 import android.util.Log;
 
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.codexperiments.rx.AndroidScheduler;
 
 public class RxTest {
     public static <T> void subscribeAndWait(final Observable<T> pObservable, final Observer<T> pObserver)

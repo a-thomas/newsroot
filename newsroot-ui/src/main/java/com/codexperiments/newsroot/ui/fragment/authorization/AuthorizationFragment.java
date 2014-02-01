@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.authorization;
 
 import javax.inject.Inject;
 

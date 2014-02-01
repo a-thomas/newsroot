@@ -18,7 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.codexperiments.rx.AndroidScheduler;
 import com.google.common.collect.Lists;
 
 public abstract class Database extends SQLiteOpenHelper {

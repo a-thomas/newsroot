@@ -19,7 +19,7 @@ import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.codexperiments.rx.AndroidScheduler;
 
 public class TweetDatabaseRepository implements TweetRepository {
     private TweetRepository mRepository;

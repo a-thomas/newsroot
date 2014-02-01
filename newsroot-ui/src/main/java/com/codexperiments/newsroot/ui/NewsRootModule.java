@@ -13,8 +13,8 @@ import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetRemoteRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
-import com.codexperiments.newsroot.ui.fragment.AuthorizationFragment;
-import com.codexperiments.newsroot.ui.fragment.NewsListFragment;
+import com.codexperiments.newsroot.ui.fragment.authorization.AuthorizationFragment;
+import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragment;
 
 import dagger.Module;
 import dagger.Provides;

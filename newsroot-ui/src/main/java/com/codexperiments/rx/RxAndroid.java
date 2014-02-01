@@ -6,8 +6,6 @@ import rx.Observer;
 import rx.Subscription;
 import android.support.v4.app.Fragment;
 
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
-
 public class RxAndroid {
     public static <TResult> Observable<TResult> from(Observable<TResult> pFindTweets, Fragment pFragment) {
         return Observable.create(new OnSubcribeFragmentSupport<TResult>(pFindTweets, pFragment));

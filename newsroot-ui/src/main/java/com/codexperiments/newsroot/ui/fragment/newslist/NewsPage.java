@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.newslist;
 
 import com.codexperiments.newsroot.common.Page;
 import com.codexperiments.newsroot.data.tweet.TweetDTO;

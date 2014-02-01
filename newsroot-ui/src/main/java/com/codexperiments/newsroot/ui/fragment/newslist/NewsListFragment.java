@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.newslist;
 
 import javax.inject.Inject;
 
@@ -25,7 +25,7 @@ import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.repository.tweet.TweetRepository;
-import com.codexperiments.newsroot.ui.fragment.NewsListFragmentAdapter.ItemFactory;
+import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragmentAdapter.ItemFactory;
 import com.codexperiments.rx.RxAndroid;
 
 public class NewsListFragment extends BaseFragment {
@@ -157,8 +157,8 @@ public class NewsListFragment extends BaseFragment {
                          // mTweets.insert(new NewsPage(pTweetPageResponse.initialGap()));
                          mTweets.insert(new NewsPage(lTweetPage));
 
-                         TimeGap lTimeGap = pTweetPageResponse.initialGap();
-                         mTweets.insert(new NewsPage(lTimeGap));
+                         // TimeGap lTimeGap = pTweetPageResponse.initialGap();
+                         // mTweets.insert(new NewsPage(lTimeGap));
                          mUIListAdapter.notifyDataSetChanged();
                      }
                  });

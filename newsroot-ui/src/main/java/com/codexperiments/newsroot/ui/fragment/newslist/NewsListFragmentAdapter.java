@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.newslist;
 
 import android.view.View;
 import android.view.ViewGroup;

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.ui.fragment;
+package com.codexperiments.newsroot.ui.fragment.authorization;
 
 import com.codexperiments.newsroot.common.event.BaseEvent;
 import com.codexperiments.newsroot.common.event.EventListener;

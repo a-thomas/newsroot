@@ -6,6 +6,7 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 
 public class TweetPageResponse {
     private TweetPage mTweetPage;
+
     private final TimeGap mInitialGap;
     private final TimeGap mRemainingGap;
 

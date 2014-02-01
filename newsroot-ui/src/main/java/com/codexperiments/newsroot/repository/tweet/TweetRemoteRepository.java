@@ -23,7 +23,7 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.manager.tweet.TweetAccessException;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.manager.tweet.TweetManager.QueryHandler;
-import com.codexperiments.newsroot.ui.activity.AndroidScheduler;
+import com.codexperiments.rx.AndroidScheduler;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;

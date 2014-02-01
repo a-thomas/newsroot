@@ -14,7 +14,7 @@ public class NewsTweetItem extends RelativeLayout {
     // private CompositeSubscription mSubcriptions;
     // private Property<Boolean> mSelectedProperty;
 
-    // private Tweet mTweet;
+    private TweetDTO mTweet;
     private TextView mUINewsName;
     private TextView mUINewsScreenName;
     private TextView mUINewsText;
@@ -46,41 +46,19 @@ public class NewsTweetItem extends RelativeLayout {
         mUINewsCreatedAt = (TextView) findViewById(R.id.item_news_createdAt);
     }
 
-    // @Override
-    // public void initialize(Tweet pTweet) {
-    // mTweet = pTweet;
-    // mSubcriptions = Subscriptions.create();
-    // mSelectedProperty = isSelectedProperty();
-    //
-    // mSubcriptions.add(RxUI.fromClick(this).subscribe(Property.toggle(mSelectedProperty)));
-    // mSubcriptions.add(mSelectedProperty.subscribe(RxUI.toActivated(this)));
-    // }
-
     public void setContent(TweetDTO pTweet) {
-        // mTweet = pTweet;
-
+        mTweet = pTweet;
         mUINewsName.setText(pTweet.getName());
         mUINewsScreenName.setText(pTweet.getScreenName());
         mUINewsText.setText(pTweet.getText());
         mUINewsCreatedAt.setText(String.valueOf(pTweet.getCreatedAt()));
 
-        // setActivated(pTweet.isSelected());
-        // mSelectedProperty.reset();
-    }
-
-    public void setIsSelected(TweetDTO pTweet) {
         setActivated(pTweet.isSelected());
     }
 
-    // protected Property<Boolean> isSelectedProperty() {
-    // return Property.create(new PropertyAccess<Boolean>() {
-    // public Boolean get() {
-    // return mTweet.isSelected();
-    // }
-    //
-    // public void set(Boolean pValue) {
-    // mTweet.setSelected(pValue);
-    // }
-    // });
-    // }
+    public void toggleSelection() {
+        boolean lSelected = !mTweet.isSelected();
+        mTweet.setSelected(lSelected);
+        setActivated(lSelected);
+    }
 }

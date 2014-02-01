@@ -1,9 +1,9 @@
 package com.codexperiments.newsroot.ui.fragment;
 
-import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.codexperiments.newsroot.common.structure.PageIndex;
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
@@ -11,20 +11,26 @@ import com.codexperiments.newsroot.domain.tweet.News;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 
 public class NewsListFragmentAdapter extends BaseAdapter {
-    private Activity mActivity;
     private NewsListFragment mListFragment;
     private PageIndex<News> mIndex;
     private int mIndexSize;
+
+    private ItemFactory<NewsMoreItem> mMoreItemFactory;
+    private ItemFactory<NewsTweetItem> mTweetItemFactory;
+    private ItemFactory<NewsTimeGapItem> mTimeGapItemFactory;
 
     private int mLastItemSeen = -1;
     private boolean mHasMore = true;
 
     public NewsListFragmentAdapter(NewsListFragment pListFragment) {
         super();
-        mActivity = pListFragment.getActivity();
         mListFragment = pListFragment;
         mIndex = mListFragment.mTweets;
         mIndexSize = mIndex.size();
+
+        mMoreItemFactory = mListFragment.onCreateMoreItem();
+        mTweetItemFactory = mListFragment.onCreateTweetItem();
+        mTimeGapItemFactory = mListFragment.onCreateTimeGapItem();
     }
 
     public boolean isLastItem(int pPosition) {
@@ -45,7 +51,11 @@ public class NewsListFragmentAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int pPosition) {
-        return mIndex.find(mIndexSize - pPosition - 1, 1).get(0);
+        return mIndex.find(toIndex(pPosition), 1).get(0);
+    }
+
+    public int toIndex(int pPosition) {
+        return mIndexSize - pPosition - 1;
     }
 
     @Override
@@ -66,26 +76,58 @@ public class NewsListFragmentAdapter extends BaseAdapter {
 
     @Override
     public View getView(int pPosition, View pConvertView, ViewGroup pParent) {
-        if (isLastItem(pPosition) && (pPosition > mLastItemSeen)) {
-            mListFragment.onMore();
-            mLastItemSeen = pPosition;
-        }
         Object lItem = null;
+        // More item.
         if (isLastItem(pPosition) && mHasMore) {
-            return mListFragment.onCreateMoreItem((NewsMoreItem) pConvertView);
+            NewsMoreItem lMoreItem = (pConvertView != null) ? (NewsMoreItem) pConvertView
+                            : mMoreItemFactory.onCreateItem(pPosition, pParent);
+            mListFragment.onBindMoreItem(lMoreItem);
+
+            // Notifies more items are requested the first time we see the More item
+            if (pPosition > mLastItemSeen) {
+                lMoreItem.performClick();
+                mLastItemSeen = pPosition;
+            }
+            return lMoreItem;
         } else {
             lItem = getItem(pPosition);
+            int lIndex = toIndex(pPosition);
+            // TimeGap item.
             if (lItem.getClass() == TimeGap.class) {
-                pConvertView = mListFragment.onCreateTimeGapItem((NewsTimeGapItem) pConvertView, (TimeGap) lItem, pParent);
-            } else if (lItem.getClass() == TweetDTO.class) {
-                pConvertView = mListFragment.onCreateTweetItem((NewsTweetItem) pConvertView, (TweetDTO) lItem, pParent);
+                if (pConvertView == null) pConvertView = mTimeGapItemFactory.onCreateItem(pPosition, pParent);
+                mListFragment.onBindTimeGapItem((NewsTimeGapItem) pConvertView, lIndex);
             }
+            // Tweet Item.
+            else if (lItem.getClass() == TweetDTO.class) {
+                if (pConvertView == null) pConvertView = mTweetItemFactory.onCreateItem(pPosition, pParent);
+                mListFragment.onBindTweetItem((NewsTweetItem) pConvertView, lIndex);
+            }
+            return pConvertView;
         }
-        return pConvertView;
     }
 
     @Override
     public int getViewTypeCount() {
         return 3;
+    }
+
+    public <TItemView> TItemView findItem(ListView pListView, View pView, Class<TItemView> pItemViewClass) {
+        // If there is a ClassCastException, that means that the view wasn't an item from the list.
+        View lListItem = pView;
+        View lView = (View) pView.getParent();
+        while (lView != pListView) {
+            lListItem = lView;
+            lView = (View) lListItem.getParent();
+        }
+
+        if (pItemViewClass.isInstance(lListItem)) {
+            return pItemViewClass.cast(lListItem);
+        } else {
+            return null;
+        }
+    }
+
+    public interface ItemFactory<TView> {
+        TView onCreateItem(int pPosition, ViewGroup pParent);
     }
 }

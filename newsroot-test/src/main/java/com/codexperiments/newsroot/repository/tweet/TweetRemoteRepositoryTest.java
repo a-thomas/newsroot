@@ -58,15 +58,14 @@ public class TweetRemoteRepositoryTest extends TestCase {
     }
 
     public void testFindHomeTweets_noPage() throws Exception {
-        // Setup.
         final int lPageCount = 5;
         final int lPageSize = 20;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
-        // Record.
+        // SCENARIO: An empty page is returned by server.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_empty.json");
-        // Run.
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -89,10 +88,10 @@ public class TweetRemoteRepositoryTest extends TestCase {
         final int lPageSize = 20; // More page available since returned page will be full.
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
-        // Record.
+        // SCENARIO: A full page is returned from the server.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json");
-        // Run.
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),
@@ -114,12 +113,12 @@ public class TweetRemoteRepositoryTest extends TestCase {
         final int lPageSize = 20; // No more page available since last returned page will not be full.
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
-        // Record.
+        // SCENARIO: Several pages returned from the server, last being not full.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json")
                                .thenReturn("twitter/ctx_tweet_02-2.json")
                                .thenReturn("twitter/ctx_tweet_02-3.json");
-        // Run.
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+
         // Verify server calls.
         verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
                                                         hasQueryParam("count", TweetPageData.PAGE_SIZE),

@@ -34,7 +34,7 @@ public class NewsMoreItem extends RelativeLayout {
         mUINewsMoreProgress = (ProgressBar) findViewById(R.id.item_news_more_progress);
     }
 
-    public void setContent() {
+    public void enable() {
         mUINewsMoreLabel.setEnabled(true);
         mUINewsMoreProgress.setEnabled(true);
     }

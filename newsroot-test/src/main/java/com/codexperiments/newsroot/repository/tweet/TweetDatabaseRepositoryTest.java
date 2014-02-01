@@ -87,7 +87,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
      * No tweet is returned, only an empty page.
      */
     public void testFindHomeTweets_noPage() throws Exception {
-        // Setup.
         final int lPageCount = 5;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
@@ -100,10 +99,9 @@ public class TweetDatabaseRepositoryTest extends TestCase {
             }
         });
 
-        // Record.
+        // SCENARIO: An empty page is returned by server.
         Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE)) //
                .thenReturn(lInnerResult);
-        // Run: An empty page is returned by server.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
         // Verify inner repository calls.
         verify(mTweetInnerRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
@@ -122,7 +120,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
      * More page available since returned page will be full.
      */
     public void testFindHomeTweets_singlePage_moreAvailable() throws Exception {
-        // Setup.
         final int lPageCount = 1; // Single page
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
@@ -130,10 +127,9 @@ public class TweetDatabaseRepositoryTest extends TestCase {
                                                                                   lTimeGap,
                                                                                   "twitter/ctx_tweet_02-1.json");
 
-        // Record.
+        // SCENARIO: A full page is returned from the server.
         Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE))
                .thenReturn(TweetPageResponseData.asObservable(scheduler(), lServerResponse));
-        // Run: A full page is returned from the server.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
         // Verify inner repository calls.
         verify(mTweetInnerRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
@@ -143,7 +139,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         verifyNoMoreInteractions(mTweetInnerRepository, mTweetPageObserver);
         reset(mTweetInnerRepository, mTweetPageObserver);
 
-        // Run: Server response has been cached and so data is now returned from the database.
+        // SCENARIO: Server response has been cached and so data is now returned from the database.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
         // Verify page returned by the database is the same as server response.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
@@ -161,7 +157,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
      * No more page available since last returned page will not be full.
      */
     public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
-        // Setup.
         final int lPageCount = 5; // Several pages. Not all will be returned.
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
@@ -175,11 +170,11 @@ public class TweetDatabaseRepositoryTest extends TestCase {
                                                                                    lServerResponse2.remainingGap(),
                                                                                    "twitter/ctx_tweet_02-3.json");
 
-        // Record.
+        // SCENARIO: Several pages returned from the server, last being not full.
         Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE))
                .thenReturn(TweetPageResponseData.asObservable(scheduler(), lServerResponse1, lServerResponse2, lServerResponse3));
-        // Run: A full page is returned from the server.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
+
         // Verify inner repository calls.
         verify(mTweetInnerRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
         // Verify page received is the one returned from the server.
@@ -190,7 +185,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         verifyNoMoreInteractions(mTweetInnerRepository, mTweetPageObserver);
         reset(mTweetInnerRepository, mTweetPageObserver);
 
-        // Run: Server response has been cached and so data is now returned from the database.
+        // SCENARIO: Server response has been cached and so data is now returned from the database.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
         // Verify pages returned by the database are the same as server response.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
@@ -209,7 +204,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
     }
 
     public void testFindHomeTweets_constraintException() throws Exception {
-        // Setup.
         final int lPageCount = 5;
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
@@ -220,11 +214,11 @@ public class TweetDatabaseRepositoryTest extends TestCase {
                                                                                    lTimeGap,
                                                                                    "twitter/ctx_tweet_02-1.json");
 
-        // Record.
+        // SCENARIO: A full page is returned from the server.
         Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE))
                .thenReturn(TweetPageResponseData.asObservable(scheduler(), lServerResponse1, lServerResponse2));
-        // Run: A full page is returned from the server.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
+
         // Verify inner repository calls.
         verify(mTweetInnerRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
         // Verify page received is the one returned from the server.
@@ -234,16 +228,15 @@ public class TweetDatabaseRepositoryTest extends TestCase {
     }
 
     public void testFindHomeTweets_serverException() throws Exception {
-        // Setup.
         final int lPageCount = 5;
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
-        // Record.
+        // SCENARIO: A full page is returned from the server.
         Mockito.when(mTweetInnerRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE))
                .thenReturn(TweetPageResponseData.asThrowable(scheduler(), TweetAccessException.from(new IOException())));
-        // Run: A full page is returned from the server.
         subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
+
         // Verify inner repository calls.
         verify(mTweetInnerRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
         // Verify page received is the one returned from the server.

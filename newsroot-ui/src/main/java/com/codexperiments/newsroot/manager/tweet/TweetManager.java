@@ -14,6 +14,11 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
+import rx.Observable;
+import rx.Observable.OnSubscribeFunc;
+import rx.Observer;
+import rx.Subscription;
+import rx.util.functions.Action1;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -175,6 +180,54 @@ public class TweetManager {
             }
             if (lRequest != null) lRequest.disconnect();
         }
+    }
+
+    public Observable<HttpURLConnection> connect(final Observable<String> pUrls) {
+        return Observable.create(new OnSubscribeFunc<HttpURLConnection>() {
+            public Subscription onSubscribe(final Observer<? super HttpURLConnection> pConnectionObserver) {
+                final Subscription lParentSubscription = pUrls.subscribe(new Action1<String>() {
+                    public void call(String pUrl) {
+                        JsonParser lParser = null;
+                        HttpURLConnection lRequest = null;
+                        InputStream lInputStream = null;
+                        try {
+                            URL lUrl = new URL(pUrl);
+                            Log.e(TweetManager.class.getSimpleName(), lUrl.toString());
+                            lRequest = (HttpURLConnection) lUrl.openConnection();
+                            lRequest.setDoInput(true);
+                            lRequest.setDoOutput(false);
+
+                            mConsumer.sign(lRequest);
+                            lRequest.connect();
+                            int lStatusCode = lRequest.getResponseCode();
+                            if (lStatusCode != 200) throw new IOException();
+                            // TODO 429, etc.
+
+                            pConnectionObserver.onNext(lRequest);
+                        } catch (Exception eException) {
+                            try {
+                                if (lParser != null) lParser.close();
+                            } catch (IOException eIOException) {
+                                eIOException.printStackTrace();
+                            }
+                            try {
+                                if (lInputStream != null) lInputStream.close();
+                            } catch (IOException eIOException) {
+                                eIOException.printStackTrace();
+                            }
+                            if (lRequest != null) lRequest.disconnect();
+                            pConnectionObserver.onError(eException);
+                        }
+                    }
+                });
+                // return Subscriptions.create(new Action0() {
+                // public void call() {
+                // lParentSubscription.unsubscribe();
+                // }
+                // });
+                return lParentSubscription;
+            }
+        });
     }
 
     public interface QueryHandler<TResult> {

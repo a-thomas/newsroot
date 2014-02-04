@@ -21,13 +21,13 @@ public class TweetPageResponse {
         mRemainingGap = mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
     }
 
-    public TimeGap initialGap() {
-        return mInitialGap;
-    }
-
-    public TimeGap remainingGap() {
-        return mRemainingGap;
-    }
+    // public TimeGap initialGap() {
+    // return mInitialGap;
+    // }
+    //
+    // public TimeGap remainingGap() {
+    // return mRemainingGap;
+    // }
 
     public TweetPage tweetPage() {
         return mTweetPage;

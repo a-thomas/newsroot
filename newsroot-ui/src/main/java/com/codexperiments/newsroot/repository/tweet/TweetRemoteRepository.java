@@ -1,8 +1,13 @@
 package com.codexperiments.newsroot.repository.tweet;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -12,18 +17,18 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.subscriptions.Subscriptions;
-import rx.util.functions.Action0;
+import rx.operators.SafeObservableSubscription;
+import rx.subjects.Subject;
+import rx.subscriptions.CompositeSubscription;
+import rx.util.functions.Func1;
 import android.util.Log;
 
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
-import com.codexperiments.newsroot.manager.tweet.TweetAccessException;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
-import com.codexperiments.newsroot.manager.tweet.TweetManager.QueryHandler;
-import com.codexperiments.rx.AndroidScheduler;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -48,48 +53,180 @@ public class TweetRemoteRepository implements TweetRepository {
         return new Timeline(pUsername);
     }
 
-    @Override
-    public Observable<TweetPageResponse> findTweets(Timeline pTimeline, TimeGap pTimeGap, int pPageCount, int pPageSize) {
-        return findTweets(TweetQuery.URL_HOME, pTimeGap, pPageCount);
-    }
+    // private Observable<String> urlGenerator(final String pUrl,
+    // final TimeGap pInitialGap,
+    // final int pPageCount,
+    // final Observable<TweetPageResponse> pPages)
+    // {
+    // return Observable.create(new OnSubscribeFunc<String>() {
+    // public Subscription onSubscribe(final Observer<? super String> pObserver) {
+    // pPages.subscribe(new Observer<TweetPageResponse>() {
+    // public void onNext(TweetPageResponse pTweetPageResponse) {
+    // TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+    // TimeGap lNextGap = lTweetPage.isFull() ? pInitialGap.remainingGap(lTweetPage.timeRange()) : null;
+    // String lQuery = TweetQuery.query(mHost, pUrl).withTimeGap(lNextGap).withPageSize(mPageSize).toString();
+    // pObserver.onNext(lQuery);
+    // }
+    //
+    // public void onCompleted() {
+    // }
+    //
+    // public void onError(Throwable pThrowable) {
+    // }
+    // });
+    //
+    // String lQuery = TweetQuery.query(mHost, pUrl).withTimeGap(pInitialGap).withPageSize(mPageSize).toString();
+    // pObserver.onNext(lQuery);
+    // return Subscriptions.empty();
+    // }
+    // });
+    // }
 
-    private Observable<TweetPageResponse> findTweets(final String pUrl, final TimeGap pTimeGap, final int pPageCount) {
-        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-                AndroidScheduler.threadPoolForIO().schedule(new Action0() {
-                    public void call() {
-                        try {
-                            TimeGap lTimeGap = pTimeGap;
-                            int lPageCount = pPageCount;
-                            // XXX
-                            // try { Thread.sleep(5000); } catch (InterruptedException eInterruptedException) { }
-                            while ((lTimeGap != null) && (lPageCount-- > 0)) {
-                                TweetPage lTweetPage = findTweetPage(pUrl, lTimeGap, mPageSize);
-                                TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, lTimeGap);
-                                pObserver.onNext(lTweetPageResponse);
-                                lTimeGap = lTweetPageResponse.remainingGap();
-                            }
-                            pObserver.onCompleted();
-                        } catch (TweetAccessException eTweetAccessException) {
-                            pObserver.onError(eTweetAccessException);
+    private Subject<TweetPageResponse, String> urlGenerator(final TimeGap pInitialGap,
+                                                            final int pPageCount,
+                                                            final Subscription pSubscription,
+                                                            final Func1<TweetPageResponse, String> pNextValue)
+    {
+        String initialValue = pNextValue.call(null);
+        final ConcurrentHashMap<Subscription, Observer<? super String>> observers = new ConcurrentHashMap<Subscription, Observer<? super String>>();
+        final AtomicReference<String> currentValue = new AtomicReference<String>(initialValue);
+
+        OnSubscribeFunc<String> lOnSubscribe = new OnSubscribeFunc<String>() {
+            public Subscription onSubscribe(final Observer<? super String> pObserver) {
+                final SafeObservableSubscription subscription = new SafeObservableSubscription();
+
+                subscription.wrap(new Subscription() {
+                    @Override
+                    public void unsubscribe() {
+                        // on unsubscribe remove it from the map of outbound observers to notify
+                        observers.remove(subscription);
+                        if (observers.size() == 0) {
+                            pSubscription.unsubscribe();
                         }
                     }
                 });
-                return Subscriptions.empty();
+
+                pObserver.onNext(currentValue.get());
+
+                // on subscribe add it to the map of outbound observers to notify
+                observers.put(subscription, pObserver);
+                return subscription;
+            }
+        };
+
+        return new Subject<TweetPageResponse, String>(lOnSubscribe) {
+            public void onNext(TweetPageResponse pTweetPageResponse) {
+                String lQuery = pNextValue.call(pTweetPageResponse);
+
+                if (lQuery != null) {
+                    currentValue.set(lQuery);
+                    for (Observer<? super String> observer : observers.values()) {
+                        observer.onNext(lQuery);
+                    }
+                } else {
+                    pSubscription.unsubscribe();
+                    onCompleted(); // TODO
+                }
+            }
+
+            public void onCompleted() {
+                // TODO Check if already completed.
+                for (Observer<? super String> observer : observers.values()) {
+                    observer.onCompleted();
+                }
+            }
+
+            public void onError(Throwable pThrowable) {
+                for (Observer<? super String> observer : observers.values()) {
+                    observer.onError(pThrowable);
+                }
+            }
+        };
+    }
+
+    @Override
+    public Observable<TweetPageResponse> findTweets(final Timeline pTimeline,
+                                                    final TimeGap pTimeGap,
+                                                    final int pPageCount,
+                                                    final int pPageSize)
+    {
+        final Func1<TweetPageResponse, String> lNextValue = new Func1<TweetPageResponse, String>() {
+            public String call(TweetPageResponse pTweetPageResponse) {
+                TimeGap lNextGap = pTimeGap;
+                if (pTweetPageResponse != null) {
+                    TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+                    if (!lTweetPage.isFull()) {
+                        return null;
+                    } else {
+                        lNextGap = pTimeGap.remainingGap(lTweetPage.timeRange());
+                    }
+                }
+                return TweetQuery.query(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).toString();
+            }
+        };
+
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
+                final CompositeSubscription sub = new CompositeSubscription();
+                final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, sub, lNextValue);
+                final Observable<TweetPageResponse> lResponse = findTweets(mTweetManager.connect(lURLs), pPageSize);
+                sub.add(lResponse.subscribe(lURLs)); // TODO Merge into one Subscription
+                sub.add(lResponse.subscribe(pTweetPageResponseObserver));
+                return new Subscription() {
+                    public void unsubscribe() {
+                        sub.unsubscribe();
+                    }
+                };
             }
         });
     }
 
-    private TweetPage findTweetPage(String pUrl, final TimeGap pTimeGap, final int pPageSize) throws TweetAccessException {
-        TweetQuery lQuery = TweetQuery.query(mHost, pUrl).withTimeGap(pTimeGap).withPageSize(pPageSize);
-        return mTweetManager.query(lQuery, new QueryHandler<TweetPage>() {
-            public TweetPage parse(TweetQuery pQuery, JsonParser pParser) throws Exception {
-                return parseTweetPage(pTimeGap, pPageSize, pParser);
+    private Observable<TweetPageResponse> findTweets(final Observable<HttpURLConnection> pConnections, final int pPageSize) {
+        final JsonFactory mJSONFactory = new JsonFactory();
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+                return pConnections.subscribe(new Observer<HttpURLConnection>() {
+                    public void onNext(HttpURLConnection pConnection) {
+                        InputStream lInputStream = null;
+                        try {
+                            lInputStream = new BufferedInputStream(pConnection.getInputStream());
+                            JsonParser lParser = mJSONFactory.createParser(lInputStream);
+                            TweetPage lTweetPage = parseTweetPage(pPageSize, lParser);
+                            pObserver.onNext(new TweetPageResponse(lTweetPage, null));
+                            // is.close();
+                        } catch (IOException eIOException) {
+                            // try {
+                            // respCode = ((HttpURLConnection) conn).getResponseCode();
+                            // es = ((HttpURLConnection) conn).getErrorStream();
+                            // int ret = 0;
+                            // // read the response body
+                            // while ((ret = es.read(buf)) > 0) {
+                            // processBuf(buf);
+                            // }
+                            // // close the errorstream
+                            // es.close();
+                            // } catch (IOException ex) {
+                            // // deal with the exception
+                            // }
+                            pObserver.onError(eIOException);
+                        } finally {
+                            pConnection.disconnect();
+                        }
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                });
             }
         });
     }
 
-    private TweetPage parseTweetPage(TimeGap pTimeGap, int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
+    private TweetPage parseTweetPage(int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
         if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
         List<TweetDTO> lTweets = new ArrayList<TweetDTO>(pPageSize);
 

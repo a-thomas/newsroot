@@ -18,7 +18,6 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Action1;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -185,8 +184,8 @@ public class TweetManager {
     public Observable<HttpURLConnection> connect(final Observable<String> pUrls) {
         return Observable.create(new OnSubscribeFunc<HttpURLConnection>() {
             public Subscription onSubscribe(final Observer<? super HttpURLConnection> pConnectionObserver) {
-                final Subscription lParentSubscription = pUrls.subscribe(new Action1<String>() {
-                    public void call(String pUrl) {
+                final Subscription lParentSubscription = pUrls.subscribe(new Observer<String>() {
+                    public void onNext(String pUrl) {
                         JsonParser lParser = null;
                         HttpURLConnection lRequest = null;
                         InputStream lInputStream = null;
@@ -218,6 +217,14 @@ public class TweetManager {
                             if (lRequest != null) lRequest.disconnect();
                             pConnectionObserver.onError(eException);
                         }
+                    }
+
+                    public void onCompleted() {
+                        pConnectionObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pConnectionObserver.onError(pThrowable);
                     }
                 });
                 // return Subscriptions.create(new Action0() {

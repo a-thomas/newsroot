@@ -18,16 +18,16 @@ public class TweetPageResponse {
         super();
         mTweetPage = pTweetPage;
         mInitialGap = pInitialTimeGap;
-        mRemainingGap = mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
+        mRemainingGap = null;// mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
     }
 
-    // public TimeGap initialGap() {
-    // return mInitialGap;
-    // }
-    //
-    // public TimeGap remainingGap() {
-    // return mRemainingGap;
-    // }
+    public TimeGap initialGap() {
+        return mInitialGap;
+    }
+
+    public TimeGap remainingGap() {
+        return mRemainingGap;
+    }
 
     public TweetPage tweetPage() {
         return mTweetPage;

@@ -153,6 +153,8 @@ public class TweetRemoteRepository implements TweetRepository {
         final AtomicReference<String> currentValue = new AtomicReference<String>(initialValue);
 
         OnSubscribeFunc<String> lOnSubscribe = new OnSubscribeFunc<String>() {
+            Subscription subscription = null;
+
             public Subscription onSubscribe(final Observer<? super String> pObserver) {
                 final SafeObservableSubscription subscription = new SafeObservableSubscription();
 
@@ -162,15 +164,15 @@ public class TweetRemoteRepository implements TweetRepository {
                         // on unsubscribe remove it from the map of outbound observers to notify
                         observers.remove(subscription);
                         if (observers.size() == 0) {
-                            pSubscription.unsubscribe();
+                            subscription.unsubscribe();
                         }
                     }
                 });
 
-                pObserver.onNext(currentValue.get());
-
                 // on subscribe add it to the map of outbound observers to notify
                 observers.put(subscription, pObserver);
+
+                pObserver.onNext(currentValue.get());
                 return subscription;
             }
         };
@@ -185,7 +187,7 @@ public class TweetRemoteRepository implements TweetRepository {
                         observer.onNext(lQuery);
                     }
                 } else {
-                    pSubscription.unsubscribe();
+                    // lOnSubscribe.subscription.unsubscribe();
                     onCompleted(); // TODO
                 }
             }
@@ -225,6 +227,13 @@ public class TweetRemoteRepository implements TweetRepository {
                 return TweetQuery.query(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).toString();
             }
         };
+
+        // Observable.create(new OnSubscribeFunc<String>() {
+        // public Subscription onSubscribe(final Observer<? super String> pObserver) {
+        // final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, lNextValue);
+        // return lURLs.subscribe(pObserver);
+        // }
+        // });
 
         final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, lNextValue);
         final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);

@@ -178,11 +178,14 @@ public class TweetRemoteRepository implements TweetRepository {
         };
 
         return new Subject<TweetPageResponse, String>(lOnSubscribe) {
+            int mPageCount = pPageCount - 1;
+
             public void onNext(TweetPageResponse pTweetPageResponse) {
                 String lQuery = pNextValue.call(pTweetPageResponse);
 
-                if (lQuery != null) {
+                if ((lQuery != null) && (mPageCount > 0)) {
                     currentValue.set(lQuery);
+                    --mPageCount;
                     for (Observer<? super String> observer : observers.values()) {
                         observer.onNext(lQuery);
                     }

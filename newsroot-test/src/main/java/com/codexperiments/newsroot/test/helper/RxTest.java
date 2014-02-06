@@ -35,6 +35,25 @@ public class RxTest {
         lCompleted.await();
     }
 
+    public static <T> void subscribeAndNotWait(final Observable<T> pObservable, final Observer<T> pObserver)
+        throws InterruptedException
+    {
+        pObservable.observeOn(AndroidScheduler.threadForUI()).subscribe(new Observer<T>() {
+            public void onNext(T pValue) {
+                pObserver.onNext(pValue);
+            }
+
+            public void onCompleted() {
+                pObserver.onCompleted();
+            }
+
+            public void onError(Throwable pThrowable) {
+                Log.e(getClass().getSimpleName(), "Error in Observable;", pThrowable);
+                pObserver.onError(pThrowable);
+            }
+        });
+    }
+
     public static <T> void scheduleOnNext(TestScheduler pScheduler, final Observer<T> observer, final T value, int delay) {
         pScheduler.schedule(new Action0() {
             @Override

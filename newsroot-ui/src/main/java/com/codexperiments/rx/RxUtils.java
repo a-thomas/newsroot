@@ -1,5 +1,5 @@
 package com.codexperiments.rx;
 
-public class RxHTTP {
+public class RxUtils {
 
 }

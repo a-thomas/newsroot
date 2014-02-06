@@ -28,6 +28,7 @@ import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
+import com.codexperiments.rx.OperationFeedback;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -139,6 +140,10 @@ public class TweetRemoteRepository implements TweetRepository {
                 return TweetQuery.query(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).toString();
             }
         };
+
+        final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);
+        final Observable<TweetPageResponse> lResponse = findTweets(lConnection, pPageSize);
+        OperationFeedback.feed(lResponse, lNextValue, pPageCount);
 
         return Observable.defer(new Func0<Observable<TweetPageResponse>>() {
             public Observable<TweetPageResponse> call() {

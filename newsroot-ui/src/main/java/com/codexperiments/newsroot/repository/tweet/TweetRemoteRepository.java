@@ -19,7 +19,6 @@ import rx.Observer;
 import rx.Subscription;
 import rx.operators.SafeObservableSubscription;
 import rx.subjects.Subject;
-import rx.util.functions.Func0;
 import rx.util.functions.Func1;
 import android.util.Log;
 
@@ -140,44 +139,52 @@ public class TweetRemoteRepository implements TweetRepository {
                 return TweetQuery.query(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).toString();
             }
         };
-
-        final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);
-        final Observable<TweetPageResponse> lResponse = findTweets(lConnection, pPageSize);
-        OperationFeedback.feed(lResponse, lNextValue, pPageCount);
-
-        return Observable.defer(new Func0<Observable<TweetPageResponse>>() {
-            public Observable<TweetPageResponse> call() {
-                final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, lNextValue);
-                final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);
-                final Observable<TweetPageResponse> lResponse = findTweets(lConnection, pPageSize);
-
-                return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-                    public Subscription onSubscribe(final Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
-                        final Subscription lInnerSubscription = lResponse.subscribe(new Observer<TweetPageResponse>() {
-                            public void onNext(TweetPageResponse pTweetPageResponse) {
-                                pTweetPageResponseObserver.onNext(pTweetPageResponse);
-                                lURLs.onNext(pTweetPageResponse);
-                            }
-
-                            public void onCompleted() {
-                                pTweetPageResponseObserver.onCompleted();
-                                lURLs.onCompleted();
-                            }
-
-                            public void onError(Throwable pThrowable) {
-                                pTweetPageResponseObserver.onError(pThrowable);
-                                lURLs.onError(pThrowable);
-                            }
-                        });
-                        return new Subscription() {
-                            public void unsubscribe() {
-                                lInnerSubscription.unsubscribe();
-                            }
-                        };
-                    }
-                });
+        return OperationFeedback.feedback(lNextValue, pPageCount, new Func1<Observable<String>, Observable<TweetPageResponse>>() {
+            public Observable<TweetPageResponse> call(Observable<String> pUrls) {
+                return findTweets(mTweetManager.connect(pUrls), pPageSize);
             }
         });
+
+        // final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, lNextValue);
+        // final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);
+        // final Observable<TweetPageResponse> lResponse = findTweets(lConnection, pPageSize);
+        // final Observable<HttpURLConnection> lConnection2 = mTweetManager.connect(lURLs2);
+        // final Observable<TweetPageResponse> lResponse2 = findTweets(lConnection2, pPageSize);
+        // final Observable<TweetPageResponse> lFeedResponse = lURLs2.feed(lResponse2);
+        //
+        // Observable.defer(new Func0<Observable<TweetPageResponse>>() {
+        // public Observable<TweetPageResponse> call() {
+        // final Subject<TweetPageResponse, String> lURLs = urlGenerator(pTimeGap, pPageCount, lNextValue);
+        // final Observable<HttpURLConnection> lConnection = mTweetManager.connect(lURLs);
+        // final Observable<TweetPageResponse> lResponse = findTweets(lConnection, pPageSize);
+        //
+        // return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+        // public Subscription onSubscribe(final Observer<? super TweetPageResponse> pTweetPageResponseObserver) {
+        // final Subscription lInnerSubscription = lResponse.subscribe(new Observer<TweetPageResponse>() {
+        // public void onNext(TweetPageResponse pTweetPageResponse) {
+        // pTweetPageResponseObserver.onNext(pTweetPageResponse);
+        // lURLs.onNext(pTweetPageResponse);
+        // }
+        //
+        // public void onCompleted() {
+        // pTweetPageResponseObserver.onCompleted();
+        // lURLs.onCompleted();
+        // }
+        //
+        // public void onError(Throwable pThrowable) {
+        // pTweetPageResponseObserver.onError(pThrowable);
+        // lURLs.onError(pThrowable);
+        // }
+        // });
+        // return new Subscription() {
+        // public void unsubscribe() {
+        // lInnerSubscription.unsubscribe();
+        // }
+        // };
+        // }
+        // });
+        // }
+        // });
     }
 
     private Observable<TweetPageResponse> findTweets(final Observable<HttpURLConnection> pConnections, final int pPageSize) {

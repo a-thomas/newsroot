@@ -188,6 +188,7 @@ public class TweetManager {
             public Subscription onSubscribe(final Observer<? super HttpURLConnection> pConnectionObserver) {
                 final Subscription lParentSubscription = pUrls.subscribe(new Observer<String>() {
                     public void onNext(final String pUrl) {
+                        if (pUrl == null) throw new IllegalAccessError();
                         AndroidScheduler.threadPoolForIO().schedule(new Action0() {
                             public void call() {
                                 JsonParser lParser = null;

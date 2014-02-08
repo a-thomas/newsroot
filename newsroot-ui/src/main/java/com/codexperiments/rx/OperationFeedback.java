@@ -11,10 +11,11 @@ import rx.operators.SafeObservableSubscription;
 import rx.subjects.Subject;
 import rx.util.functions.Func0;
 import rx.util.functions.Func1;
+import rx.util.functions.Func2;
 
 public class OperationFeedback {
-    private static <TInput, TOutput> FeedbackObservable<TInput, TOutput> createFeedbackSubject(final Func1<TOutput, TInput> pFeedbackValue,
-                                                                                               final int pMaxRecursion)
+    private static <TInput, TOutput> Subject<TOutput, TInput> createFeedbackSubject(final Func1<TOutput, TInput> pFeedbackValue,
+                                                                                    final int pMaxRecursion)
     {
         final TInput initialValue = pFeedbackValue.call(null);
         final ConcurrentHashMap<Subscription, Observer<? super TInput>> observers = new ConcurrentHashMap<Subscription, Observer<? super TInput>>();
@@ -43,7 +44,7 @@ public class OperationFeedback {
             }
         };
 
-        return new FeedbackObservable<TInput, TOutput>(lOnSubscribe) {
+        return new Subject<TOutput, TInput>(lOnSubscribe) {
             int mPageCount = pMaxRecursion - 1;
 
             public void onNext(TOutput pTValue) {
@@ -76,14 +77,14 @@ public class OperationFeedback {
         };
     }
 
-    public static <TInput, TOutput> Observable<TOutput> feedback(final Func1<TOutput, TInput> pFeedbackValue,
-                                                             final int pMaxRecursion,
-                                                             final Func1<Observable<TInput>, Observable<TOutput>> pFunc1)
+    public static <TInput, TOutput> Observable<TOutput> feedback(final int pMaxRecursion,
+                                                                 final Func1<TOutput, TInput> pFeedbackValue,
+                                                                 final Func1<Observable<TInput>, Observable<TOutput>> pFunc1)
     {
         return Observable.defer(new Func0<Observable<? extends TOutput>>() {
             public Observable<? extends TOutput> call() {
                 return Observable.create(new OnSubscribeFunc<TOutput>() {
-                    final FeedbackObservable<TInput, TOutput> feed1 = createFeedbackSubject(pFeedbackValue, pMaxRecursion);
+                    final Subject<TOutput, TInput> feed1 = createFeedbackSubject(pFeedbackValue, pMaxRecursion);
                     final Observable<TOutput> pOutputObservable = pFunc1.call(feed1);
 
                     public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
@@ -114,111 +115,119 @@ public class OperationFeedback {
         });
     }
 
-    public abstract static class FeedbackObservable<TInput, TOutput> extends Subject<TOutput, TInput> {
+    private static <TOutput> Subject<TOutput, TOutput> createFeedbackSubject2(// final Func1<TOutput, TInput> pFeedbackValue,
+    final TOutput pInitialValue,
+                                                                              final int pMaxRecursion)
+    {
+        final TOutput initialValue = pInitialValue;
+        final ConcurrentHashMap<Subscription, Observer<? super TOutput>> observers = new ConcurrentHashMap<Subscription, Observer<? super TOutput>>();
+        final AtomicReference<TOutput> currentValue = new AtomicReference<TOutput>(initialValue);
 
-        protected FeedbackObservable(OnSubscribeFunc<TInput> onSubscribe) {
-            super(onSubscribe);
-        }
+        OnSubscribeFunc<TOutput> lOnSubscribe = new OnSubscribeFunc<TOutput>() {
+            public Subscription onSubscribe(final Observer<? super TOutput> pObserver) {
+                final SafeObservableSubscription subscription = new SafeObservableSubscription();
 
-        // public Observable<TOutput> feed(final Observable<TOutput> pOutputObservable) {
-        // // return Observable.defer(new Func0<Observable<TOutput>>() {
-        // // public Observable<TOutput> call() {
-        // // return Observable.create(new OnSubscribeFunc<TOutput>() {
-        // // public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
-        // // final Subscription lInnerSubscription = pOutputObservable.subscribe(new Observer<TOutput>() {
-        // // public void onNext(TOutput pTValue) {
-        // // pOutputObserver.onNext(pTValue);
-        // // this.onNext(pTValue);
-        // // }
-        // //
-        // // public void onCompleted() {
-        // // pOutputObserver.onCompleted();
-        // // this.onCompleted();
-        // // }
-        // //
-        // // public void onError(Throwable pThrowable) {
-        // // pOutputObserver.onError(pThrowable);
-        // // this.onError(pThrowable);
-        // // }
-        // // });
-        // // return new Subscription() {
-        // // public void unsubscribe() {
-        // // lInnerSubscription.unsubscribe();
-        // // }
-        // // };
-        // // }
-        // // });
-        // // }
-        // // });
-        //
-        // return Observable.create(new OnSubscribeFunc<TOutput>() {
-        // public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
-        // final Subscription lInnerSubscription = pOutputObservable.subscribe(new Observer<TOutput>() {
-        // public void onNext(TOutput pTValue) {
-        // pOutputObserver.onNext(pTValue);
-        // this.onNext(pTValue);
-        // }
-        //
-        // public void onCompleted() {
-        // pOutputObserver.onCompleted();
-        // this.onCompleted();
-        // }
-        //
-        // public void onError(Throwable pThrowable) {
-        // pOutputObserver.onError(pThrowable);
-        // this.onError(pThrowable);
-        // }
-        // });
-        // return new Subscription() {
-        // public void unsubscribe() {
-        // lInnerSubscription.unsubscribe();
-        // }
-        // };
-        // }
-        // });
-        // }
+                subscription.wrap(new Subscription() {
+                    @Override
+                    public void unsubscribe() {
+                        // on unsubscribe remove it from the map of outbound observers to notify
+                        observers.remove(subscription);
+                        if (observers.size() == 0) {
+                            subscription.unsubscribe();
+                        }
+                    }
+                });
+
+                // on subscribe add it to the map of outbound observers to notify
+                observers.put(subscription, pObserver);
+
+                pObserver.onNext(currentValue.get());
+                return subscription;
+            }
+        };
+
+        return new Subject<TOutput, TOutput>(lOnSubscribe) {
+            int mPageCount = pMaxRecursion - 1;
+
+            public void onNext(TOutput pTValue) {
+                // TOutput lQuery = pFeedbackValue.call(pTValue);
+
+                if ((pTValue != null) && (mPageCount > 0)) {
+                    currentValue.set(pTValue);
+                    --mPageCount;
+                    for (Observer<? super TOutput> observer : observers.values()) {
+                        observer.onNext(pTValue);
+                    }
+                } else {
+                    // lOnSubscribe.subscription.unsubscribe();
+                    onCompleted(); // TODO
+                }
+            }
+
+            public void onCompleted() {
+                // TODO Check if already completed.
+                for (Observer<? super TOutput> observer : observers.values()) {
+                    observer.onCompleted();
+                }
+            }
+
+            public void onError(Throwable pThrowable) {
+                for (Observer<? super TOutput> observer : observers.values()) {
+                    observer.onError(pThrowable);
+                }
+            }
+        };
     }
 
-    // public static <TInput, TOutput> FeedbackObservable<TInput, TOutput> feed(final Func1<TOutput, TInput> pFeedbackValue,
-    // final int pMaxRecursion)
-    // {
-    // Func0<Observable<TOutput>> lObservableFactory = new Func0<Observable<TOutput>>() {
-    // public Observable<TOutput> call() {
-    // final Subject<TOutput, TInput> lFeedbackSubject = createFeedbackSubject(pFeedbackValue, pMaxRecursion);
-    //
-    // return Observable.create(new OnSubscribeFunc<TOutput>() {
-    // public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
-    // final Subscription lInnerSubscription = pObservable.subscribe(new Observer<TOutput>() {
-    // public void onNext(TOutput pTValue) {
-    // pOutputObserver.onNext(pTValue);
-    // lFeedbackSubject.onNext(pTValue);
-    // }
-    //
-    // public void onCompleted() {
-    // pOutputObserver.onCompleted();
-    // lFeedbackSubject.onCompleted();
-    // }
-    //
-    // public void onError(Throwable pThrowable) {
-    // pOutputObserver.onError(pThrowable);
-    // lFeedbackSubject.onError(pThrowable);
-    // }
-    // });
-    // return new Subscription() {
-    // public void unsubscribe() {
-    // lInnerSubscription.unsubscribe();
-    // }
-    // };
-    // }
-    // });
-    // }
-    // };
-    // return new FeedbackObservable<TInput, TOutput>(OperationDefer.defer(lObservableFactory)) {
-    // @Override
-    // public Subscription feed(Observable<TOutput> pOutputObservable) {
-    // return null;
-    // }
-    // };
-    // }
+    private static final Object EOR = new Object();
+
+    @SuppressWarnings("unchecked")
+    public static <TInput> TInput endOFRecursion() {
+        return (TInput) EOR;
+    }
+
+    public static <TInput, TOutput> Observable<TOutput> feedback2(final int pMaxRecursion,
+                                                                  final Observable<TInput> src,
+                                                                  final Func2<Observable<TInput>, Observable<TOutput>, Observable<TInput>> pFeedbackValue,
+                                                                  final Func1<Observable<TInput>, Observable<TOutput>> pFunc1)
+    {
+        return Observable.defer(new Func0<Observable<? extends TOutput>>() {
+            public Observable<? extends TOutput> call() {
+                return Observable.create(new OnSubscribeFunc<TOutput>() {
+                    final Subject<TOutput, TOutput> feed2 = createFeedbackSubject2(null, pMaxRecursion);
+                    final Observable<TInput> zipit = pFeedbackValue.call(src, feed2);
+                    final Observable<TOutput> pOutputObservable = pFunc1.call(zipit);
+
+                    public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
+                        final Subscription lInnerSubscription = pOutputObservable.subscribe(new Observer<TOutput>() {
+                            public void onNext(TOutput pTValue) {
+                                if (pTValue != EOR) {
+                                    pOutputObserver.onNext(pTValue);
+                                    feed2.onNext(pTValue);
+                                } else {
+                                    onCompleted();
+                                }
+                            }
+
+                            public void onCompleted() {
+                                pOutputObserver.onCompleted();
+                                feed2.onCompleted();
+                            }
+
+                            public void onError(Throwable pThrowable) {
+                                pOutputObserver.onError(pThrowable);
+                                feed2.onError(pThrowable);
+                            }
+                        });
+                        return new Subscription() {
+                            public void unsubscribe() {
+                                lInnerSubscription.unsubscribe();
+                            }
+                        };
+                    }
+                });
+            }
+        });
+    }
 
 }

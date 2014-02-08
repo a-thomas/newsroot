@@ -110,43 +110,43 @@ public class TweetRemoteRepositoryTest extends TestCase {
         verifyNoMoreInteractions(server(), mTweetPageObserver);
     }
 
-    // public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
-    // // Setup.
-    // final int lPageCount = 5; // Several pages. Not all will be returned.
-    // final int lPageSize = 20; // No more page available since last returned page will not be full.
-    // final TimeGap lTimeGap = TimeGap.initialTimeGap();
-    //
-    // // SCENARIO: Several pages returned from the server, last being not full.
-    // whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json")
-    // .thenReturn("twitter/ctx_tweet_02-2.json")
-    // .thenReturn("twitter/ctx_tweet_02-3.json");
-    // subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
-    //
-    // // Verify server calls.
-    // verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-    // hasQueryParam("count", TweetPageData.PAGE_SIZE),
-    // not(hasQueryParam("max_id")))));
-    // verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-    // hasQueryParam("count", TweetPageData.PAGE_SIZE),
-    // hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
-    // verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-    // hasQueryParam("count", TweetPageData.PAGE_SIZE),
-    // hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
-    // // Verify pages received.
-    // ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
-    // verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
-    // verify(mTweetPageObserver).onCompleted();
-    //
-    // List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-    // assertThat(lTweetPageResponseArgs.size(), equalTo(3));
-    // TweetPageData.checkTweetPage_02_1(lTweetPageResponseCaptor.getAllValues().get(0), lTimeGap);
-    // TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());
-    // TweetPageData.checkTweetPage_02_3(lTweetPageResponseArgs.get(2), lTweetPageResponseArgs.get(1).remainingGap());
-    //
-    // verifyNoMoreInteractions(server(), mTweetPageObserver);
-    // }
-
     public void testFindHomeTweets_severalPages_noMoreAvailable() throws Exception {
+        // Setup.
+        final int lPageCount = 5; // Several pages. Not all will be returned.
+        final int lPageSize = 20; // No more page available since last returned page will not be full.
+        final TimeGap lTimeGap = TimeGap.initialTimeGap();
+
+        // SCENARIO: Several pages returned from the server, last being not full.
+        whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json")
+                               .thenReturn("twitter/ctx_tweet_02-2.json")
+                               .thenReturn("twitter/ctx_tweet_02-3.json");
+        subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+
+        // Verify server calls.
+        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                        not(hasQueryParam("max_id")))));
+        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                        hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
+        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                        hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
+        // Verify pages received.
+        ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
+        verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
+        verify(mTweetPageObserver).onCompleted();
+
+        List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
+        assertThat(lTweetPageResponseArgs.size(), equalTo(3));
+        TweetPageData.checkTweetPage_02_1(lTweetPageResponseCaptor.getAllValues().get(0), lTimeGap);
+        TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());
+        TweetPageData.checkTweetPage_02_3(lTweetPageResponseArgs.get(2), lTweetPageResponseArgs.get(1).remainingGap());
+
+        verifyNoMoreInteractions(server(), mTweetPageObserver);
+    }
+
+    public void testFindHomeTweets_severalPages_noMoreAvailable_multi() throws Exception {
         // Setup.
         final int lPageCount = 5; // Several pages. Not all will be returned.
         final int lPageSize = 20; // No more page available since last returned page will not be full.

@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.manager.tweet;
 
+import static com.codexperiments.rx.AndroidScheduler.threadPoolForIO;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,14 +20,13 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Action0;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.codexperiments.newsroot.repository.tweet.TweetQuery;
-import com.codexperiments.rx.AndroidScheduler;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -186,49 +187,36 @@ public class TweetManager {
     public Observable<HttpURLConnection> connect(final Observable<String> pUrls) {
         return Observable.create(new OnSubscribeFunc<HttpURLConnection>() {
             public Subscription onSubscribe(final Observer<? super HttpURLConnection> pConnectionObserver) {
-                final Subscription lParentSubscription = pUrls.subscribe(new Observer<String>() {
+                return pUrls.observeOn(threadPoolForIO()).subscribe(new Observer<String>() {
                     public void onNext(final String pUrl) {
-                        if (pUrl == null) throw new IllegalAccessError();
-                        AndroidScheduler.threadPoolForIO().schedule(new Action0() {
-                            public void call() {
-                                JsonParser lParser = null;
-                                HttpURLConnection lRequest = null;
-                                InputStream lInputStream = null;
-                                try {
-                                    URL lUrl = new URL(pUrl);
-                                    Log.e(TweetManager.class.getSimpleName(), lUrl.toString());
-                                    lRequest = (HttpURLConnection) lUrl.openConnection();
-                                    lRequest.setDoInput(true);
-                                    lRequest.setDoOutput(false);
+                        HttpURLConnection lRequest = null;
+                        InputStream lInputStream = null;
+                        try {
+                            URL lUrl = new URL(pUrl);
+                            Log.e(TweetManager.class.getSimpleName(), lUrl.toString());
+                            lRequest = (HttpURLConnection) lUrl.openConnection();
+                            lRequest.setDoInput(true);
+                            lRequest.setDoOutput(false);
 
-                                    mConsumer.sign(lRequest);
-                                    lRequest.connect();
-                                    int lStatusCode = lRequest.getResponseCode();
-                                    if (lStatusCode != 200) throw new IOException();
-                                    // TODO 429, etc.
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (Exception e) {
-
-                                    }
-
-                                    pConnectionObserver.onNext(lRequest);
-                                } catch (Exception eException) {
-                                    try {
-                                        if (lParser != null) lParser.close();
-                                    } catch (IOException eIOException) {
-                                        eIOException.printStackTrace();
-                                    }
-                                    try {
-                                        if (lInputStream != null) lInputStream.close();
-                                    } catch (IOException eIOException) {
-                                        eIOException.printStackTrace();
-                                    }
-                                    if (lRequest != null) lRequest.disconnect();
-                                    pConnectionObserver.onError(eException);
-                                }
+                            mConsumer.sign(lRequest);
+                            if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) {
+                                lRequest.setRequestProperty("Connection", "close");
                             }
-                        });
+                            lRequest.connect();
+                            int lStatusCode = lRequest.getResponseCode();
+                            if (lStatusCode != 200) throw new IOException();
+                            // TODO 429, etc.
+
+                            pConnectionObserver.onNext(lRequest);
+                        } catch (Exception eException) {
+                            try {
+                                if (lInputStream != null) lInputStream.close();
+                            } catch (IOException eIOException) {
+                                eIOException.printStackTrace();
+                            }
+                            if (lRequest != null) lRequest.disconnect();
+                            pConnectionObserver.onError(eException);
+                        }
                     }
 
                     public void onCompleted() {
@@ -239,12 +227,6 @@ public class TweetManager {
                         pConnectionObserver.onError(pThrowable);
                     }
                 });
-                // return Subscriptions.create(new Action0() {
-                // public void call() {
-                // lParentSubscription.unsubscribe();
-                // }
-                // });
-                return lParentSubscription;
             }
         });
     }

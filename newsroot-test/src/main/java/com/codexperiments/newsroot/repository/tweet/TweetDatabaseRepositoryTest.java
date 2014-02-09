@@ -4,9 +4,7 @@ import static com.codexperiments.newsroot.test.data.TweetPageData.PAGE_SIZE;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnComplete;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnNext;
 import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWait;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -147,7 +145,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         verify(mTweetPageObserver).onCompleted();
 
         List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-        assertThat(lTweetPageResponseArgs.size(), equalTo(1));
         TweetPageData.checkTweetPage_02_1(lTweetPageResponseArgs.get(0), lTimeGap); // Superficial data check.
         TweetPageData.checkTweetPageResponse(lTweetPageResponseArgs.get(0), lServerResponse); // Comparison to reference data.
         verifyNoMoreInteractions(mTweetInnerRepository, mTweetPageObserver);
@@ -193,7 +190,6 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         verify(mTweetPageObserver).onCompleted();
 
         List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-        assertThat(lTweetPageResponseArgs.size(), equalTo(3));
         TweetPageData.checkTweetPage_02_1(lTweetPageResponseArgs.get(0), lTimeGap); // Superficial data check.
         TweetPageData.checkTweetPageResponse(lTweetPageResponseArgs.get(0), lServerResponse1); // Comparison to reference data.
         TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());

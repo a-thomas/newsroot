@@ -1,7 +1,7 @@
 package com.codexperiments.newsroot.repository.tweet;
 
-import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndNotWait;
 import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWait;
+import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWaitMultipleTimes;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasQueryParam;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasUrl;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.whenRequestOn;
@@ -20,11 +20,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hamcrest.Matchers;
 import org.mockito.ArgumentCaptor;
 
 import rx.Observable;
 import rx.Observer;
-import android.util.Log;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
@@ -70,9 +70,9 @@ public class TweetRemoteRepositoryTest extends TestCase {
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
 
         // Verify server calls.
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        not(hasQueryParam("max_id")))));
+        verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                   not(hasQueryParam("max_id")))));
         // Verify empty page received.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
         verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
@@ -96,9 +96,9 @@ public class TweetRemoteRepositoryTest extends TestCase {
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
 
         // Verify server calls.
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        not(hasQueryParam("max_id")))));
+        verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                   not(hasQueryParam("max_id")))));
         // Verify page received.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
         verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
@@ -123,22 +123,21 @@ public class TweetRemoteRepositoryTest extends TestCase {
         subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
 
         // Verify server calls.
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        not(hasQueryParam("max_id")))));
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
-        verify(server()).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                        hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                        hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
+        verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                   not(hasQueryParam("max_id")))));
+        verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                   hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
+        verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                   hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                   hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
         // Verify pages received.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
         verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
         verify(mTweetPageObserver).onCompleted();
 
         List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-        assertThat(lTweetPageResponseArgs.size(), equalTo(3));
         TweetPageData.checkTweetPage_02_1(lTweetPageResponseCaptor.getAllValues().get(0), lTimeGap);
         TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());
         TweetPageData.checkTweetPage_02_3(lTweetPageResponseArgs.get(2), lTweetPageResponseArgs.get(1).remainingGap());
@@ -146,66 +145,46 @@ public class TweetRemoteRepositoryTest extends TestCase {
         verifyNoMoreInteractions(server(), mTweetPageObserver);
     }
 
-    public void testFindHomeTweets_severalPages_noMoreAvailable_multi() throws Exception {
+    public void testFindHomeTweets_severalPages_multipleSubscribers() throws Exception {
         // Setup.
         final int lPageCount = 5; // Several pages. Not all will be returned.
         final int lPageSize = 20; // No more page available since last returned page will not be full.
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
         // SCENARIO: Several pages returned from the server, last being not full.
-        whenRequestOn(server()).thenReturn("twitter/ctx_tweet_02-1.json")
-                               .thenReturn("twitter/ctx_tweet_02-1.json")
-                               .thenReturn("twitter/ctx_tweet_02-2.json")
-                               .thenReturn("twitter/ctx_tweet_02-2.json")
-                               .thenReturn("twitter/ctx_tweet_02-3.json")
-                               .thenReturn("twitter/ctx_tweet_02-3.json");
-        Observable<TweetPageResponse> resp = mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize);
-        Observable<TweetPageResponse> resp2 = mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize);
-        subscribeAndNotWait(resp, new Observer<TweetPageResponse>() {
-            @Override
-            public void onCompleted() {
-                Log.w("XXX", "completed");
-            }
+        whenRequestOn(server(), not(hasQueryParam("max_id"))).thenReturn("twitter/ctx_tweet_02-1.json");
+        whenRequestOn(server(), hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1)).thenReturn("twitter/ctx_tweet_02-2.json");
+        whenRequestOn(server(), hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1)).thenReturn("twitter/ctx_tweet_02-3.json");
 
-            @Override
-            public void onError(Throwable pE) {
-                Log.w("XXX", "error ", pE);
-            }
-
-            @Override
-            public void onNext(TweetPageResponse pArgs) {
-                Log.w("XXX", "next " + pArgs);
-            }
-        });
-        subscribeAndWait(resp, mTweetPageObserver);
-        try {
-            Thread.sleep(5000);
-        } catch (Exception e) {
-
-        }
+        Observable<TweetPageResponse> lTweets = mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize);
+        List<Observer<TweetPageResponse>> lMockObservers = subscribeAndWaitMultipleTimes(5, lTweets, mTweetPageObserver);
 
         // Verify server calls.
-        verify(server(), times(2)).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                                  hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                                  not(hasQueryParam("max_id")))));
-        verify(server(), times(2)).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                                  hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                                  hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
-        verify(server(), times(2)).getResponseAsset(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
-                                                                  hasQueryParam("count", TweetPageData.PAGE_SIZE),
-                                                                  hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
+        verify(server(), times(5)).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                             hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                             not(hasQueryParam("max_id")))));
+        verify(server(), times(5)).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                             hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                             hasQueryParam("max_id", TweetPageData.OLDEST_02_1 - 1))));
+        verify(server(), times(5)).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
+                                                             hasQueryParam("count", TweetPageData.PAGE_SIZE),
+                                                             hasQueryParam("max_id", TweetPageData.OLDEST_02_2 - 1))));
         // Verify pages received.
         ArgumentCaptor<TweetPageResponse> lTweetPageResponseCaptor = ArgumentCaptor.forClass(TweetPageResponse.class);
         verify(mTweetPageObserver, times(3)).onNext(lTweetPageResponseCaptor.capture());
         verify(mTweetPageObserver).onCompleted();
 
         List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-        assertThat(lTweetPageResponseArgs.size(), equalTo(3));
         TweetPageData.checkTweetPage_02_1(lTweetPageResponseCaptor.getAllValues().get(0), lTimeGap);
         TweetPageData.checkTweetPage_02_2(lTweetPageResponseArgs.get(1), lTweetPageResponseArgs.get(0).remainingGap());
         TweetPageData.checkTweetPage_02_3(lTweetPageResponseArgs.get(2), lTweetPageResponseArgs.get(1).remainingGap());
-        assertThat(lTweetPageResponseCaptor.getAllValues().size(), equalTo(3));
-
         verifyNoMoreInteractions(server(), mTweetPageObserver);
+
+        // Verify other observers received the same number of pages.
+        for (Observer<TweetPageResponse> lObservers : lMockObservers) {
+            verify(lObservers, times(3)).onNext(argThat(Matchers.any(TweetPageResponse.class)));
+            verify(lObservers).onCompleted();
+        }
+        verifyNoMoreInteractions(lMockObservers.toArray());
     }
 }

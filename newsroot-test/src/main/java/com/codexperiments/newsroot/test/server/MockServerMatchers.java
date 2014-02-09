@@ -5,12 +5,37 @@ import static org.mockito.Matchers.argThat;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 import org.simpleframework.http.Query;
 import org.simpleframework.http.Request;
 
 public class MockServerMatchers {
+    public static RequestUrlMatcher hasUrl(String pValue) {
+        return new RequestUrlMatcher(pValue);
+    }
+
+    public static RequestHasParamMatcher hasQueryParam(String pParam) {
+        return new RequestHasParamMatcher(pParam);
+    }
+
+    public static RequestParamMatcher hasQueryParam(String pParam, String pValue) {
+        return new RequestParamMatcher(pParam, pValue);
+    }
+
+    public static RequestParamMatcher hasQueryParam(String pParam, long pValue) {
+        return new RequestParamMatcher(pParam, Long.toString(pValue));
+    }
+
+    public static OngoingStubbing<String> whenRequestOn(MockServerHandler pHandler) {
+        return Mockito.when(pHandler.getResponse(argThat(any(Request.class))));
+    }
+
+    public static OngoingStubbing<String> whenRequestOn(MockServerHandler pHandler, Matcher<Request> pRequestMatcher) {
+        return Mockito.when(pHandler.getResponse(argThat(pRequestMatcher)));
+    }
+
     public static class RequestUrlMatcher extends BaseMatcher<Request> {
         private final String mValue;
 
@@ -85,25 +110,5 @@ public class MockServerMatchers {
             desc.appendText(" with value ");
             desc.appendText(mValue);
         }
-    }
-
-    public static RequestUrlMatcher hasUrl(String pValue) {
-        return new RequestUrlMatcher(pValue);
-    }
-
-    public static RequestHasParamMatcher hasQueryParam(String pParam) {
-        return new RequestHasParamMatcher(pParam);
-    }
-
-    public static RequestParamMatcher hasQueryParam(String pParam, String pValue) {
-        return new RequestParamMatcher(pParam, pValue);
-    }
-
-    public static RequestParamMatcher hasQueryParam(String pParam, long pValue) {
-        return new RequestParamMatcher(pParam, Long.toString(pValue));
-    }
-
-    public static OngoingStubbing<String> whenRequestOn(MockServerHandler pHandler) {
-        return Mockito.when(pHandler.getResponseAsset(argThat(any(Request.class))));
     }
 }

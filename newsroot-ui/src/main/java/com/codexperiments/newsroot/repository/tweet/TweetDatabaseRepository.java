@@ -22,7 +22,7 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.rx.AndroidScheduler;
 
 public class TweetDatabaseRepository implements TweetRepository {
-    private TweetRepository mRepository;
+    private TweetRemoteRepository mRemoteRepository;
     private TweetDatabase mDatabase;
     // private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
     private Map<String, Timeline> mTimelines;
@@ -32,9 +32,9 @@ public class TweetDatabaseRepository implements TweetRepository {
 
     // private ViewTimelineDAO mViewTimelineDAO;
 
-    public TweetDatabaseRepository(TweetDatabase pDatabase, TweetDAO pTweetDAO, TweetRepository pRepository) {
+    public TweetDatabaseRepository(TweetDatabase pDatabase, TweetDAO pTweetDAO, TweetRemoteRepository pRemoteRepository) {
         super();
-        mRepository = pRepository;
+        mRemoteRepository = pRemoteRepository;
         mDatabase = pDatabase;
         // mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
         mTimelines = new HashMap<String, Timeline>();
@@ -103,7 +103,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                     }
                     // No data was found in database, let's hope there are some in the cloud.
                     else {
-                        cacheTweets(mRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
+                        cacheTweets(mRemoteRepository.findTweets(pTimeline, pTimeGap, pPageCount, pPageSize)).subscribe(pObserver);
                     }
                 } catch (Exception eException) {
                     pObserver.onError(eException);

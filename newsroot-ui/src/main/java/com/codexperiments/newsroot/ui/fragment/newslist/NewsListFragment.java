@@ -23,15 +23,15 @@ import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.TimeRange;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
+import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
-import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragmentAdapter.ItemFactory;
 import com.codexperiments.rx.RxAndroid;
 
 public class NewsListFragment extends BaseFragment {
     private static final String ARG_SCREEN_NAME = "screenName";
 
-    @Inject TweetRepository mTweetRepository;
+    @Inject TweetDatabaseRepository mTweetRepository;
 
     protected Timeline mTimeline;
     protected PageIndex<News> mTweets;

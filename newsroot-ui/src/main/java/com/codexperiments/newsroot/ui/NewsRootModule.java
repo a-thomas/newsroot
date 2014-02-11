@@ -11,7 +11,6 @@ import com.codexperiments.newsroot.data.tweet.TweetDatabase;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetRemoteRepository;
-import com.codexperiments.newsroot.repository.tweet.TweetRepository;
 import com.codexperiments.newsroot.ui.activity.HomeActivity;
 import com.codexperiments.newsroot.ui.fragment.authorization.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragment;
@@ -71,8 +70,11 @@ public class NewsRootModule {
 
     @Provides
     @Singleton
-    public TweetRepository provideTweetRepository(TweetManager pTweetManager, TweetDatabase pTweetDatabase, TweetDAO pTweetDAO) {
-        TweetRepository lRemoteRepository = new TweetRemoteRepository(pTweetManager, "https://api.twitter.com/");
+    public TweetDatabaseRepository provideTweetDatabaseRepository(TweetManager pTweetManager,
+                                                                  TweetDatabase pTweetDatabase,
+                                                                  TweetDAO pTweetDAO)
+    {
+        TweetRemoteRepository lRemoteRepository = new TweetRemoteRepository(pTweetManager, "https://api.twitter.com/");
         return new TweetDatabaseRepository(pTweetDatabase, pTweetDAO, lRemoteRepository);
     }
 }

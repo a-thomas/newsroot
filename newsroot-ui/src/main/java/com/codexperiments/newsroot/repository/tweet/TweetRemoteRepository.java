@@ -32,7 +32,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class TweetRemoteRepository implements TweetRepository {
+public class TweetRemoteRepository {
     private TweetManager mTweetManager;
     private String mHost;
     private int mPageSize;
@@ -47,12 +47,10 @@ public class TweetRemoteRepository implements TweetRepository {
         mDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss z yyyy").withZone(DateTimeZone.UTC);
     }
 
-    @Override
     public Timeline findTimeline(String pUsername) {
         return new Timeline(pUsername);
     }
 
-    @Override
     public Observable<TweetPageResponse> findTweets(final Timeline pTimeline,
                                                     final TimeGap pTimeGap,
                                                     final int pPageCount,

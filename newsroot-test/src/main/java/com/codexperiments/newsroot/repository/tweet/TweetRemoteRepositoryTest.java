@@ -37,13 +37,13 @@ import dagger.Module;
 import dagger.Provides;
 
 public class TweetRemoteRepositoryTest extends TestCase {
-    @Inject TweetRepository mTweetRemoteRepository;
+    @Inject TweetRemoteRepository mTweetRemoteRepository;
     @Inject Observer<TweetPageResponse> mTweetPageObserver;
 
     @Module(includes = TestModule.class, injects = TweetRemoteRepositoryTest.class, overrides = true)
     static class LocalModule {
         @Provides
-        public TweetRepository provideTweetRemoteRepository(TweetManager pTweetManager) {
+        public TweetRemoteRepository provideTweetRemoteRepository(TweetManager pTweetManager) {
             return new TweetRemoteRepository(pTweetManager, "http://localhost:" + MockServer.PORT + "/");
         }
 

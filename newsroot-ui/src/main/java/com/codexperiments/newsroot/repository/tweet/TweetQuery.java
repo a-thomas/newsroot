@@ -10,7 +10,7 @@ public class TweetQuery {
     private int mPageSize;
     private TimeGap mTimeGap;
 
-    public static TweetQuery query(String pHost, String pUrl) {
+    public static TweetQuery queryFor(String pHost, String pUrl) {
         return new TweetQuery(pHost, pUrl);
     }
 
@@ -64,6 +64,10 @@ public class TweetQuery {
         if (mSeparator == '?') mSeparator = '&';
         // TODO Use URLEncodedUtils
         mQuery.append(pParam).append("=").append(Long.toString(pValue));
+    }
+
+    public String asURL() {
+        return mQuery.toString();
     }
 
     @Override

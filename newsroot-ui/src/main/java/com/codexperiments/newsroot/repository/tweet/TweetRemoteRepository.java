@@ -1,5 +1,7 @@
 package com.codexperiments.newsroot.repository.tweet;
 
+import static com.codexperiments.newsroot.repository.tweet.TweetQuery.queryFor;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,29 +58,24 @@ public class TweetRemoteRepository implements TweetRepository {
                                                     final int pPageCount,
                                                     final int pPageSize)
     {
-        FeedbackFunc<String, TweetPageResponse> lFeedback = new FeedbackFunc<String, TweetPageResponse>() {
-            public Observable<String> call(Observable<String> pT1, Observable<TweetPageResponse> pT2) {
-                return Observable.combineLatest(pT1, pT2, new Func2<String, TweetPageResponse, String>() {
-                    public String call(String pT1, TweetPageResponse pTweetPageResponse) {
+        FeedbackFunc<String, TweetPageResponse> lMergeFeedback = new FeedbackFunc<String, TweetPageResponse>() {
+            public Observable<String> call(Observable<String> pInitialURL, Observable<TweetPageResponse> pTweetPageResponses) {
+
+                return Observable.combineLatest(pInitialURL, pTweetPageResponses, new Func2<String, TweetPageResponse, String>() {
+                    public String call(String pInitialURL, TweetPageResponse pTweetPageResponse) {
                         TimeGap lNextGap = pTimeGap;
                         if (pTweetPageResponse != null) {
                             TweetPage lTweetPage = pTweetPageResponse.tweetPage();
-                            if (!lTweetPage.isFull()) {
-                                return null;
-                            } else {
-                                lNextGap = pTimeGap.remainingGap(lTweetPage.timeRange());
-                            }
+                            if (!lTweetPage.isFull()) return null;
+                            else lNextGap = pTimeGap.remainingGap(lTweetPage.timeRange());
                         }
-                        return TweetQuery.query(mHost, TweetQuery.URL_HOME)
-                                         .withTimeGap(lNextGap)
-                                         .withPageSize(mPageSize)
-                                         .toString();
+                        return queryFor(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).asURL();
                     }
                 }).takeWhile(Rxt.notNullValue());
             }
         };
 
-        return Rxt.feedback(pPageCount, mHost, lFeedback, new FeedbackOutput<String, TweetPageResponse>() {
+        return Rxt.feedback(pPageCount, lMergeFeedback, new FeedbackOutput<String, TweetPageResponse>() {
             public Observable<TweetPageResponse> call(Observable<String> pUrls) {
                 return findTweets(mTweetManager.connect(pUrls), pPageSize);
             }

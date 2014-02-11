@@ -9,6 +9,7 @@ import rx.subjects.Subject;
 import rx.util.functions.Func0;
 import rx.util.functions.Func1;
 import rx.util.functions.Func2;
+import android.util.Log;
 
 public class Rxt {
     public static <TValue> Func1<TValue, Boolean> nullValue() {
@@ -76,6 +77,7 @@ public class Rxt {
                             }
 
                             public void onError(Throwable pThrowable) {
+                                Log.e("XXXXX", "RRR", pThrowable);
                                 pOutputObserver.onError(pThrowable);
                                 lFeedbackSubject.onError(pThrowable);
                             }
@@ -97,6 +99,13 @@ public class Rxt {
                                                                  final FeedbackOutput<TInput, TOutput> pOutputFactory)
     {
         return feedback(pMaxRecursion, Observable.from(pInitialValue), pFeedbackFactory, pOutputFactory);
+    }
+
+    public static <TInput, TOutput> Observable<TOutput> feedback(final int pMaxRecursion,
+                                                                 final FeedbackFunc<TInput, TOutput> pFeedbackFactory,
+                                                                 final FeedbackOutput<TInput, TOutput> pOutputFactory)
+    {
+        return feedback(pMaxRecursion, Observable.from((TInput) null), pFeedbackFactory, pOutputFactory);
     }
 
     public interface FeedbackFunc<TInput, TOutput> extends Func2<Observable<TInput>, Observable<TOutput>, Observable<TInput>> {

@@ -28,12 +28,12 @@ public class TweetPage implements Page<TweetDTO>/* , Iterable<TweetDTO> */{
     }
 
     @Override
-    public long lowerBound() {
+    public long oldestBound() {
         return mTimeRange.oldestBound();
     }
 
     @Override
-    public long upperBound() {
+    public long earliestBound() {
         return mTimeRange.earliestBound();
     }
 

@@ -18,7 +18,7 @@ public class TweetPageResponse {
         super();
         mTweetPage = pTweetPage;
         mInitialGap = pInitialTimeGap;
-        mRemainingGap = null;// mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
+        mRemainingGap = mTweetPage.isFull() ? mInitialGap.remainingGap(mTweetPage.timeRange()) : null;
     }
 
     public TimeGap initialGap() {

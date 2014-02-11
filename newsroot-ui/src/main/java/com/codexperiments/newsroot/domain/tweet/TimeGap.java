@@ -1,6 +1,5 @@
 package com.codexperiments.newsroot.domain.tweet;
 
-
 // TODO Make immutable
 public class TimeGap implements News {
     private/* final */long mId;
@@ -93,6 +92,16 @@ public class TimeGap implements News {
     public TimeGap remainingGap(TimeRange pTimeRange) {
         long lRangeEarliestBound = pTimeRange.earliestBound();
         long lRangeOldestBound = pTimeRange.oldestBound() - 1; // TODO Check bug because of -1
+
+        if ((lRangeOldestBound < mOldestBound) || (lRangeEarliestBound > mEarliestBound)) {
+            throw new IllegalArgumentException();
+        }
+        return (lRangeOldestBound > mOldestBound) ? new TimeGap(lRangeOldestBound, mOldestBound) : null;
+    }
+
+    public TimeGap remainingGap(TweetPage pTweetPage) {
+        long lRangeEarliestBound = pTweetPage.earliestBound();
+        long lRangeOldestBound = pTweetPage.oldestBound() - 1; // TODO Check bug because of -1
 
         if ((lRangeOldestBound < mOldestBound) || (lRangeEarliestBound > mEarliestBound)) {
             throw new IllegalArgumentException();

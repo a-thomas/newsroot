@@ -33,12 +33,12 @@ public class NewsPage implements Page<News> {
     }
 
     @Override
-    public long lowerBound() {
+    public long oldestBound() {
         return mTimeRange.oldestBound();
     }
 
     @Override
-    public long upperBound() {
+    public long earliestBound() {
         return mTimeRange.earliestBound();
     }
 

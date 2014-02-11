@@ -81,7 +81,7 @@ public class TreePageIndex<TItem> implements PageIndex<TItem> {
     }
 
     public void insert(Page<? extends TItem> pPage) {
-        long lKey = pPage.upperBound();
+        long lKey = pPage.earliestBound();
         Node lX = mRoot;
         Node lY = NIL;
 

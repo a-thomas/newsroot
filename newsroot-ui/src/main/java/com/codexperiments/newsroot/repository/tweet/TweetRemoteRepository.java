@@ -77,12 +77,15 @@ public class TweetRemoteRepository implements TweetRepository {
 
         return Rxt.feedback(pPageCount, lMergeFeedback, new FeedbackOutput<String, TweetPageResponse>() {
             public Observable<TweetPageResponse> call(Observable<String> pUrls) {
-                return findTweets(mTweetManager.connect(pUrls), pPageSize);
+                return findTweets(mTweetManager.connect(pUrls), pTimeGap, pPageSize);
             }
         });
     }
 
-    private Observable<TweetPageResponse> findTweets(final Observable<HttpURLConnection> pConnections, final int pPageSize) {
+    private Observable<TweetPageResponse> findTweets(final Observable<HttpURLConnection> pConnections,
+                                                     final TimeGap pTimeGap,
+                                                     final int pPageSize)
+    {
         final JsonFactory mJSONFactory = new JsonFactory();
         return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
@@ -93,7 +96,7 @@ public class TweetRemoteRepository implements TweetRepository {
                             lInputStream = new BufferedInputStream(pConnection.getInputStream());
                             JsonParser lParser = mJSONFactory.createParser(lInputStream);
                             TweetPage lTweetPage = parseTweetPage(pPageSize, lParser);
-                            pObserver.onNext(new TweetPageResponse(lTweetPage, null));
+                            pObserver.onNext(new TweetPageResponse(lTweetPage, pTimeGap));
                             // is.close();
                         } catch (IOException eIOException) {
                             // try {

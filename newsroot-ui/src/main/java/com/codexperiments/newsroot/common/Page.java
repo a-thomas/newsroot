@@ -1,9 +1,9 @@
 package com.codexperiments.newsroot.common;
 
 public interface Page<TItem> /* extends Iterable<TItem> */{
-    long lowerBound();
+    long oldestBound();
 
-    long upperBound();
+    long earliestBound();
 
     TItem get(int pIndex);
 

@@ -256,11 +256,11 @@ public class PageIndexTest extends TestCase {
             }
         }
 
-        public long lowerBound() {
+        public long oldestBound() {
             return mLowerBound;
         }
 
-        public long upperBound() {
+        public long earliestBound() {
             return mUpperBound;
         }
 

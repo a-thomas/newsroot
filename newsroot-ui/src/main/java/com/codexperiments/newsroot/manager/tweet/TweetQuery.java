@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.repository.tweet;
+package com.codexperiments.newsroot.manager.tweet;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 

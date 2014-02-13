@@ -28,6 +28,7 @@ import rx.Observer;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
+import com.codexperiments.newsroot.manager.tweet.TweetQuery;
 import com.codexperiments.newsroot.test.TestCase;
 import com.codexperiments.newsroot.test.TestModule;
 import com.codexperiments.newsroot.test.data.TweetPageData;

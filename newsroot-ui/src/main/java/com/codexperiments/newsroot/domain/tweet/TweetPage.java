@@ -23,6 +23,10 @@ public class TweetPage implements Page<TweetDTO>/* , Iterable<TweetDTO> */{
         return mTweets;
     }
 
+    public boolean isEmpty() {
+        return mTweets.length <= 0;
+    }
+
     public boolean isFull() {
         return mIsFull;
     }

@@ -40,11 +40,13 @@ public class Rxt {
      *                     (C)
      * </pre>
      * 
+     * TODO Use startWith()
+     * 
      * @param pMaxRecursion Feedback loop will be performed at most pMaxRecursion before completion.
      * @param pSource
      * @param pFeedbackFactory
      * @param pOutputFactory
-     * @return
+     * @return Observable
      */
     public static <TInput, TOutput> Observable<TOutput> feedback(final int pMaxRecursion,
                                                                  final Observable<TInput> pSource,
@@ -55,14 +57,15 @@ public class Rxt {
         // It wouldn't be nice if each subscription fed back others.
         return Observable.defer(new Func0<Observable<? extends TOutput>>() {
             public Observable<? extends TOutput> call() {
+                // Subject allows us to create the feedback loop. Limit the number of possible feedback loops if needed (C).
+                final Subject<TOutput, TOutput> lFeedbackSubject = BehaviorSubject.create((TOutput) null);
+                final Observable<TOutput> lFeedback = (pMaxRecursion > 0) ? lFeedbackSubject.take(pMaxRecursion)
+                                : lFeedbackSubject;
+                // Merge the input and feedback observables (A).
+                final Observable<TInput> lMergeInput = pFeedbackFactory.call(pSource, lFeedback);
+                // Output observable right after the feedback "fork" (B).
+                final Observable<TOutput> lFinalOutput = pOutputFactory.call(lMergeInput);
                 return Observable.create(new OnSubscribeFunc<TOutput>() {
-                    // Subject allows us to create the feedback loop. Limit the number of possible feedback loops if needed (C).
-                    Subject<TOutput, TOutput> lFeedbackSubject = BehaviorSubject.create((TOutput) null);
-                    Observable<TOutput> lFeedback = (pMaxRecursion > 0) ? lFeedbackSubject.take(pMaxRecursion) : lFeedbackSubject;
-                    // Merge the input and feedback observables (A).
-                    Observable<TInput> lMergeInput = pFeedbackFactory.call(pSource, lFeedback);
-                    // Output observable right after the feedback "fork" (B).
-                    Observable<TOutput> lFinalOutput = pOutputFactory.call(lMergeInput);
 
                     public Subscription onSubscribe(final Observer<? super TOutput> pOutputObserver) {
                         final Subscription lInnerSubscription = lFinalOutput.subscribe(new Observer<TOutput>() {

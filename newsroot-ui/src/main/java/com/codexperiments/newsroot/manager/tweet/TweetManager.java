@@ -26,7 +26,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import com.codexperiments.newsroot.repository.tweet.TweetQuery;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 

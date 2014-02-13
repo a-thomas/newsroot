@@ -1,6 +1,8 @@
 package com.codexperiments.newsroot.repository.tweet;
 
-import static com.codexperiments.newsroot.repository.tweet.TweetQuery.queryFor;
+import static com.codexperiments.newsroot.manager.tweet.TweetQuery.queryFor;
+import static com.codexperiments.rx.Rxt.feedback;
+import static rx.Observable.combineLatest;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.util.functions.Func1;
 import rx.util.functions.Func2;
 
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
@@ -24,6 +27,7 @@ import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
+import com.codexperiments.newsroot.manager.tweet.TweetQuery;
 import com.codexperiments.rx.Rxt;
 import com.codexperiments.rx.Rxt.FeedbackFunc;
 import com.codexperiments.rx.Rxt.FeedbackOutput;
@@ -59,7 +63,7 @@ public class TweetRemoteRepository {
         FeedbackFunc<String, TweetPageResponse> lMergeFeedback = new FeedbackFunc<String, TweetPageResponse>() {
             public Observable<String> call(Observable<String> pInitialURL, Observable<TweetPageResponse> pTweetPageResponses) {
 
-                return Observable.combineLatest(pInitialURL, pTweetPageResponses, new Func2<String, TweetPageResponse, String>() {
+                return combineLatest(pInitialURL, pTweetPageResponses, new Func2<String, TweetPageResponse, String>() {
                     public String call(String pInitialURL, TweetPageResponse pTweetPageResponse) {
                         TimeGap lNextGap = pTimeGap;
                         if (pTweetPageResponse != null) {
@@ -73,18 +77,19 @@ public class TweetRemoteRepository {
             }
         };
 
-        return Rxt.feedback(pPageCount, lMergeFeedback, new FeedbackOutput<String, TweetPageResponse>() {
+        return feedback(pPageCount, lMergeFeedback, new FeedbackOutput<String, TweetPageResponse>() {
             public Observable<TweetPageResponse> call(Observable<String> pUrls) {
-                return findTweets(mTweetManager.connect(pUrls), pTimeGap, pPageSize);
+                return findTweets(pTimeGap, pPageSize, mTweetManager.connect(pUrls));
             }
         });
     }
 
-    private Observable<TweetPageResponse> findTweets(final Observable<HttpURLConnection> pConnections,
-                                                     final TimeGap pTimeGap,
-                                                     final int pPageSize)
+    private Observable<TweetPageResponse> findTweets(final TimeGap pTimeGap,
+                                                     final int pPageSize,
+                                                     final Observable<HttpURLConnection> pConnections)
     {
         final JsonFactory mJSONFactory = new JsonFactory();
+
         return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
                 return pConnections.subscribe(new Observer<HttpURLConnection>() {

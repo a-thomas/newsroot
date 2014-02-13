@@ -126,7 +126,23 @@ public class TweetDatabaseRepositoryTest extends TestCase {
         // SCENARIO: A full page is returned from the server.
         Mockito.when(mTweetRemoteRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE))
                .thenReturn(TweetPageResponseData.asObservable(scheduler(), lServerResponse));
-        subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE), mTweetPageObserver);
+        subscribeAndWait(mTweetDatabaseRepository.findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE),
+                         new Observer<TweetPageResponse>() {
+                             @Override
+                             public void onCompleted() {
+                                 mTweetPageObserver.onCompleted();
+                             }
+
+                             @Override
+                             public void onError(Throwable pE) {
+                                 mTweetPageObserver.onError(pE);
+                             }
+
+                             @Override
+                             public void onNext(TweetPageResponse pArgs) {
+                                 mTweetPageObserver.onNext(pArgs);
+                             }
+                         });
         // Verify inner repository calls.
         verify(mTweetRemoteRepository).findTweets(lTimeline, lTimeGap, lPageCount, PAGE_SIZE);
         // Verify page received is the one returned from the server.

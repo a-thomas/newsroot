@@ -11,6 +11,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.schedulers.TestScheduler;
 import rx.util.functions.Action0;
+import android.util.Log;
 
 import com.codexperiments.rx.AndroidScheduler;
 import com.google.common.collect.Lists;
@@ -40,6 +41,7 @@ public class RxTest {
 
             public void onError(Throwable pThrowable) {
                 pObserver.onError(pThrowable);
+                Log.e("===", "ERROR:", pThrowable);
                 lCompleted.countDown();
             }
         });

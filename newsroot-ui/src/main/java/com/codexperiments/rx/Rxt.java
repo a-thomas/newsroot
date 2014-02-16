@@ -4,6 +4,7 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.operators.SafeObservableSubscription;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 import rx.util.functions.Func0;
@@ -59,8 +60,9 @@ public class Rxt {
             public Observable<? extends TOutput> call() {
                 // Subject allows us to create the feedback loop. Limit the number of possible feedback loops if needed (C).
                 final Subject<TOutput, TOutput> lFeedbackSubject = BehaviorSubject.create((TOutput) null);
-                final Observable<TOutput> lFeedback = (pMaxRecursion > 0) ? lFeedbackSubject.take(pMaxRecursion)
-                                : lFeedbackSubject;
+                final Observable<TOutput> lFeedback = /*
+                                                       * (pMaxRecursion > 0) ? lFeedbackSubject.take(pMaxRecursion) :
+                                                       */lFeedbackSubject;
                 // Merge the input and feedback observables (A).
                 final Observable<TInput> lMergeInput = pFeedbackFactory.call(pSource, lFeedback);
                 // Output observable right after the feedback "fork" (B).
@@ -115,5 +117,30 @@ public class Rxt {
     }
 
     public interface FeedbackOutput<TInput, TOutput> extends Func1<Observable<TInput>, Observable<TOutput>> {
+    }
+
+    public static <TValue> Observable<TValue> takeWhileInclusive(final Observable<TValue> pValues, final Func1<TValue, Boolean> pPredicate) {
+        return Observable.create(new OnSubscribeFunc<TValue>() {
+            public Subscription onSubscribe(final Observer<? super TValue> pObserver) {
+                final SafeObservableSubscription subscription = new SafeObservableSubscription();
+                return subscription.wrap(pValues.subscribe(new Observer<TValue>() {
+                    public void onNext(TValue pValue) {
+                        pObserver.onNext(pValue);
+                        if (pPredicate.call(pValue) == Boolean.FALSE) {
+                            pObserver.onCompleted();
+                            subscription.unsubscribe();
+                        }
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                }));
+            }
+        });
     }
 }

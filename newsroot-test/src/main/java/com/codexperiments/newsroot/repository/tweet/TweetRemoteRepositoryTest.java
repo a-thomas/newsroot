@@ -1,5 +1,6 @@
 package com.codexperiments.newsroot.repository.tweet;
 
+import static com.codexperiments.newsroot.test.data.TweetPageData.PAGE_SIZE;
 import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWait;
 import static com.codexperiments.newsroot.test.helper.RxTest.subscribeAndWaitMultipleTimes;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasQueryParam;
@@ -7,8 +8,6 @@ import static com.codexperiments.newsroot.test.server.MockServerMatchers.hasUrl;
 import static com.codexperiments.newsroot.test.server.MockServerMatchers.whenRequestOn;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -62,13 +61,11 @@ public class TweetRemoteRepositoryTest extends TestCase {
     }
 
     public void testFindHomeTweets_noPage() throws Exception {
-        final int lPageCount = 5;
-        final int lPageSize = 20;
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
 
         // SCENARIO: An empty page is returned by server.
         whenRequestOn(server()).thenReturn("twitter/ctx_tweet_empty.json");
-        subscribeAndWait(mTweetRemoteRepository.findTweets(null, lTimeGap, lPageCount, lPageSize), mTweetPageObserver);
+        subscribeAndWait(mTweetRemoteRepository.findTweetsIM(null, PAGE_SIZE, Observable.from(lTimeGap)), mTweetPageObserver);
 
         // Verify server calls.
         verify(server()).getResponse(argThat(allOf(hasUrl(TweetQuery.URL_HOME),
@@ -79,11 +76,10 @@ public class TweetRemoteRepositoryTest extends TestCase {
         verify(mTweetPageObserver).onNext(lTweetPageResponseCaptor.capture());
         verify(mTweetPageObserver).onCompleted();
 
-        List<TweetPageResponse> lTweetPageResponseArgs = lTweetPageResponseCaptor.getAllValues();
-        assertThat(lTweetPageResponseArgs.size(), equalTo(1));
-        TweetPageData.checkTweetPage_empty(lTweetPageResponseArgs.get(0), lTimeGap);
+        TweetPageResponse lPageResponse = lTweetPageResponseCaptor.getAllValues().get(0);
+        TweetPageData.checkTweetPage_empty(lPageResponse, lTimeGap);
 
-        verifyNoMoreInteractions(server(), mTweetPageObserver);
+        verifyNoMoreInteractions(mTweetPageObserver);
     }
 
     public void testFindHomeTweets_singlePage_moreAvailable() throws Exception {

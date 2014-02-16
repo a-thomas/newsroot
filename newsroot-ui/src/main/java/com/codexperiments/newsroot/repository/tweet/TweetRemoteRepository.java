@@ -84,6 +84,71 @@ public class TweetRemoteRepository {
         });
     }
 
+    public Observable<TweetPageResponse> findTweetsIM(final Timeline pTimeline,
+                                                      final int pPageSize,
+                                                      final Observable<TimeGap> pTimeGaps)
+    {
+        Observable<String> lUrls = pTimeGaps.map(new Func1<TimeGap, String>() {
+            public String call(TimeGap pTimeGap) {
+                TimeGap lNextGap = pTimeGap;
+                // if (pTweetPageResponse != null) {
+                // TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+                // if (!lTweetPage.isFull()) return null;
+                // else lNextGap = pTimeGap.remainingGap(lTweetPage.timeRange());
+                // }
+                return queryFor(mHost, TweetQuery.URL_HOME).withTimeGap(lNextGap).withPageSize(mPageSize).asURL();
+            }
+        });
+
+        return findTweetsIM(pPageSize, mTweetManager.connect(lUrls));
+    }
+
+    private Observable<TweetPageResponse> findTweetsIM(final int pPageSize, final Observable<HttpURLConnection> pConnections) {
+        final JsonFactory mJSONFactory = new JsonFactory();
+
+        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+                return pConnections.subscribe(new Observer<HttpURLConnection>() {
+                    public void onNext(HttpURLConnection pConnection) {
+                        InputStream lInputStream = null;
+                        try {
+                            lInputStream = new BufferedInputStream(pConnection.getInputStream());
+                            JsonParser lParser = mJSONFactory.createParser(lInputStream);
+                            TweetPage lTweetPage = parseTweetPage(pPageSize, lParser);
+                            pObserver.onNext(new TweetPageResponse(lTweetPage, null));
+                            // is.close();
+                        } catch (IOException eIOException) {
+                            // try {
+                            // respCode = ((HttpURLConnection) conn).getResponseCode();
+                            // es = ((HttpURLConnection) conn).getErrorStream();
+                            // int ret = 0;
+                            // // read the response body
+                            // while ((ret = es.read(buf)) > 0) {
+                            // processBuf(buf);
+                            // }
+                            // // close the errorstream
+                            // es.close();
+                            // } catch (IOException ex) {
+                            // // deal with the exception
+                            // }
+                            pObserver.onError(eIOException);
+                        } finally {
+                            pConnection.disconnect();
+                        }
+                    }
+
+                    public void onCompleted() {
+                        pObserver.onCompleted();
+                    }
+
+                    public void onError(Throwable pThrowable) {
+                        pObserver.onError(pThrowable);
+                    }
+                });
+            }
+        });
+    }
+
     private Observable<TweetPageResponse> findTweets(final TimeGap pTimeGap,
                                                      final int pPageSize,
                                                      final Observable<HttpURLConnection> pConnections)

@@ -88,7 +88,7 @@ public class TweetDatabaseRepository implements TweetRepository {
 
         return feedback(pPageCount, lMergeFeedback, new FeedbackOutput<TimeGap, TweetPageResponse>() {
             public Observable<TweetPageResponse> call(Observable<TimeGap> pTimeGaps) {
-                Observable<TweetPageResponse> fromDatabase = findTweetsInCache(pTimeline, pPageCount, pPageSize, pTimeGaps);
+                Observable<TweetPageResponse> fromDatabase = findTweetsInCache(pTimeline, pPageSize, pTimeGaps);
                 Observable<TweetPageResponse> fromRemote = cacheTweets(mRemoteRepository.findTweets(pTimeline,
                                                                                                     pTimeGap,
                                                                                                     pPageCount,
@@ -98,14 +98,46 @@ public class TweetDatabaseRepository implements TweetRepository {
         });
     }
 
-    private Observable<TweetPageResponse> findTweetsInCache(final Timeline pTimeline,
-                                                            final int pPageCount,
-                                                            final int pPageSize,
-                                                            final Observable<TimeGap> pTimeGaps)
+    public Observable<TweetPageResponse> findTweetsIM(final Timeline pTimeline,
+                                                      final TimeGap pTimeGap,
+                                                      final int pPageCount,
+                                                      final int pPageSize)
+    {
+        FeedbackFunc<TimeGap, TweetPageResponse> lMergeFeedback = new FeedbackFunc<TimeGap, TweetPageResponse>() {
+            public Observable<TimeGap> call(Observable<TimeGap> pInitialGap, Observable<TweetPageResponse> pTweetPageResponses) {
+
+                return combineLatest(pInitialGap, pTweetPageResponses, new Func2<TimeGap, TweetPageResponse, TimeGap>() {
+                    public TimeGap call(TimeGap pInitialURL, TweetPageResponse pTweetPageResponse) {
+                        TimeGap lNextGap = pTimeGap;
+                        if (pTweetPageResponse != null) {
+                            TweetPage lTweetPage = pTweetPageResponse.tweetPage();
+                            if (!lTweetPage.isFull()) return null;
+                            else lNextGap = pTimeGap.remainingGap(lTweetPage.timeRange());
+                        }
+                        return lNextGap;
+                    }
+                }).takeWhile(Rxt.notNullValue());
+            }
+        };
+
+        return feedback(pPageCount, lMergeFeedback, new FeedbackOutput<TimeGap, TweetPageResponse>() {
+            public Observable<TweetPageResponse> call(Observable<TimeGap> pTimeGaps) {
+                Observable<TweetPageResponse> fromDatabase = findTweetsInCache(pTimeline, pPageSize, pTimeGaps);
+                Observable<TweetPageResponse> fromRemote = cacheTweets(mRemoteRepository.findTweetsIM(pTimeline,
+                                                                                                      pPageSize,
+                                                                                                      pTimeGaps));
+                return Observable.concat(fromDatabase, fromRemote);
+            }
+        });
+    }
+
+    public Observable<TweetPageResponse> findTweetsInCache(final Timeline pTimeline,
+                                                           final int pPageSize,
+                                                           final Observable<TimeGap> pTimeGaps)
     {
         return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-                return pTimeGaps.subscribe(new Observer<TimeGap>() {
+                return pTimeGaps.observeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Observer<TimeGap>() {
                     public void onNext(TimeGap pTimeGap) {
                         TweetDTO[] lTweets = mTweetDAO.find()
                                                       .withTweets()
@@ -115,12 +147,12 @@ public class TweetDatabaseRepository implements TweetRepository {
                         TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
                         TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, pTimeGap);
                         int lTweetCount = lTweets.length;
-                        if (lTweetCount > 0) {
-                            pObserver.onNext(lTweetPageResponse);
-                        }
-                        if (lTweetCount < DEFAULT_PAGE_SIZE) {
-                            pObserver.onCompleted();
-                        }
+                        // if (lTweetCount > 0) {
+                        pObserver.onNext(lTweetPageResponse);
+                        // }
+                        // if (lTweetCount < DEFAULT_PAGE_SIZE) {
+                        // pObserver.onCompleted();
+                        // }
                     }
 
                     public void onCompleted() {
@@ -132,7 +164,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                     }
                 });
             }
-        }).subscribeOn(AndroidScheduler.threadPoolForDatabase());
+        });
     }
 
     private Observable<TweetPageResponse> findTweetsFromRemote(final Timeline pTimeline,
@@ -279,7 +311,9 @@ public class TweetDatabaseRepository implements TweetRepository {
             }
 
             public void onCompleted() {
-                mTimeGapDAO.delete(pTweetPageResponse.initialGap()); // TODO Bug here? Done after transaction?
+                if (pTweetPageResponse.initialGap() != null) { // TODO REMOVE
+                    mTimeGapDAO.delete(pTweetPageResponse.initialGap()); // TODO Bug
+                }
                 TimeGap lRemainingTimeGap = pTweetPageResponse.remainingGap();
                 if (lRemainingTimeGap != null) {
                     mTimeGapDAO.create(lRemainingTimeGap);

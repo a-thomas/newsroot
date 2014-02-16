@@ -1,5 +1,6 @@
 package com.codexperiments.newsroot.test.server;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.any;
 import static org.mockito.Matchers.argThat;
 
@@ -12,19 +13,35 @@ import org.simpleframework.http.Query;
 import org.simpleframework.http.Request;
 
 public class MockServerMatchers {
-    public static RequestUrlMatcher hasUrl(String pValue) {
-        return new RequestUrlMatcher(pValue);
+    public static Request hasUrl(String pValue) {
+        return argThat(new RequestUrlMatcher(pValue));
     }
 
-    public static RequestHasParamMatcher hasQueryParam(String pParam) {
+    public static Request hasUrl(String pValue, Matcher<Request> pParameter1) {
+        return argThat(allOf(new RequestUrlMatcher(pValue), pParameter1));
+    }
+
+    public static Request hasUrl(String pValue, Matcher<Request> pParameter1, Matcher<Request> pParameter2) {
+        return argThat(allOf(new RequestUrlMatcher(pValue), pParameter1, pParameter2));
+    }
+
+    public static Request hasUrl(String pValue,
+                                 Matcher<Request> pParameter1,
+                                 Matcher<Request> pParameter2,
+                                 Matcher<Request> pParameter3)
+    {
+        return argThat(allOf(new RequestUrlMatcher(pValue), pParameter1, pParameter2, pParameter3));
+    }
+
+    public static RequestHasParamMatcher hasParam(String pParam) {
         return new RequestHasParamMatcher(pParam);
     }
 
-    public static RequestParamMatcher hasQueryParam(String pParam, String pValue) {
+    public static RequestParamMatcher hasParam(String pParam, String pValue) {
         return new RequestParamMatcher(pParam, pValue);
     }
 
-    public static RequestParamMatcher hasQueryParam(String pParam, long pValue) {
+    public static RequestParamMatcher hasParam(String pParam, long pValue) {
         return new RequestParamMatcher(pParam, Long.toString(pValue));
     }
 

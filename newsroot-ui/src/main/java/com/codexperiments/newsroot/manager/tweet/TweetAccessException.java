@@ -1,6 +1,8 @@
 package com.codexperiments.newsroot.manager.tweet;
 
-public class TweetAccessException extends Exception {
+import java.io.IOException;
+
+public class TweetAccessException extends IOException {
     private static final long serialVersionUID = 9102531134652767782L;
 
     protected TweetAccessException(Throwable pThrowable) {

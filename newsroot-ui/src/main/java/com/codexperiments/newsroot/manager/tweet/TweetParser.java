@@ -2,23 +2,16 @@ package com.codexperiments.newsroot.manager.tweet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
-import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -33,51 +26,66 @@ public class TweetParser {
         TResult parse(JsonParser pParser) throws Exception;
     }
 
-    public TweetParser(Context pContext) {
+    public TweetParser() {
         super();
         mJSONFactory = new JsonFactory();
         mDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss z yyyy").withZone(DateTimeZone.UTC);
     }
 
-    public TweetPage parseTweetPage(final TimeGap pTimeGap, final int pPageSize, InputStream lInputStream)
-        throws TweetAccessException
-    {
+    //
+    // public TweetPage parseTweetPage(final int pPageSize, InputStream lInputStream) throws TweetAccessException {
+    // JsonParser lParser = null;
+    // try {
+    // lParser = mJSONFactory.createParser(lInputStream);
+    // ParserHandler<TweetPage> lParserHandler = new ParserHandler<TweetPage>() {
+    // public TweetPage parse(JsonParser pParser) throws Exception {
+    // return parseTweetPage(pPageSize, pParser);
+    // }
+    // };
+    // return lParserHandler.parse(lParser);
+    // } catch (MalformedURLException eMalformedURLException) {
+    // throw TweetAccessException.from(eMalformedURLException);
+    // } catch (IOException eIOException) {
+    // throw TweetAccessException.from(eIOException);
+    // } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
+    // throw TweetAccessException.from(eOAuthMessageSignerException);
+    // } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
+    // throw TweetAccessException.from(eOAuthExpectationFailedException);
+    // } catch (OAuthCommunicationException eOAuthCommunicationException) {
+    // throw TweetAccessException.from(eOAuthCommunicationException);
+    // } catch (Exception eException) {
+    // throw TweetAccessException.from(eException);
+    // } finally {
+    // try {
+    // if (lParser != null) lParser.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // try {
+    // if (lInputStream != null) lInputStream.close();
+    // } catch (IOException eIOException) {
+    // eIOException.printStackTrace();
+    // }
+    // }
+    // }
+
+    public TweetPage parseTweetPage(int pPageSize, InputStream lInputStream) throws TweetAccessException {
         JsonParser lParser = null;
         try {
             lParser = mJSONFactory.createParser(lInputStream);
-            ParserHandler<TweetPage> lParserHandler = new ParserHandler<TweetPage>() {
-                public TweetPage parse(JsonParser pParser) throws Exception {
-                    return parseTweetPage(pTimeGap, pPageSize, pParser);
-                }
-            };
-            return lParserHandler.parse(lParser);
-        } catch (MalformedURLException eMalformedURLException) {
-            throw TweetAccessException.from(eMalformedURLException);
+            return parseTweetPage(pPageSize, lParser);
         } catch (IOException eIOException) {
             throw TweetAccessException.from(eIOException);
-        } catch (OAuthMessageSignerException eOAuthMessageSignerException) {
-            throw TweetAccessException.from(eOAuthMessageSignerException);
-        } catch (OAuthExpectationFailedException eOAuthExpectationFailedException) {
-            throw TweetAccessException.from(eOAuthExpectationFailedException);
-        } catch (OAuthCommunicationException eOAuthCommunicationException) {
-            throw TweetAccessException.from(eOAuthCommunicationException);
-        } catch (Exception eException) {
-            throw TweetAccessException.from(eException);
         } finally {
             try {
                 if (lParser != null) lParser.close();
             } catch (IOException eIOException) {
                 eIOException.printStackTrace();
             }
-            try {
-                if (lInputStream != null) lInputStream.close();
-            } catch (IOException eIOException) {
-                eIOException.printStackTrace();
-            }
         }
     }
 
-    private TweetPage parseTweetPage(TimeGap pTimeGap, int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
+    private TweetPage parseTweetPage(int pPageSize, JsonParser pParser) throws JsonParseException, IOException {
         if (pParser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
         List<TweetDTO> lTweets = new ArrayList<TweetDTO>(pPageSize);
 

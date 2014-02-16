@@ -1,5 +1,6 @@
 package com.codexperiments.newsroot.test.data;
 
+import static com.codexperiments.newsroot.test.data.TweetPageData.PAGE_SIZE;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnComplete;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnError;
 import static com.codexperiments.newsroot.test.helper.RxTest.scheduleOnNext;
@@ -12,7 +13,7 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.concurrency.TestScheduler;
+import rx.schedulers.TestScheduler;
 import rx.subscriptions.Subscriptions;
 import android.content.Context;
 import android.util.Log;
@@ -60,8 +61,7 @@ public class TweetPageResponseData {
         InputStream lAssetStream = null;
         try {
             lAssetStream = pContext.getAssets().open(pAssetPath);
-            TweetParser lParser = new TweetParser(pContext);
-            TweetPage lTweetPage = lParser.parseTweetPage(pTimeGap, TweetPageData.PAGE_SIZE, lAssetStream);
+            TweetPage lTweetPage = new TweetParser().parseTweetPage(PAGE_SIZE, lAssetStream);
             return new TweetPageResponse(lTweetPage, pTimeGap);
         } finally {
             try {

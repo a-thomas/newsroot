@@ -25,37 +25,22 @@ import com.codexperiments.rx.AndroidScheduler;
 import com.codexperiments.rx.Rxt;
 
 public class TweetDatabaseRepository implements TweetRepository {
-    private static final Func1<TweetPageResponse, Boolean> PAGE_FULL = new Func1<TweetPageResponse, Boolean>() {
-        public Boolean call(TweetPageResponse pTweetPageResponse) {
-            return pTweetPageResponse != null && pTweetPageResponse.tweetPage().isFull();
-        }
-    };
-    private static final Func1<TweetPageResponse, Boolean> EMPTY_PAGES = new Func1<TweetPageResponse, Boolean>() {
-        public Boolean call(TweetPageResponse pTweetPageResponse) {
-            return pTweetPageResponse != null && !pTweetPageResponse.tweetPage().isEmpty();
-        }
-    };
-
     private TweetRemoteRepository mRemoteRepository;
     private TweetDatabase mDatabase;
-    // private Map<Timeline, Boolean> mHasMore; // TODO Concurrency
     private Map<String, Timeline> mTimelines;
 
-    @Inject TweetDAO mTweetDAO;
+    private TweetDAO mTweetDAO;
     private TimeGapDAO mTimeGapDAO;
 
-    // private ViewTimelineDAO mViewTimelineDAO;
-
+    @Inject
     public TweetDatabaseRepository(TweetDatabase pDatabase, TweetDAO pTweetDAO, TweetRemoteRepository pRemoteRepository) {
         super();
         mRemoteRepository = pRemoteRepository;
         mDatabase = pDatabase;
-        // mHasMore = new ConcurrentHashMap<Timeline, Boolean>(64);
         mTimelines = new HashMap<String, Timeline>();
 
         mTweetDAO = pTweetDAO;
         mTimeGapDAO = new TimeGapDAO(mDatabase);
-        // mViewTimelineDAO = new ViewTimelineDAO(mDatabase);
 
         mDatabase.recreate();
     }
@@ -82,10 +67,10 @@ public class TweetDatabaseRepository implements TweetRepository {
                 final BehaviorSubject<TimeGap> lTimeGaps = BehaviorSubject.create(pTimeGap);
 
                 Observable<TweetPageResponse> lFromDatabase = findTweetsInCache(pTimeline, pPageSize, lTimeGaps);
-                lFromDatabase = Rxt.takeWhileInclusive(lFromDatabase, PAGE_FULL).filter(EMPTY_PAGES);
+                lFromDatabase = Rxt.takeWhileInclusive(lFromDatabase, PAGE_FULL).filter(PAGE_NOT_EMPTY);
 
                 Observable<TweetPageResponse> lFromRepo = cacheTweets(mRemoteRepository.findTweets(null, pPageSize, lTimeGaps));
-                lFromRepo = Rxt.takeWhileInclusive(lFromRepo, PAGE_FULL).filter(EMPTY_PAGES);
+                lFromRepo = Rxt.takeWhileInclusive(lFromRepo, PAGE_FULL).filter(PAGE_NOT_EMPTY);
 
                 return Observable.concat(lFromDatabase, lFromRepo) //
                                  .take(pPageCount)
@@ -176,4 +161,15 @@ public class TweetDatabaseRepository implements TweetRepository {
             }
         };
     }
+
+    private static final Func1<TweetPageResponse, Boolean> PAGE_FULL = new Func1<TweetPageResponse, Boolean>() {
+        public Boolean call(TweetPageResponse pTweetPageResponse) {
+            return pTweetPageResponse != null && pTweetPageResponse.tweetPage().isFull();
+        }
+    };
+    private static final Func1<TweetPageResponse, Boolean> PAGE_NOT_EMPTY = new Func1<TweetPageResponse, Boolean>() {
+        public Boolean call(TweetPageResponse pTweetPageResponse) {
+            return pTweetPageResponse != null && !pTweetPageResponse.tweetPage().isEmpty();
+        }
+    };
 }

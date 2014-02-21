@@ -92,7 +92,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                 return pTimeGaps.observeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Observer<TimeGap>() {
                     public void onNext(TimeGap pTimeGap) {
                         TweetDTO[] lTweets = mTweetDAO.find()
-                                                      .withTweets()
+                                                      .selectTweets()
                                                       .byTimeGap(pTimeGap)
                                                       .limitTo(DEFAULT_PAGE_SIZE)
                                                       .asArray();

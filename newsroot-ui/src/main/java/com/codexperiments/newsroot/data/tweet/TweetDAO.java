@@ -83,7 +83,7 @@ public class TweetDAO {
             return this;
         }
 
-        public QueryTweet withTweets() {
+        public QueryTweet selectTweets() {
             mTweetHandler = new TweetHandler();
             mQuery.selectAll(DB_TWEET.TWT_TWEET);
             return this;

@@ -68,7 +68,7 @@ public class TweetDatabase extends Database {
     public void onCreate(SQLiteDatabase pDatabase) {
         super.onCreate(pDatabase);
         try {
-            executeAssetScript("sql/twitter_create.sql");
+            executeScriptFromAssets("sql/twitter_create.sql");
             // executeAssetScript("sql/ctx_timeline_01.sql");
             // executeAssetScript("sql/ctx_timeline_02.sql");
             // executeAssetScript("sql/ctx_timeline_03.sql");
@@ -85,7 +85,7 @@ public class TweetDatabase extends Database {
     public void onDestroy(SQLiteDatabase pDatabase) {
         super.onDestroy(pDatabase);
         try {
-            executeAssetScript("sql/twitter_drop.sql");
+            executeScriptFromAssets("sql/twitter_drop.sql");
         } catch (IOException eIOException) {
             // TODO Exception handling
             throw new RuntimeException(eIOException);

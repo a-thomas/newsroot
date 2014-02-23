@@ -125,7 +125,7 @@ public class Query<TTable extends Enum<?> & Table> {
         return this;
     }
 
-    String toQuery() {
+    public String toQuery() {
         StringBuilder lQuery = new StringBuilder();
         lQuery.append(mSelect).append(mFrom).append(mWhere);
         if (mOrderBy.length() > 0) {
@@ -142,7 +142,7 @@ public class Query<TTable extends Enum<?> & Table> {
         return lQuery.toString();
     }
 
-    String[] toParams() {
+    public String[] toParams() {
         return mParams.toArray(new String[mParams.size()]);
     }
 }

@@ -1,5 +1,10 @@
 package com.codexperiments.newsroot.repository.tweet;
 
+import static com.codexperiments.rx.RxAndroid.asArray;
+import static com.codexperiments.rx.RxAndroid.beginTransaction;
+import static com.codexperiments.rx.RxAndroid.endTransaction;
+import static com.codexperiments.rx.RxAndroid.select;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,15 +18,19 @@ import rx.subjects.BehaviorSubject;
 import rx.util.functions.Action1;
 import rx.util.functions.Func0;
 import rx.util.functions.Func1;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.codexperiments.newsroot.common.data.Query;
 import com.codexperiments.newsroot.data.tweet.TimeGapDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDAO;
 import com.codexperiments.newsroot.data.tweet.TweetDTO;
 import com.codexperiments.newsroot.data.tweet.TweetDatabase;
+import com.codexperiments.newsroot.data.tweet.TweetDatabase.DB_TWEET;
+import com.codexperiments.newsroot.data.tweet.TweetHandler;
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
 import com.codexperiments.newsroot.domain.tweet.Timeline;
 import com.codexperiments.newsroot.domain.tweet.TweetPage;
-import com.codexperiments.rx.AndroidScheduler;
 import com.codexperiments.rx.Rxt;
 
 public class TweetDatabaseRepository implements TweetRepository {
@@ -87,34 +96,50 @@ public class TweetDatabaseRepository implements TweetRepository {
                                                            final int pPageSize,
                                                            final Observable<TimeGap> pTimeGaps)
     {
-        return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
-            public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
-                return pTimeGaps.observeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Observer<TimeGap>() {
-                    public void onNext(TimeGap pTimeGap) {
-                        TweetDTO[] lTweets = mTweetDAO.find()
-                                                      .selectTweets()
-                                                      .byTimeGap(pTimeGap)
-                                                      .limitTo(DEFAULT_PAGE_SIZE)
-                                                      .asArray();
-                        TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
-                        TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, pTimeGap);
-                        pObserver.onNext(lTweetPageResponse);
-                    }
-
-                    public void onCompleted() {
-                        pObserver.onCompleted();
-                    }
-
-                    public void onError(Throwable pThrowable) {
-                        pObserver.onError(pThrowable);
-                    }
-                });
+        pTimeGaps.map(new Func1<TimeGap, Query<DB_TWEET>>() {
+            public Query<DB_TWEET> call(TimeGap pTimeGap) {
+                return mTweetDAO.find().selectTweets().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asQuery();
             }
         });
+        Observable<Cursor> lSelectCursor = select(mDatabase.getConnection(), pTimeGaps.map(new Func1<TimeGap, Query<DB_TWEET>>() {
+            public Query<DB_TWEET> call(TimeGap pTimeGap) {
+                return mTweetDAO.find().selectTweets().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asQuery();
+            }
+        }));
+        return asArray(lSelectCursor, new TweetHandler()).map(new Func1<TweetDTO[], TweetPageResponse>() {
+            public TweetPageResponse call(TweetDTO[] pTweets) {
+                return new TweetPageResponse(new TweetPage(pTweets, DEFAULT_PAGE_SIZE), null);
+            }
+        });
+        // return Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
+        // public Subscription onSubscribe(final Observer<? super TweetPageResponse> pObserver) {
+        // return pTimeGaps.observeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Observer<TimeGap>() {
+        // public void onNext(TimeGap pTimeGap) {
+        // TweetDTO[] lTweets = mTweetDAO.find()
+        // .selectTweets()
+        // .byTimeGap(pTimeGap)
+        // .limitTo(DEFAULT_PAGE_SIZE)
+        // .asArray();
+        // TweetPage lTweetPage = new TweetPage(lTweets, DEFAULT_PAGE_SIZE);
+        // TweetPageResponse lTweetPageResponse = new TweetPageResponse(lTweetPage, pTimeGap);
+        // pObserver.onNext(lTweetPageResponse);
+        // }
+        //
+        // public void onCompleted() {
+        // pObserver.onCompleted();
+        // }
+        //
+        // public void onError(Throwable pThrowable) {
+        // pObserver.onError(pThrowable);
+        // }
+        // });
+        // }
+        // });
     }
 
     private Observable<TweetPageResponse> cacheTweets(Observable<TweetPageResponse> pTweetPages) {
-        final Observable<TweetPageResponse> lTweetPagesTransaction = mDatabase.beginTransaction(pTweetPages);
+        SQLiteDatabase lConnection = mDatabase.getWritableDatabase();
+        final Observable<TweetPageResponse> lTweetPagesTransaction = beginTransaction(lConnection, pTweetPages);
 
         final Observable<TweetPageResponse> lCachedTweetPages = Observable.create(new OnSubscribeFunc<TweetPageResponse>() {
             public Subscription onSubscribe(final Observer<? super TweetPageResponse> pPageObserver) {
@@ -134,7 +159,7 @@ public class TweetDatabaseRepository implements TweetRepository {
                 });
             }
         });
-        return mDatabase.endTransaction(lCachedTweetPages);
+        return endTransaction(lConnection, lCachedTweetPages);
     }
 
     private Observer<TweetDTO> cacheTweetsObserver(final TweetPageResponse pTweetPageResponse,

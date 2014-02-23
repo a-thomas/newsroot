@@ -5,20 +5,13 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observable.OnSubscribeFunc;
-import rx.Observer;
-import rx.Subscription;
-import rx.util.functions.Action1;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.codexperiments.rx.AndroidScheduler;
 import com.google.common.collect.Lists;
 
 public abstract class Database extends SQLiteOpenHelper {
@@ -56,125 +49,16 @@ public abstract class Database extends SQLiteOpenHelper {
         onCreate(getWritableDatabase());
     }
 
-    public <T> Observable<T> doInTransaction(final Observable<T> pObservable, final Action1<T> pObservableAction) {
-        return doInTransaction(pObservable, pObservableAction, null);
-    }
-
-    public <T> Observable<T> doInTransaction(final Observable<T> pObservable,
-                                             final Action1<T> pObservableAction,
-                                             final Action1<List<T>> pObservableBatchAction)
-    {
-        return Observable.create(new OnSubscribeFunc<T>() {
-            public Subscription onSubscribe(final Observer<? super T> pObserver) {
-                return pObservable.buffer(Integer.MAX_VALUE)
-                                  .observeOn(AndroidScheduler.threadPoolForDatabase())
-                                  .subscribe(new Observer<List<T>>() {
-                                      public void onNext(List<T> pValues) {
-                                          mConnection.beginTransaction();
-                                          try {
-                                              for (T lValue : pValues) {
-                                                  pObservableAction.call(lValue);
-                                              }
-                                              if (pObservableBatchAction != null) {
-                                                  pObservableBatchAction.call(pValues);
-                                              }
-                                              mConnection.setTransactionSuccessful();
-                                              mConnection.endTransaction();
-
-                                              // Once data is committed, push data further into the pipeline.
-                                              for (T value : pValues) {
-                                                  pObserver.onNext(value);
-                                              }
-                                          } catch (SQLException eSQLException) {
-                                              mConnection.endTransaction();
-                                              pObserver.onError(eSQLException);
-                                              throw eSQLException;
-                                          }
-                                      }
-
-                                      public void onCompleted() {
-                                          pObserver.onCompleted();
-                                      }
-
-                                      public void onError(Throwable pThrowable) {
-                                          pObserver.onError(pThrowable);
-                                      }
-                                  });
-            }
-        });
-    }
-
-    public <T> Observable<T> beginTransaction(final Observable<T> pObservable) {
-        return Observable.create(new OnSubscribeFunc<T>() {
-            public Subscription onSubscribe(final Observer<? super T> pObserver) {
-                return pObservable.observeOn(AndroidScheduler.threadPoolForDatabase()).subscribe(new Observer<T>() {
-                    public void onNext(T pValue) {
-                        try {
-                            mConnection.beginTransaction();
-                            pObserver.onNext(pValue);
-                        } catch (SQLException eSQLException) {
-                            pObserver.onError(eSQLException);
-                        }
-                    }
-
-                    public void onCompleted() {
-                        pObserver.onCompleted();
-                    }
-
-                    public void onError(Throwable pThrowable) {
-                        Log.e(getClass().getSimpleName(), "Ending transaction", pThrowable);
-                        pObserver.onError(pThrowable);
-                    }
-                });
-            }
-        });
-    }
-
-    public <T> Observable<T> endTransaction(final Observable<T> pObservable) {
-        return Observable.create(new OnSubscribeFunc<T>() {
-            public Subscription onSubscribe(final Observer<? super T> pObserver) {
-                return pObservable.subscribe(new Observer<T>() {
-                    public void onNext(T pValue) {
-                        try {
-                            mConnection.setTransactionSuccessful();
-                            mConnection.endTransaction();
-                            pObserver.onNext(pValue);
-                        } catch (SQLException eSQLException) {
-                            pObserver.onError(eSQLException);
-                        }
-                    }
-
-                    public void onCompleted() {
-                        pObserver.onCompleted();
-                    }
-
-                    public void onError(Throwable pThrowable) {
-                        Log.e(getClass().getSimpleName(), "Ending transaction", pThrowable);
-                        if (mConnection.inTransaction()) {
-                            mConnection.endTransaction();
-                        }
-                        pObserver.onError(pThrowable);
-                    }
-                });
-            }
-        });
-    }
-
-    public Cursor execute(Query pQuery) {
-        return mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
-    }
-
-    public Database executeAssetScript(String pAssetPath) throws IOException {
-        executeAssetScript(pAssetPath, mContext);
+    public Database executeScriptFromAssets(String pAssetPath) throws IOException {
+        executeScriptFromAssets(pAssetPath, mContext);
         return this;
     }
 
-    public Database executeAssetScript(String pAssetPath, Context pContext) throws IOException {
+    public Database executeScriptFromAssets(String pAssetPath, Context pContext) throws IOException {
         InputStream lAssetStream = null;
         mConnection.beginTransaction();
         try {
             lAssetStream = pContext.getAssets().open(pAssetPath);
-            // File can't be more than 2 Go...
             byte[] lScript = new byte[lAssetStream.available()];
             lAssetStream.read(lScript);
 
@@ -212,7 +96,7 @@ public abstract class Database extends SQLiteOpenHelper {
     }
 
     public <TEntity> void parse(Query pQuery, RowHandler pRowHandler) {
-        Cursor lCursor = execute(pQuery);
+        Cursor lCursor = mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
         try {
             int lResultSize = lCursor.getCount();
             for (int i = lResultSize; i < lResultSize; ++i) {
@@ -224,9 +108,13 @@ public abstract class Database extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor runQuery(Query pQuery) {
+        return mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
+    }
+
     @SuppressWarnings("unchecked")
     public <TEntity> TEntity[] parseArray(Query pQuery, ObjectHandler<TEntity> pObjectHandler) {
-        Cursor lCursor = execute(pQuery);
+        Cursor lCursor = mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
         try {
             int lResultSize = lCursor.getCount();
             pObjectHandler.initialize(lCursor);
@@ -242,7 +130,7 @@ public abstract class Database extends SQLiteOpenHelper {
     }
 
     public <TEntity> List<TEntity> parseList(Query pQuery, ObjectHandler<TEntity> pObjectHandler) {
-        Cursor lCursor = execute(pQuery);
+        Cursor lCursor = mConnection.rawQuery(pQuery.toQuery(), pQuery.toParams());
         try {
             int lResultSize = lCursor.getCount();
             List<TEntity> lEntity = Lists.newArrayListWithCapacity(lResultSize);

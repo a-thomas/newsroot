@@ -89,7 +89,7 @@ public class TweetDatabaseRepositoryTest extends TestCase {
     }
 
     public void testFindTweetsInCache_severalPages() throws Exception {
-        mDatabase.executeAssetScript("sql/ctx_timeline_02.sql");
+        mDatabase.executeScriptFromAssets("sql/ctx_timeline_02.sql");
 
         final TimeGap lTimeGap = TimeGap.initialTimeGap();
         final Timeline lTimeline = mTweetDatabaseRepository.findTimeline("Test");

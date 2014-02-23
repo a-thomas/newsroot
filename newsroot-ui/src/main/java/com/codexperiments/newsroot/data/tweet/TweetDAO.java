@@ -2,6 +2,8 @@ package com.codexperiments.newsroot.data.tweet;
 
 import java.util.List;
 
+import android.database.Cursor;
+
 import com.codexperiments.newsroot.common.data.Insert;
 import com.codexperiments.newsroot.common.data.Query;
 import com.codexperiments.newsroot.common.data.Update;
@@ -100,6 +102,14 @@ public class TweetDAO {
                   .whereLower(COL_TWT_TWEET.TWT_ID, pTimeGap.earliestBound());
             // }
             return this;
+        }
+
+        public Query<DB_TWEET> asQuery() {
+            return mQuery;
+        }
+
+        public Cursor asCursor() {
+            return mDatabase.runQuery(mQuery);
         }
 
         public TweetDTO[] asArray() {

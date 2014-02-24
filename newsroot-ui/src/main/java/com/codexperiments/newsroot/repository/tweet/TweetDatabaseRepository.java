@@ -137,6 +137,27 @@ public class TweetDatabaseRepository implements TweetRepository {
         // });
     }
 
+    public Observable<TweetPageResponse> findTweetsInCache2(final Timeline pTimeline,
+                                                            final int pPageSize,
+                                                            final Observable<TimeGap> pTimeGaps)
+    {
+        pTimeGaps.map(new Func1<TimeGap, Query<DB_TWEET>>() {
+            public Query<DB_TWEET> call(TimeGap pTimeGap) {
+                return mTweetDAO.find().selectTweets().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asQuery();
+            }
+        });
+        Observable<Cursor> lSelectCursor = select(mDatabase.getConnection(), pTimeGaps.map(new Func1<TimeGap, Query<DB_TWEET>>() {
+            public Query<DB_TWEET> call(TimeGap pTimeGap) {
+                return mTweetDAO.find().selectTweets().byTimeGap(pTimeGap).limitTo(DEFAULT_PAGE_SIZE).asQuery();
+            }
+        }));
+        return asArray(lSelectCursor, new TweetHandler()).map(new Func1<TweetDTO[], TweetPageResponse>() {
+            public TweetPageResponse call(TweetDTO[] pTweets) {
+                return new TweetPageResponse(new TweetPage(pTweets, DEFAULT_PAGE_SIZE), null);
+            }
+        });
+    }
+
     private Observable<TweetPageResponse> cacheTweets(Observable<TweetPageResponse> pTweetPages) {
         SQLiteDatabase lConnection = mDatabase.getWritableDatabase();
         final Observable<TweetPageResponse> lTweetPagesTransaction = beginTransaction(lConnection, pTweetPages);

@@ -9,9 +9,6 @@ import android.app.Application;
 import com.codexperiments.newsroot.common.event.AndroidEventBus;
 import com.codexperiments.newsroot.common.platform.PlatformModule;
 import com.codexperiments.newsroot.ui.NewsRootModule;
-import com.codexperiments.robolabor.task.android.AndroidTaskManager;
-import com.codexperiments.robolabor.task.android.AndroidTaskManagerConfig;
-import com.codexperiments.robolabor.task.handler.Task;
 
 import dagger.ObjectGraph;
 
@@ -71,15 +68,15 @@ public abstract class BaseApplication extends Application {
                                            new NewsRootModule(this));
         // objectGraph.get(WebViewPlatform.class);
         registerService(new AndroidEventBus());
-        registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
-            @Override
-            public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
-                // if (pTask) {
-                return true;
-                // }
-                // return super.keepResultOnHold(pTask);
-            }
-        }));
+        // registerService(new AndroidTaskManager(this, new AndroidTaskManagerConfig(this) {
+        // @Override
+        // public boolean keepResultOnHold(Task<?, ?, ?> pTask) {
+        // // if (pTask) {
+        // return true;
+        // // }
+        // // return super.keepResultOnHold(pTask);
+        // }
+        // }));
     }
 
     // @Override

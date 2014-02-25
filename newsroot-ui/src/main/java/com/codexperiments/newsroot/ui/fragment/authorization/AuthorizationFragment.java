@@ -20,13 +20,12 @@ import com.codexperiments.newsroot.common.event.EventBus;
 import com.codexperiments.newsroot.common.platform.webview.WebViewPlatform;
 import com.codexperiments.newsroot.manager.tweet.TweetAuthorizationCallback;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
-import com.codexperiments.robolabor.task.TaskManager;
 
 public class AuthorizationFragment extends BaseFragment {
     private static final String BUNDLE_REDIRECTION = "redirection";
 
     private EventBus mEventBus;
-    private TaskManager mTaskManager;
+    // private TaskManager mTaskManager;
     @Inject TweetManager mTweetManager;
 
     private TweetAuthorizationCallback mRedirection;
@@ -52,7 +51,7 @@ public class AuthorizationFragment extends BaseFragment {
         super.onCreateView(pInflater, pContainer, pBundle);
         mWebViewPlatform = BaseApplication.getServiceFrom(getActivity(), WebViewPlatform.class);
         mEventBus = BaseApplication.getServiceFrom(getActivity(), EventBus.class);
-        mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
+        // mTaskManager = BaseApplication.getServiceFrom(getActivity(), TaskManager.class);
         mTweetManager = BaseApplication.getServiceFrom(getActivity(), TweetManager.class);
 
         View lUIFragment = pInflater.inflate(R.layout.fragment_authorization, pContainer, false);
@@ -118,7 +117,7 @@ public class AuthorizationFragment extends BaseFragment {
 
     @Override
     public void onStart() {
-        mTaskManager.manage(this);
+        // mTaskManager.manage(this);
         if (mRedirection == null) {
             mEventBus.registerListener(this);
             mUIWebView.loadUrl("file:///android_asset/twitter_authorize.html");
@@ -133,7 +132,7 @@ public class AuthorizationFragment extends BaseFragment {
         super.onStop();
         mUIDialog.dismiss();
         mEventBus.unregisterListener(this);
-        mTaskManager.unmanage(this);
+        // mTaskManager.unmanage(this);
         mUIWebView.setWebViewClient(new WebViewClient());
         mWebViewPlatform.stopWebView(mUIWebView);
     }

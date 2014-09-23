@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">News Root</string>
     <string name="app_code">newsroot</string>
-    <string name="version">1.0</string>
+    <string name="version">0.1-SNAPSHOT</string>
 </resources>

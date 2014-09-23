@@ -1,49 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.codexperiments.newsroot"
-    android:versionCode="1"
-    android:versionName="0.1-SNAPSHOT" >
+          package="com.codexperiments.newsroot"
+          android:versionCode="1"
+          android:versionName="0.1-SNAPSHOT">
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+            android:minSdkVersion="8"
+            android:targetSdkVersion="19"/>
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:resizeable="true"
-        android:smallScreens="true" />
+            android:anyDensity="true"
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:resizeable="true"
+            android:smallScreens="true"/>
 
     <application
-        android:name="com.codexperiments.newsroot.ui.NewsRootApplication"
-        android:allowBackup="true"
-        android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light.NoTitleBar" >
-        <activity
-            android:name="com.codexperiments.newsroot.ui.activity.HomeActivity"
+            android:name=".NewsRootApplication"
+            android:allowBackup="true"
+            android:icon="@drawable/icon"
             android:label="@string/app_name"
-            android:launchMode="singleTask" >
+            android:theme="@android:style/Theme.Light.NoTitleBar">
+        <activity
+                android:name="com.codexperiments.newsroot.ui.activity.HomeActivity"
+                android:label="@string/app_name"
+                android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data
-                    android:host="newsroot-callback"
-                    android:scheme="oauth" />
+                <data android:host="newsroot-callback"
+                      android:scheme="oauth"/>
             </intent-filter>
         </activity>
     </application>

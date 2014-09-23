@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:and="http://schemas.android.com/apk/res/android">
-    <item and:state_pressed="true" and:drawable="@color/color2" />
-    <item and:state_focused="true" and:drawable="@color/color3" />
-    <item and:state_activated="true" and:drawable="@color/color4" />
-    <item and:state_checked="true" and:drawable="@color/color5" />
-    <item and:state_activated="true" and:state_checked="true" and:drawable="@color/color5" />
-    <item and:drawable="@color/color1" />
-</selector>

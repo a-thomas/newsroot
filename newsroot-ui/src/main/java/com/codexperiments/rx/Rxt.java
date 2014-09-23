@@ -1,16 +1,16 @@
 package com.codexperiments.rx;
 
+import android.util.Log;
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.operators.SafeObservableSubscription;
+import rx.functions.Func0;
+import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
-import rx.util.functions.Func0;
-import rx.util.functions.Func1;
-import rx.util.functions.Func2;
-import android.util.Log;
+import rx.subscriptions.Subscriptions;
 
 public class Rxt {
     public static <TValue> Func1<TValue, Boolean> nullValue() {
@@ -56,8 +56,8 @@ public class Rxt {
     {
         // Since feedback loop uses a subject, need to defer creation to avoid side-effects between subscriptions.
         // It wouldn't be nice if each subscription fed back others.
-        return Observable.defer(new Func0<Observable<? extends TOutput>>() {
-            public Observable<? extends TOutput> call() {
+        return Observable.defer(new Func0<Observable</*? extends */TOutput>>() {
+            public Observable</*? extends */TOutput> call() {
                 // Subject allows us to create the feedback loop. Limit the number of possible feedback loops if needed (C).
                 final Subject<TOutput, TOutput> lFeedbackSubject = BehaviorSubject.create((TOutput) null);
                 final Observable<TOutput> lFeedback = /*
@@ -91,6 +91,11 @@ public class Rxt {
                             public void unsubscribe() {
                                 lInnerSubscription.unsubscribe();
                             }
+
+                            @Override
+                            public boolean isUnsubscribed() {
+                                return lInnerSubscription.isUnsubscribed();
+                            }
                         };
                     }
                 });
@@ -122,24 +127,24 @@ public class Rxt {
     public static <TValue> Observable<TValue> takeWhileInclusive(final Observable<TValue> pValues, final Func1<TValue, Boolean> pPredicate) {
         return Observable.create(new OnSubscribeFunc<TValue>() {
             public Subscription onSubscribe(final Observer<? super TValue> pObserver) {
-                final SafeObservableSubscription subscription = new SafeObservableSubscription();
-                return subscription.wrap(pValues.subscribe(new Observer<TValue>() {
-                    public void onNext(TValue pValue) {
-                        pObserver.onNext(pValue);
-                        if (pPredicate.call(pValue) == Boolean.FALSE) {
-                            pObserver.onCompleted();
-                            subscription.unsubscribe();
-                        }
-                    }
-
-                    public void onCompleted() {
+//            final SafeObservableSubscription subscription = new SafeObservableSubscription();
+            return /*subscription.wrap(*/pValues.subscribe(new Observer<TValue>() {
+                public void onNext(TValue pValue) {
+                    pObserver.onNext(pValue);
+                    if (pPredicate.call(pValue) == Boolean.FALSE) {
                         pObserver.onCompleted();
+                        //subscription.unsubscribe();
                     }
+                }
 
-                    public void onError(Throwable pThrowable) {
-                        pObserver.onError(pThrowable);
-                    }
-                }));
+                public void onCompleted() {
+                    pObserver.onCompleted();
+                }
+
+                public void onError(Throwable pThrowable) {
+                    pObserver.onError(pThrowable);
+                }
+            });//);
             }
         });
     }

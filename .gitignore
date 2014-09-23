@@ -1,3 +1,7 @@
+# Intelij
+.idea
+*.iml
+
 # Eclipse
 .metadata/
 .classpath

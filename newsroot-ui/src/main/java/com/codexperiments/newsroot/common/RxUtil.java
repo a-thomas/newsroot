@@ -1,7 +1,7 @@
 package com.codexperiments.newsroot.common;
 
 import rx.Observable;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 public class RxUtil {
     public static <T, R> Observable<R> downcast(Observable<T> pObservable) {

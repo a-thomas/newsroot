@@ -3,8 +3,8 @@ package com.codexperiments.newsroot.common.rx;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Action1;
 import android.view.View.OnClickListener;
+import rx.functions.Action1;
 
 public interface RxOnClickEvent extends OnClickListener {
     public Observable<Void> toObservable();

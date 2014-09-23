@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.codexperiments.newsroot</groupId>
     <artifactId>newsroot-parent</artifactId>
+    <name>newsroot-parent</name>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>newsroot-parent</name>
 
     <modules>
         <module>newsroot-ui</module>
@@ -14,7 +15,7 @@
 
     <properties>
         <android.version>4.1.1.4</android.version>
-        <android.platform>16</android.platform>
+        <android.platform>19</android.platform>
         <maven.compiler.plugin>2.5.1</maven.compiler.plugin>
         <maven.android.plugin>3.6.1</maven.android.plugin>
     </properties>
@@ -59,11 +60,6 @@
                 <version>14.0.1</version>
             </dependency>
             <dependency>
-                <groupId>com.j256.ormlite</groupId>
-                <artifactId>ormlite-android</artifactId>
-                <version>4.45</version>
-            </dependency>
-            <dependency>
                 <groupId>com.jakewharton</groupId>
                 <artifactId>butterknife</artifactId>
                 <version>3.0.0</version>
@@ -71,8 +67,12 @@
             <dependency>
                 <groupId>com.netflix.rxjava</groupId>
                 <artifactId>rxjava-core</artifactId>
-                <version>0.16.1</version>
-                <scope>compile</scope>
+                <version>0.20.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.netflix.rxjava</groupId>
+                <artifactId>rxjava-android</artifactId>
+                <version>0.20.4</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.dagger</groupId>
@@ -126,9 +126,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.plugin}</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                        <outputDirectory>bin/classes</outputDirectory>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -152,22 +151,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-<!--                 <version>${maven.compiler.plugin}</version> -->
-<!--                 <configuration> -->
-<!--                     <source>1.6</source> -->
-<!--                     <target>1.6</target> -->
-<!--                 </configuration> -->
             </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-<!--                 <version>${maven.android.plugin}</version> -->
-<!--                 <configuration> -->
-<!--                     <sdk> -->
-<!--                         <platform>${android.platform}</platform> -->
-<!--                     </sdk> -->
-<!--                 </configuration> -->
-<!--                 <extensions>true</extensions> -->
             </plugin>
         </plugins>
     </build>

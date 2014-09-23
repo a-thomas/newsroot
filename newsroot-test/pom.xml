@@ -41,18 +41,17 @@
             <groupId>com.google.dexmaker</groupId>
             <artifactId>dexmaker-mockito</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.netflix.rxjava</groupId>-->
+            <!--<artifactId>rxjava-core</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

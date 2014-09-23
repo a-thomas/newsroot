@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
-import rx.util.functions.Action2;
 import android.view.View;
 import android.widget.ListView;
+import rx.functions.Action2;
 
 public class CopyOfRxListProperty<TView extends View, TItem> implements Observer<Object> {
     private final ListView mListView;

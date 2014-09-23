@@ -1,10 +1,10 @@
 package com.codexperiments.newsroot.common.rx;
 
 import rx.Observer;
-import rx.util.functions.Action2;
-import rx.util.functions.Func1;
 import android.view.View;
 import android.widget.ListView;
+import rx.functions.Action2;
+import rx.functions.Func1;
 
 public class ListProperty<TItem, TInnerView> implements Observer<TItem> {
     private ListView mListView;

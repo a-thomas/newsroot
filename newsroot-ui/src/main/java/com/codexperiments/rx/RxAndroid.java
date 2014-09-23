@@ -7,8 +7,6 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Action1;
-import rx.util.functions.Func1;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +16,8 @@ import android.util.Log;
 import com.codexperiments.newsroot.common.data.ObjectHandler;
 import com.codexperiments.newsroot.common.data.Query;
 import com.codexperiments.newsroot.common.data.Table;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class RxAndroid {
     public static <TResult> Observable<TResult> from(Observable<TResult> pFindTweets, Fragment pFragment) {

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import rx.util.functions.Func1;
 import android.database.Cursor;
+import rx.functions.Func1;
 
 public class CursorList<TElement> implements List<TElement>, Closeable {
     private Cursor mCursor;

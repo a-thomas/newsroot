@@ -14,10 +14,10 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
+import rx.functions.Action1;
+import rx.functions.Func0;
+import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
-import rx.util.functions.Action1;
-import rx.util.functions.Func0;
-import rx.util.functions.Func1;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -71,8 +71,8 @@ public class TweetDatabaseRepository implements TweetRepository {
                                                     final int pPageCount,
                                                     final int pPageSize)
     {
-        return Observable.defer(new Func0<Observable<? extends TweetPageResponse>>() {
-            public Observable<? extends TweetPageResponse> call() {
+        return Observable.defer(new Func0<Observable</*? extends */TweetPageResponse>>() {
+            public Observable</*? extends */TweetPageResponse> call() {
                 final BehaviorSubject<TimeGap> lTimeGaps = BehaviorSubject.create(pTimeGap);
 
                 Observable<TweetPageResponse> lFromDatabase = findTweetsInCache(pTimeline, pPageSize, lTimeGaps);

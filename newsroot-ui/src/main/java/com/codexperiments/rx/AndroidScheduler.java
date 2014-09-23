@@ -12,28 +12,21 @@
  */
 package com.codexperiments.rx;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import android.os.Handler;
+import android.os.Looper;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
-
-import rx.Scheduler;
-import rx.Subscription;
-import rx.concurrency.Schedulers;
-import rx.subscriptions.Subscriptions;
-import rx.util.functions.Action0;
-import rx.util.functions.Func2;
-import android.os.Handler;
-import android.os.Looper;
 
 /**
  * Executes work on the Swing UI thread. This scheduler should only be used with actions that execute quickly.
  */
-public final class AndroidScheduler extends Scheduler {
+public final class AndroidScheduler /*extends Scheduler */{
     private static final AndroidScheduler sUIThread = new AndroidScheduler(new Handler(Looper.getMainLooper()));
     private static final ExecutorService sIOPool;
     private static final ExecutorService sDatabasePool;
@@ -69,115 +62,115 @@ public final class AndroidScheduler extends Scheduler {
         });
     }
 
-    public static AndroidScheduler threadForUI() {
-        return sUIThread;
+    public static Scheduler threadForUI() {
+        return AndroidSchedulers.mainThread();
     }
 
     public static Scheduler threadPoolForIO() {
-        return Schedulers.executor(sIOPool);
+        return Schedulers.from(sIOPool);
     }
 
     public static Scheduler threadPoolForDatabase() {
-        return Schedulers.executor(sDatabasePool);
+        return Schedulers.from(sDatabasePool);
     }
 
     private AndroidScheduler(Handler handler) {
         uiHandler = handler;
     }
-
-    @Override
-    public <T> Subscription schedule(final T state, final Func2<? super Scheduler, ? super T, ? extends Subscription> action) {
-        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
-        uiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                sub.set(action.call(AndroidScheduler.this, state));
-            }
-        });
-        return Subscriptions.create(new Action0() {
-            @Override
-            public void call() {
-                Subscription subscription = sub.get();
-                if (subscription != null) {
-                    subscription.unsubscribe();
-                }
-            }
-        });
-    }
-
-    @Override
-    public <T> Subscription schedule(final T state,
-                                     final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
-                                     long dueTime,
-                                     TimeUnit unit)
-    {
-        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
-        long delay = unit.toMillis(dueTime);
-        assertThatTheDelayIsValidForTheSwingTimer(delay);
-
-        final Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sub.set(action.call(AndroidScheduler.this, state));
-            }
-        }, dueTime);
-
-        return Subscriptions.create(new Action0() {
-            @Override
-            public void call() {
-                timer.cancel();
-                timer.purge();
-
-                Subscription subscription = sub.get();
-                if (subscription != null) {
-                    subscription.unsubscribe();
-                }
-            }
-        });
-    }
-
-    @Override
-    public <T> Subscription schedulePeriodically(final T state,
-                                                 final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
-                                                 long initialDelay,
-                                                 long period,
-                                                 TimeUnit unit)
-    {
-        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
-        long delay = unit.toMillis(initialDelay);
-        assertThatTheDelayIsValidForTheSwingTimer(delay);
-
-        final Timer timer = new Timer(true);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                action.call(AndroidScheduler.this, state);
-            }
-        }, initialDelay, initialDelay);
-
-        return Subscriptions.create(new Action0() {
-            @Override
-            public void call() {
-                timer.cancel();
-                timer.purge();
-
-                Subscription subscription = sub.get();
-                if (subscription != null) {
-                    subscription.unsubscribe();
-                }
-            }
-        });
-    }
-
-    private static void assertThatTheDelayIsValidForTheSwingTimer(long delay) {
-        if (delay < 0 || delay > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("The swing timer only accepts non-negative delays up to %d milliseconds.",
-                                                             Integer.MAX_VALUE));
-        }
-    }
-
-    public static Scheduler currentThread() {
-        return new AndroidScheduler(new Handler());
-    }
+//
+//    @Override
+//    public <T> Subscription schedule(final T state, final Func2<? super Scheduler, ? super T, ? extends Subscription> action) {
+//        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
+//        uiHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                sub.set(action.call(AndroidScheduler.this, state));
+//            }
+//        });
+//        return Subscriptions.create(new Action0() {
+//            @Override
+//            public void call() {
+//                Subscription subscription = sub.get();
+//                if (subscription != null) {
+//                    subscription.unsubscribe();
+//                }
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public <T> Subscription schedule(final T state,
+//                                     final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
+//                                     long dueTime,
+//                                     TimeUnit unit)
+//    {
+//        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
+//        long delay = unit.toMillis(dueTime);
+//        assertThatTheDelayIsValidForTheSwingTimer(delay);
+//
+//        final Timer timer = new Timer(true);
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                sub.set(action.call(AndroidScheduler.this, state));
+//            }
+//        }, dueTime);
+//
+//        return Subscriptions.create(new Action0() {
+//            @Override
+//            public void call() {
+//                timer.cancel();
+//                timer.purge();
+//
+//                Subscription subscription = sub.get();
+//                if (subscription != null) {
+//                    subscription.unsubscribe();
+//                }
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public <T> Subscription schedulePeriodically(final T state,
+//                                                 final Func2<? super Scheduler, ? super T, ? extends Subscription> action,
+//                                                 long initialDelay,
+//                                                 long period,
+//                                                 TimeUnit unit)
+//    {
+//        final AtomicReference<Subscription> sub = new AtomicReference<Subscription>();
+//        long delay = unit.toMillis(initialDelay);
+//        assertThatTheDelayIsValidForTheSwingTimer(delay);
+//
+//        final Timer timer = new Timer(true);
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                action.call(AndroidScheduler.this, state);
+//            }
+//        }, initialDelay, initialDelay);
+//
+//        return Subscriptions.create(new Action0() {
+//            @Override
+//            public void call() {
+//                timer.cancel();
+//                timer.purge();
+//
+//                Subscription subscription = sub.get();
+//                if (subscription != null) {
+//                    subscription.unsubscribe();
+//                }
+//            }
+//        });
+//    }
+//
+//    private static void assertThatTheDelayIsValidForTheSwingTimer(long delay) {
+//        if (delay < 0 || delay > Integer.MAX_VALUE) {
+//            throw new IllegalArgumentException(String.format("The swing timer only accepts non-negative delays up to %d milliseconds.",
+//                                                             Integer.MAX_VALUE));
+//        }
+//    }
+//
+//    public static Scheduler currentThread() {
+//        return new AndroidScheduler(new Handler());
+//    }
 }

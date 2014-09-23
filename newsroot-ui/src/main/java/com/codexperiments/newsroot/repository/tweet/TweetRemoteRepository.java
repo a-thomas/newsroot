@@ -11,7 +11,6 @@ import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Func1;
 import android.util.Log;
 
 import com.codexperiments.newsroot.domain.tweet.TimeGap;
@@ -20,6 +19,7 @@ import com.codexperiments.newsroot.domain.tweet.TweetPage;
 import com.codexperiments.newsroot.manager.tweet.TweetManager;
 import com.codexperiments.newsroot.manager.tweet.TweetParser;
 import com.codexperiments.newsroot.manager.tweet.TweetQuery;
+import rx.functions.Func1;
 
 public class TweetRemoteRepository {
     private TweetManager mTweetManager;

@@ -1,7 +1,6 @@
 package com.codexperiments.newsroot.test;
 
 import static org.mockito.Mockito.mock;
-import rx.concurrency.TestScheduler;
 import android.app.Application;
 import android.test.InstrumentationTestCase;
 
@@ -11,6 +10,7 @@ import com.codexperiments.newsroot.ui.NewsRootApplication;
 import com.codexperiments.newsroot.ui.NewsRootModule;
 
 import dagger.ObjectGraph;
+import rx.schedulers.TestScheduler;
 
 public abstract class TestCase extends InstrumentationTestCase {
     private NewsRootApplication mApplication;
@@ -22,6 +22,9 @@ public abstract class TestCase extends InstrumentationTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        // Patch for Mockito bug: https://code.google.com/p/dexmaker/issues/detail?id=2
+        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
 
         mApplication = (NewsRootApplication) getInstrumentation().getTargetContext().getApplicationContext();
         mServerHandler = mock(MockServerHandler.class);

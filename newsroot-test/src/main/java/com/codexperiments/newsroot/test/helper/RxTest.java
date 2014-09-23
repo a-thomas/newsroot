@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
+import rx.functions.Action0;
 import rx.schedulers.TestScheduler;
-import rx.util.functions.Action0;
 
 import com.codexperiments.rx.AndroidScheduler;
 import com.google.common.collect.Lists;
@@ -136,12 +136,14 @@ public class RxTest {
                                                final TValue pValue,
                                                int pDelay)
     {
-        pScheduler.schedule(new Action0() {
-            @Override
-            public void call() {
-                pObserver.onNext(pValue);
-            }
-        }, pDelay, TimeUnit.MILLISECONDS);
+        pScheduler.advanceTimeBy(pDelay, TimeUnit.MILLISECONDS);
+        pObserver.onNext(pValue);
+//        pScheduler.schedule(new Action0() {
+//            @Override
+//            public void call() {
+//                pObserver.onNext(pValue);
+//            }
+//        }, pDelay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -157,12 +159,14 @@ public class RxTest {
                                                                   final TError pThrowable,
                                                                   int pDelay)
     {
-        pScheduler.schedule(new Action0() {
-            @Override
-            public void call() {
-                pObserver.onError(pThrowable);
-            }
-        }, pDelay, TimeUnit.MILLISECONDS);
+        pScheduler.advanceTimeBy(pDelay, TimeUnit.MILLISECONDS);
+        pObserver.onError(pThrowable);
+//        pScheduler.schedule(new Action0() {
+//            @Override
+//            public void call() {
+//                pObserver.onError(pThrowable);
+//            }
+//        }, pDelay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -173,11 +177,13 @@ public class RxTest {
      * @param pDelay Delay to wait before sending command (absolute delay, i.e. not cumulative).
      */
     public static void scheduleOnComplete(TestScheduler pScheduler, final Observer<?> pObserver, int pDelay) {
-        pScheduler.schedule(new Action0() {
-            @Override
-            public void call() {
-                pObserver.onCompleted();
-            }
-        }, pDelay, TimeUnit.MILLISECONDS);
+        pScheduler.advanceTimeBy(pDelay, TimeUnit.MILLISECONDS);
+        pObserver.onCompleted();
+//        pScheduler.schedule(new Action0() {
+//            @Override
+//            public void call() {
+//                pObserver.onCompleted();
+//            }
+//        }, pDelay, TimeUnit.MILLISECONDS);
     }
 }

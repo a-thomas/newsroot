@@ -2,7 +2,6 @@ package com.codexperiments.newsroot.ui.fragment.newslist;
 
 import javax.inject.Inject;
 
-import rx.util.functions.Action1;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ import com.codexperiments.newsroot.repository.tweet.TweetDatabaseRepository;
 import com.codexperiments.newsroot.repository.tweet.TweetPageResponse;
 import com.codexperiments.newsroot.ui.fragment.newslist.NewsListFragmentAdapter.ItemFactory;
 import com.codexperiments.rx.RxAndroid;
+import rx.functions.Action1;
 
 public class NewsListFragment extends BaseFragment {
     private static final String ARG_SCREEN_NAME = "screenName";

@@ -1,8 +1,9 @@
 package com.codexperiments.newsroot.domain.entity;
 
-import com.codexperiments.newsroot.utils.ClassUtil;
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;
+
+import java.io.IOException;
 
 @JsonType
 public class User {
@@ -44,6 +45,10 @@ public class User {
 
     @Override
     public String toString() {
-        return ClassUtil.toString(this);
+        try {
+            return User__JsonHelper.serializeToJson(this);
+        } catch (IOException ioException) {
+            return ioException.getMessage();
+        }
     }
 }

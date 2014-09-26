@@ -1,8 +1,11 @@
 package com.codexperiments.newsroot.domain.entity;
 
-import com.codexperiments.newsroot.utils.ClassUtil;
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;
+
+import java.io.IOException;
+
+import static com.codexperiments.newsroot.data.remote.parser.TwitterParser.FORMAT_DATE_TO_LONG;
 
 @JsonType
 public class Tweet {
@@ -10,7 +13,7 @@ public class Tweet {
     long id;
     @JsonField(fieldName = "text")
     String text;
-    @JsonField(fieldName = "created_at")
+    @JsonField(fieldName = "created_at", valueExtractFormatter = FORMAT_DATE_TO_LONG)
     long createdAt;
     @JsonField(fieldName = "user")
     User user;
@@ -54,6 +57,10 @@ public class Tweet {
 
     @Override
     public String toString() {
-        return ClassUtil.toString(this);
+        try {
+            return Tweet__JsonHelper.serializeToJson(this);
+        } catch (IOException ioException) {
+            return ioException.getMessage();
+        }
     }
 }

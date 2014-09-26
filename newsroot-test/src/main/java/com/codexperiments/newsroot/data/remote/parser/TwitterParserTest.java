@@ -1,20 +1,34 @@
-package com.codexperiments.newsroot.data.local;
+package com.codexperiments.newsroot.data.remote.parser;
 
+import android.test.InstrumentationTestCase;
+import com.codexperiments.newsroot.data.remote.TweetRemoteRepository;
 import com.codexperiments.newsroot.domain.entity.Tweet;
-import com.codexperiments.newsroot.domain.entity.Tweet__JsonHelper;
-import com.codexperiments.newsroot.domain.repository.TweetRepository;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import com.codexperiments.newsroot.domain.entity.User;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class TweetDatabaseRepository implements TweetRepository {
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class TwitterParserTest extends InstrumentationTestCase {
+    private TwitterParser parser = new TwitterParser();
+
+    public void testParseTweet() {
+        List<Tweet> tweetList = parser.parseTweetList(JSON_FILE);
+
+        assertThat(tweetList).isNotEmpty();
+
+        Tweet tweet = tweetList.get(0);
+        assertThat(tweet.getId()).isEqualTo(349443871694012400L);
+        assertThat(tweet.getText()).contains("caméras de surveillance");
+        assertThat(tweet.getCreatedAt()).isEqualTo(1372148886000L);
+
+        User user = tweet.getUser();
+        assertThat(user.getId()).isEqualTo(24744541L);
+        assertThat(user.getName()).isEqualTo("Le Monde");
+        assertThat(user.getScreenName()).isEqualTo("lemondefr");
+    }
+
+
     private static final String JSON_FILE = "[\n" +
             "  {\n" +
             "    \"created_at\": \"Tue Jun 25 08:28:06 +0000 2013\",\n" +
@@ -1553,54 +1567,4 @@ public class TweetDatabaseRepository implements TweetRepository {
             "    \"lang\": \"fr\"\n" +
             "  }\n" +
             "]";
-
-    private JsonFactory mJSONFactory = new JsonFactory();
-    private DateTimeFormatter mDateFormat = DateTimeFormat.forPattern("EEE MMM d HH:mm:ss z yyyy").withZone(DateTimeZone.UTC);
-
-//    public TweetPage parseTweetPage(InputStream lInputStream) throws TweetAccessException {
-//        JsonParser lParser = null;
-//        try {
-//            lParser = mJSONFactory.createParser(lInputStream);
-//            return parseTweetPage(pPageSize, lParser);
-//        } catch (IOException eIOException) {
-//            throw TweetAccessException.from(eIOException);
-//        } finally {
-//            try {
-//                if (lParser != null) lParser.close();
-//            } catch (IOException eIOException) {
-//                eIOException.printStackTrace();
-//            }
-//        }
-//    }
-
-    @Override
-    public List<Tweet> findTweets() {
-        JsonParser parser = null;
-        try {
-            parser = mJSONFactory.createParser(JSON_FILE);
-            if (parser.nextToken() != JsonToken.START_ARRAY) throw new IOException();
-            List<Tweet> tweets = new ArrayList<Tweet>(/*TODO Capacity*/);
-
-            boolean finished = false;
-            while (!finished) {
-                switch (parser.nextToken()) {
-                    case START_OBJECT:
-                        Tweet tweet = Tweet__JsonHelper.parseFromJson(parser);
-                        tweets.add(tweet);
-                        break;
-                    case END_ARRAY:
-                        finished = true;
-                        break;
-                    case NOT_AVAILABLE:
-                        throw new IOException();
-                    default:
-                        break;
-                }
-            }
-            return tweets;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
 }

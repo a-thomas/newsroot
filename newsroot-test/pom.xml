@@ -2,6 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <artifactId>newsroot-test</artifactId>
+    <name>newsroot-test</name>
+    <packaging>apk</packaging>
 
     <parent>
         <groupId>com.codexperiments.newsroot</groupId>
@@ -10,23 +13,17 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>newsroot-test</artifactId>
-    <packaging>apk</packaging>
-    <name>newsroot-test</name>
-
     <dependencies>
         <dependency>
             <groupId>com.codexperiments.newsroot</groupId>
             <artifactId>newsroot-ui</artifactId>
             <type>apk</type>
-            <version>0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.codexperiments.newsroot</groupId>
             <artifactId>newsroot-ui</artifactId>
             <type>jar</type>
-            <version>0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -35,47 +32,56 @@
             <artifactId>android-test</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.assertj</groupId>
+            <artifactId>assertj-android</artifactId>
+            <type>aar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.dexmaker</groupId>
             <artifactId>dexmaker</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.google.dexmaker</groupId>
             <artifactId>dexmaker-mockito</artifactId>
+            <scope>compile</scope>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>com.netflix.rxjava</groupId>-->
-        <!--<artifactId>rxjava-core</artifactId>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-        </dependency>
-        <!--dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.simpleframework</groupId>
             <artifactId>simple</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>support-annotations</artifactId>
+            <version>20.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <outputDirectory>bin/classes</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

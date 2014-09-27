@@ -1,6 +1,7 @@
 # Intelij
 .idea
 *.iml
+gen-external-apklibs
 
 # Eclipse
 .metadata/

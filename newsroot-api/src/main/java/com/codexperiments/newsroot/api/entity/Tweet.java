@@ -1,11 +1,11 @@
-package com.codexperiments.newsroot.domain.entity;
+package com.codexperiments.newsroot.api.entity;
 
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;
 
 import java.io.IOException;
 
-import static com.codexperiments.newsroot.data.remote.parser.TwitterParser.FORMAT_DATE_TO_LONG;
+import static com.codexperiments.newsroot.api.parser.TwitterParser.FORMAT_DATE_TO_LONG;
 
 @JsonType
 public class Tweet {

@@ -1,8 +1,8 @@
-package com.codexperiments.newsroot.data.remote;
+package com.codexperiments.newsroot.api.remote;
 
-import com.codexperiments.newsroot.data.remote.parser.TwitterParser;
-import com.codexperiments.newsroot.domain.entity.Tweet;
-import com.codexperiments.newsroot.domain.repository.TweetRepository;
+import com.codexperiments.newsroot.api.entity.Tweet;
+import com.codexperiments.newsroot.api.parser.TwitterParser;
+import com.codexperiments.newsroot.repository.TweetRepository;
 
 import java.util.List;
 

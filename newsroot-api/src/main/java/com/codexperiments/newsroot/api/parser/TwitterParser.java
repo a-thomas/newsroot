@@ -1,9 +1,7 @@
-package com.codexperiments.newsroot.data.remote.parser;
+package com.codexperiments.newsroot.api.parser;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-import com.codexperiments.newsroot.domain.entity.Tweet;
-import com.codexperiments.newsroot.domain.entity.Tweet__JsonHelper;
+import com.codexperiments.newsroot.api.entity.Tweet;
+import com.codexperiments.newsroot.api.entity.Tweet__JsonHelper;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -24,7 +22,7 @@ public class TwitterParser {
                                                                      .withLocale(Locale.ENGLISH);
 
 
-    public static final String FORMAT_DATE_TO_LONG = "com.codexperiments.newsroot.data.remote.parser.TwitterParser.formatDateToLong(jp)";
+    public static final String FORMAT_DATE_TO_LONG = "com.codexperiments.newsroot.api.parser.TwitterParser.formatDateToLong(jp)";
 
     public static final long formatDateToLong(com.fasterxml.jackson.core.JsonParser jsonParser) throws IOException {
         String value = (jsonParser.getCurrentToken() != JsonToken.VALUE_NULL) ? jsonParser.getText() : null;
@@ -55,7 +53,6 @@ public class TwitterParser {
 
 
     //region Utilities
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     private static <TType> List<TType> parseList(JsonParser parser, Callable<TType> parseAction) throws IOException {
         try {
             if (parser.nextToken() != JsonToken.START_ARRAY) throw new IOException("No JSON Array found");

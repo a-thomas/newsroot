@@ -1,17 +1,17 @@
-package com.codexperiments.newsroot.data.remote.parser;
+package com.codexperiments.newsroot.api.parser;
 
-import android.test.InstrumentationTestCase;
-import com.codexperiments.newsroot.data.remote.TweetRemoteRepository;
-import com.codexperiments.newsroot.domain.entity.Tweet;
-import com.codexperiments.newsroot.domain.entity.User;
+import com.codexperiments.newsroot.api.entity.Tweet;
+import com.codexperiments.newsroot.api.entity.User;
+import org.junit.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TwitterParserTest extends InstrumentationTestCase {
+public class TwitterParserTest {
     private TwitterParser parser = new TwitterParser();
 
+    @Test
     public void testParseTweet() {
         List<Tweet> tweetList = parser.parseTweetList(JSON_FILE);
 

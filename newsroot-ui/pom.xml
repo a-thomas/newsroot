@@ -15,9 +15,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>com.codexperiments.newsroot</groupId>
+            <artifactId>newsroot-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.codexperiments.newsroot</groupId>
+            <artifactId>newsroot-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.instagram</groupId>
             <artifactId>ig-json-parser-processor</artifactId>
@@ -65,23 +70,14 @@
     </dependencies>
 
     <build>
-        <outputDirectory>bin/classes</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <annotationProcessors>
-                        <annotationProcessor>
-                            com.instagram.common.json.annotation.processor.JsonAnnotationProcessor
-                        </annotationProcessor>
-                    </annotationProcessors>
-                </configuration>
             </plugin>
         </plugins>
     </build>

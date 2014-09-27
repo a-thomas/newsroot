@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.domain.entity;
+package com.codexperiments.newsroot.api.entity;
 
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;

@@ -1,4 +1,4 @@
-package com.codexperiments.newsroot.data.remote;
+package com.codexperiments.newsroot.api.remote;
 
 import android.test.InstrumentationTestCase;
 

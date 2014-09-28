@@ -1,14 +1,7 @@
-# Intelij
+# IDE
 .idea
 *.iml
 gen-external-apklibs
-
-# Eclipse
-.metadata/
-.classpath
-.settings
-.project
-target
 
 # built application files
 *.apk
@@ -23,7 +16,9 @@ target
 # generated files
 bin/
 gen/
+target/
 .factorypath
 
 # Local configuration file (sdk path, etc)
 local.properties
+twitter.properties

@@ -5,7 +5,7 @@ import com.instagram.common.json.annotation.JsonType;
 
 import java.io.IOException;
 
-import static com.codexperiments.newsroot.api.parser.TwitterParser.FORMAT_DATE_TO_LONG;
+import static com.codexperiments.newsroot.api.mapper.JsonFormatter.FORMAT_DATE_TO_LONG;
 
 @JsonType
 public class Tweet {

@@ -1,23 +1,55 @@
-package com.codexperiments.newsroot.api.parser;
+package com.codexperiments.newsroot.api.mapper;
 
+import com.codexperiments.newsroot.api.TwitterTestModule;
 import com.codexperiments.newsroot.api.entity.Tweet;
 import com.codexperiments.newsroot.api.entity.User;
+import dagger.Module;
+import dagger.ObjectGraph;
+import org.junit.Before;
 import org.junit.Test;
 
+import javax.inject.Inject;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TwitterParserTest {
-    private TwitterParser parser = new TwitterParser();
+public class JsonMapperTest {
+    @Inject
+    JsonMapper parser;
+
+    @Module(complete = false, includes = TwitterTestModule.class, injects = JsonMapperTest.class)
+    class TestModule {
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        ObjectGraph.create(new TestModule()).inject(this);
+    }
 
     @Test
-    public void testParseTweet() {
-        List<Tweet> tweetList = parser.parseTweetList(JSON_FILE);
+    public void testParseTweetList() throws IOException {
+        List<Tweet> tweetList = parser.mapListFrom(Tweet.class, new ByteArrayInputStream(JSON_FILE.getBytes()));
 
         assertThat(tweetList).isNotEmpty();
 
         Tweet tweet = tweetList.get(0);
+        assertThat(tweet.getId()).isEqualTo(349443871694012400L);
+        assertThat(tweet.getText()).contains("caméras de surveillance");
+        assertThat(tweet.getCreatedAt()).isEqualTo(1372148886000L);
+
+        User user = tweet.getUser();
+        assertThat(user.getId()).isEqualTo(24744541L);
+        assertThat(user.getName()).isEqualTo("Le Monde");
+        assertThat(user.getScreenName()).isEqualTo("lemondefr");
+    }
+
+    @Test
+    public void testParseTweet() throws IOException {
+        Tweet tweet = parser.mapFrom(Tweet.class, new ByteArrayInputStream(JSON_FILE_2.getBytes()));
+
+        assertThat(tweet).isNotNull();
         assertThat(tweet.getId()).isEqualTo(349443871694012400L);
         assertThat(tweet.getText()).contains("caméras de surveillance");
         assertThat(tweet.getCreatedAt()).isEqualTo(1372148886000L);
@@ -1567,4 +1599,102 @@ public class TwitterParserTest {
             "    \"lang\": \"fr\"\n" +
             "  }\n" +
             "]";
+
+    private static final String JSON_FILE_2 =
+            "  {\n" +
+                    "    \"created_at\": \"Tue Jun 25 08:28:06 +0000 2013\",\n" +
+                    "    \"id\": 349443871694012400,\n" +
+                    "    \"id_str\": \"349443871694012418\",\n" +
+                    "    \"text\": \"Clément Méric : ce que disent les caméras de surveillance http://t.co/oFCsTY6ijH\",\n" +
+                    "    \"source\": \"<a href=\\\"http://dlvr.it\\\" rel=\\\"nofollow\\\">dlvr.it</a>\",\n" +
+                    "    \"truncated\": false,\n" +
+                    "    \"in_reply_to_status_id\": null,\n" +
+                    "    \"in_reply_to_status_id_str\": null,\n" +
+                    "    \"in_reply_to_user_id\": null,\n" +
+                    "    \"in_reply_to_user_id_str\": null,\n" +
+                    "    \"in_reply_to_screen_name\": null,\n" +
+                    "    \"user\": {\n" +
+                    "      \"id\": 24744541,\n" +
+                    "      \"id_str\": \"24744541\",\n" +
+                    "      \"name\": \"Le Monde\",\n" +
+                    "      \"screen_name\": \"lemondefr\",\n" +
+                    "      \"location\": \"Paris\",\n" +
+                    "      \"description\": \"Bienvenue sur le fil d'actualité du Monde.fr.\",\n" +
+                    "      \"url\": \"http://t.co/FAAzNQ8yF3\",\n" +
+                    "      \"entities\": {\n" +
+                    "        \"url\": {\n" +
+                    "          \"urls\": [\n" +
+                    "            {\n" +
+                    "              \"url\": \"http://t.co/FAAzNQ8yF3\",\n" +
+                    "              \"expanded_url\": \"http://www.lemonde.fr\",\n" +
+                    "              \"display_url\": \"lemonde.fr\",\n" +
+                    "              \"indices\": [\n" +
+                    "                0,\n" +
+                    "                22\n" +
+                    "              ]\n" +
+                    "            }\n" +
+                    "          ]\n" +
+                    "        },\n" +
+                    "        \"description\": {\n" +
+                    "          \"urls\": []\n" +
+                    "        }\n" +
+                    "      },\n" +
+                    "      \"protected\": false,\n" +
+                    "      \"followers_count\": 1596359,\n" +
+                    "      \"friends_count\": 226,\n" +
+                    "      \"listed_count\": 19776,\n" +
+                    "      \"created_at\": \"Mon Mar 16 18:44:51 +0000 2009\",\n" +
+                    "      \"favourites_count\": 107,\n" +
+                    "      \"utc_offset\": 3600,\n" +
+                    "      \"time_zone\": \"Paris\",\n" +
+                    "      \"geo_enabled\": false,\n" +
+                    "      \"verified\": true,\n" +
+                    "      \"statuses_count\": 82335,\n" +
+                    "      \"lang\": \"fr\",\n" +
+                    "      \"contributors_enabled\": false,\n" +
+                    "      \"is_translator\": false,\n" +
+                    "      \"profile_background_color\": \"DDE1EA\",\n" +
+                    "      \"profile_background_image_url\": \"http://a0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg\",\n" +
+                    "      \"profile_background_image_url_https\": \"https://si0.twimg.com/profile_background_images/255939997/twitter_lmfr.jpg\",\n" +
+                    "      \"profile_background_tile\": true,\n" +
+                    "      \"profile_image_url\": \"http://a0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg\",\n" +
+                    "      \"profile_image_url_https\": \"https://si0.twimg.com/profile_images/1430438688/IconeTwClassique_normal.jpg\",\n" +
+                    "      \"profile_link_color\": \"50B6CF\",\n" +
+                    "      \"profile_sidebar_border_color\": \"131316\",\n" +
+                    "      \"profile_sidebar_fill_color\": \"131316\",\n" +
+                    "      \"profile_text_color\": \"3292A8\",\n" +
+                    "      \"profile_use_background_image\": true,\n" +
+                    "      \"default_profile\": false,\n" +
+                    "      \"default_profile_image\": false,\n" +
+                    "      \"following\": true,\n" +
+                    "      \"follow_request_sent\": null,\n" +
+                    "      \"notifications\": null\n" +
+                    "    },\n" +
+                    "    \"geo\": null,\n" +
+                    "    \"coordinates\": null,\n" +
+                    "    \"place\": null,\n" +
+                    "    \"contributors\": null,\n" +
+                    "    \"retweet_count\": 102,\n" +
+                    "    \"favorite_count\": 13,\n" +
+                    "    \"entities\": {\n" +
+                    "      \"hashtags\": [],\n" +
+                    "      \"symbols\": [],\n" +
+                    "      \"urls\": [\n" +
+                    "        {\n" +
+                    "          \"url\": \"http://t.co/oFCsTY6ijH\",\n" +
+                    "          \"expanded_url\": \"http://lemde.fr/10Qard9\",\n" +
+                    "          \"display_url\": \"lemde.fr/10Qard9\",\n" +
+                    "          \"indices\": [\n" +
+                    "            58,\n" +
+                    "            80\n" +
+                    "          ]\n" +
+                    "        }\n" +
+                    "      ],\n" +
+                    "      \"user_mentions\": []\n" +
+                    "    },\n" +
+                    "    \"favorited\": false,\n" +
+                    "    \"retweeted\": false,\n" +
+                    "    \"possibly_sensitive\": false,\n" +
+                    "    \"lang\": \"fr\"\n" +
+                    "  }";
 }

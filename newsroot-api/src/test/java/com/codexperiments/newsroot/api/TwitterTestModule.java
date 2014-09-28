@@ -15,7 +15,7 @@ public class TwitterTestModule {
 
     public TwitterTestModule() {
         try {
-            properties.load(new FileInputStream("twitter.properties"));
+            properties.load(new FileInputStream("../twitter.properties"));
         } catch (IOException ioException) {
             throw new RuntimeException(ioException);
         }

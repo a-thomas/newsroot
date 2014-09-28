@@ -11,6 +11,7 @@
     <modules>
         <module>newsroot-api</module>
         <module>newsroot-core</module>
+        <module>newsroot-data</module>
         <module>newsroot-ui</module>
         <module>newsroot-test</module>
     </modules>
@@ -34,6 +35,11 @@
             </dependency>
             <dependency>
                 <groupId>com.codexperiments.newsroot</groupId>
+                <artifactId>newsroot-data</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codexperiments.newsroot</groupId>
                 <artifactId>newsroot-ui</artifactId>
                 <version>0.1-SNAPSHOT</version>
                 <type>jar</type>
@@ -45,6 +51,17 @@
                 <type>apk</type>
             </dependency>
 
+            <dependency>
+                <groupId>com.codexperiments.quickdao</groupId>
+                <artifactId>quickdao-annotation</artifactId>
+                <version>0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codexperiments.quickdao</groupId>
+                <artifactId>quickdao-compiler</artifactId>
+                <version>0.1-SNAPSHOT</version>
+                <optional>true</optional>
+            </dependency>
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
@@ -71,6 +88,11 @@
                 <groupId>com.instagram</groupId>
                 <artifactId>ig-json-parser-processor</artifactId>
                 <version>[0.0.3,)</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javawriter</artifactId>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -140,6 +162,7 @@
                 <artifactId>assertj-android</artifactId>
                 <version>1.0.0</version>
                 <type>aar</type>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.dexmaker</groupId>
@@ -163,6 +186,12 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>1.9.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.robolectric</groupId>
+                <artifactId>robolectric</artifactId>
+                <version>2.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -196,7 +225,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <version>3.1</version>
                     <configuration>
                         <source>1.7</source>
                         <target>1.7</target>

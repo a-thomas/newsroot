@@ -22,6 +22,10 @@
             <groupId>com.codexperiments.newsroot</groupId>
             <artifactId>newsroot-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.codexperiments.newsroot</groupId>
+            <artifactId>newsroot-data</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.instagram</groupId>

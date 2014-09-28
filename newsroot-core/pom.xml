@@ -15,9 +15,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.instagram</groupId>
-            <artifactId>ig-json-parser-processor</artifactId>
+            <groupId>com.codexperiments.quickdao</groupId>
+            <artifactId>quickdao-annotation</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.netflix.rxjava</groupId>
             <artifactId>rxjava-core</artifactId>

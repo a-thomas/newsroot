@@ -28,32 +28,12 @@
         </dependency>
 
         <dependency>
-            <groupId>com.instagram</groupId>
-            <artifactId>ig-json-parser-processor</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>support-v4</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.jakewharton</groupId>
             <artifactId>butterknife</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-android</artifactId>
         </dependency>
         <dependency>
             <groupId>com.squareup.dagger</groupId>
@@ -64,8 +44,32 @@
             <artifactId>dagger-compiler</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.instagram</groupId>
+            <artifactId>ig-json-parser-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup</groupId>
+            <artifactId>otto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.rxjava</groupId>
+            <artifactId>rxjava-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.rxjava</groupId>
+            <artifactId>rxjava-android</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
         </dependency>
     </dependencies>
 

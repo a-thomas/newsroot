@@ -22,3 +22,4 @@ target/
 # Local configuration file (sdk path, etc)
 local.properties
 twitter.properties
+newsroot-ui/res/values/twitter.xml

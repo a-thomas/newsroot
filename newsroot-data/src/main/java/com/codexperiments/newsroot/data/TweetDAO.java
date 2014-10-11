@@ -2,6 +2,7 @@ package com.codexperiments.newsroot.data;
 
 import android.database.Cursor;
 import com.codexperiments.newsroot.core.domain.entities.Tweet;
+import com.codexperiments.newsroot.core.domain.repository.TweetRepository;
 import com.codexperiments.newsroot.data.sqlite.TweetMapper;
 import com.codexperiments.newsroot.data.sqlite.TweetTable;
 import com.codexperiments.newsroot.data.sqlite.UserMapper;
@@ -12,7 +13,7 @@ import com.codexperiments.quickdao.Query;
 
 import static com.codexperiments.newsroot.data.sqlite.UserTable.USR_USER;
 
-public class TweetDAO extends TweetTable {
+public class TweetDAO extends TweetTable implements TweetRepository {
     private TwitterDatabase database;
 
     public TweetDAO(TwitterDatabase database) {
@@ -20,11 +21,12 @@ public class TweetDAO extends TweetTable {
         this.database = database;
     }
 
+    @Override
     public FindAllTweet findAll() {
         return new FindAllTweet(database);
     }
 
-    public static class FindAllTweet extends BaseQuery<Tweet, Mapper> {
+    public static class FindAllTweet extends BaseQuery<Tweet, Mapper> implements TweetRepository.FindAllTweet {
         public FindAllTweet(Database database) {
             super(database, new Mapper(), new Query().from(TWT_TWEET).orderBy(TweetTable.TWT_ID).descending());
         }

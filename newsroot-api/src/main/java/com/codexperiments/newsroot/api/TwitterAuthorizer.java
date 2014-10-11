@@ -5,6 +5,9 @@ import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -16,6 +19,8 @@ import java.util.Map;
 import static com.codexperiments.newsroot.api.AuthorizationDeniedException.authorizationDenied;
 import static com.codexperiments.newsroot.api.AuthorizationFailedException.authorizationFailed;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
+import static rx.Observable.OnSubscribe;
 
 public class TwitterAuthorizer {
     private final String endpoint;
@@ -25,7 +30,7 @@ public class TwitterAuthorizer {
     private OAuthProvider provider;
     private OAuthConsumer consumer;
 
-    private Callback callback = null;
+//    private Callback callback = null;
     private String expectedCallbackUri;
 
     public TwitterAuthorizer(String endpoint, String applicationKey, String applicationSecret) {
@@ -57,45 +62,70 @@ public class TwitterAuthorizer {
 // TODO        notifyCredentialChanged(userToken, userSecret);
     }
 
-    public String requestAuthorization(Callback callback, String expectedCallbackUri) throws AuthorizationFailedException {
+    /**
+     * @onError AuthorizationFailedException
+     */
+    public Observable<String> requestAuthorization(/*Callback callback, */final String expectedCallbackUri) {
+        // TODO AssertUIThread
         if (isNullOrEmpty(expectedCallbackUri)) throw new IllegalStateException("Callback Uri must be null or empty");
-        this.callback = callback; // TODO
-
+//        this.callback = callback; // TODO
+        this.expectedCallbackUri = expectedCallbackUri;
         deauthorize();
-        try {
-            this.expectedCallbackUri = expectedCallbackUri;
-            return provider.retrieveRequestToken(consumer, expectedCallbackUri);
-        } catch (OAuthException oauthException) {
-            throw authorizationFailed(oauthException);
-        }
+
+        return Observable.create(new OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    String result = provider.retrieveRequestToken(consumer, expectedCallbackUri);
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onNext(result);
+                        subscriber.onCompleted();
+                    }
+                } catch (OAuthException oauthException) {
+                    subscriber.onError(authorizationFailed(oauthException));
+                }
+            }
+        }).subscribeOn(Schedulers.io());
     }
 
-    public void confirmAuthorization(String providedCallbackUri) throws AuthorizationFailedException, AuthorizationDeniedException {
+    /**
+     * @onError AuthorizationFailedException, AuthorizationDeniedException
+     */
+    public Observable<TwitterCredentials> confirmAuthorization(final String providedCallbackUri) {
         if (expectedCallbackUri == null) throw new IllegalStateException("Authorization not requested");
         if (providedCallbackUri == null || !providedCallbackUri.contains(expectedCallbackUri)) {
-            throw new IllegalArgumentException(String.format("Invalid callback URI %s", providedCallbackUri));
+            throw new IllegalArgumentException(format("Invalid callback URI %s", providedCallbackUri));
         }
 
-        Map<String, String> uriParams = getQueryParams(providedCallbackUri);
-        String verifier = uriParams.get("oauth_verifier");
-        if (isNullOrEmpty(verifier)) {
-            if (uriParams.containsKey("denied")) throw authorizationDenied();
-            else throw authorizationFailed(String.format("Invalid oauth_verifier parameter in URI %s", providedCallbackUri));
-        }
+        return Observable.create(new OnSubscribe<TwitterCredentials>() {
+            @Override
+            public void call(Subscriber<? super TwitterCredentials> subscriber) {
+                try {
+                    Map<String, String> uriParams = getQueryParams(providedCallbackUri);
+                    String verifier = uriParams.get("oauth_verifier");
+                    if (isNullOrEmpty(verifier)) {
+                        if (uriParams.containsKey("denied")) subscriber.onError(authorizationDenied());
+                        else subscriber.onError(authorizationFailed("Invalid oauth_verifier parameter in URI %s", providedCallbackUri));
+                        return;
+                    }
 
-        try {
-            provider.retrieveAccessToken(consumer, verifier);
-            String userToken = consumer.getToken();
-            String userSecret = consumer.getTokenSecret();
-            notifyCredentialChanged(userToken, userSecret);
-        } catch (OAuthException oauthException) {
-            throw authorizationFailed(oauthException);
-        }
+                    provider.retrieveAccessToken(consumer, verifier);
+                    String userToken = consumer.getToken();
+                    String userSecret = consumer.getTokenSecret();
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onNext(new TwitterCredentials(userToken, userSecret));
+                        subscriber.onCompleted();
+                    }
+                } catch (OAuthException oauthException) {
+                    subscriber.onError(authorizationFailed(oauthException));
+                }
+            }
+        }).subscribeOn(Schedulers.io());
     }
 
-    private void notifyCredentialChanged(String consumerKey, String consumerSecret) {
-        if (callback != null) callback.onCredentialChanged(consumerKey, consumerSecret);
-    }
+//    private void notifyCredentialChanged(String consumerKey, String consumerSecret) {
+//        if (callback != null) callback.onCredentialChanged(consumerKey, consumerSecret);
+//    }
 
     // TOOD Optimize
     private static Map<String, String> getQueryParams(String url) {
@@ -120,7 +150,7 @@ public class TwitterAuthorizer {
         }
     }
 
-    public interface Callback {
-        void onCredentialChanged(String consumerKey, String consumerSecret);
-    }
+//    public interface Callback {
+//        void onCredentialChanged(String consumerKey, String consumerSecret);
+//    }
 }

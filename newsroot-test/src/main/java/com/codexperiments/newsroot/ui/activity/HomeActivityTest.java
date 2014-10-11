@@ -1,6 +1,7 @@
 package com.codexperiments.newsroot.ui.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
+import com.codexperiments.newsroot.ui.HomeActivity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 

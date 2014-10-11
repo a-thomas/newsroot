@@ -21,8 +21,7 @@ public class TwitterTestModule {
         }
     }
 
-    @Provides
-    @Singleton
+    @Provides @Singleton
     public TwitterAuthorizer provideAuthorizer(Endpoint endpoint) {
         TwitterAuthorizer authorizer = new TwitterAuthorizer(endpoint.getUrl(),
                                                              properties.getProperty("twitter.api.applicationKey"),

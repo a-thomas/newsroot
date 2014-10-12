@@ -39,13 +39,14 @@ public class AuthorizationFragment extends BaseFragment {
     // Dependencies
     @Inject Bus eventBus;
     @Inject TwitterAuthorizer twitterAuthorizer;
-    private SharedPreferences preferences;
+    protected SharedPreferences preferences;
     // State
-    private String redirection;
-    private CompositeSubscription subscriptions = new CompositeSubscription();
+    protected String redirection;
+    protected CompositeSubscription subscriptions = new CompositeSubscription();
     // UI
-    private WebView webView;
-    private ProgressDialog progressDialog;
+    protected WebView webView;
+    protected ProgressDialog progressDialog;
+
 
     public static final AuthorizationFragment authorize(Activity activity) {
         SharedPreferences preferences = activity.getSharedPreferences("newsroot_settings", 0);
@@ -170,8 +171,7 @@ public class AuthorizationFragment extends BaseFragment {
         eventBus.register(this);
 
         try {
-            Method method = WebView.class.getMethod("onPause");
-            method.invoke(webView);
+            WebView.class.getMethod("onPause").invoke(webView);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
         }
     }
@@ -182,8 +182,7 @@ public class AuthorizationFragment extends BaseFragment {
         eventBus.unregister(this);
 
         try {
-            Method method = WebView.class.getMethod("onResume");
-            method.invoke(webView);
+            WebView.class.getMethod("onResume").invoke(webView);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
         }
     }
@@ -258,7 +257,7 @@ public class AuthorizationFragment extends BaseFragment {
 
 
     //region Utilities
-    private void sub(Subscription subscription) {
+    protected void sub(Subscription subscription) {
         subscriptions.add(subscription);
     }
     //endregion

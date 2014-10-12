@@ -18,7 +18,7 @@
 
     <properties>
         <android.version>4.1.1.4</android.version>
-        <android.platform>19</android.platform>
+        <android.platform>21</android.platform>
     </properties>
 
     <dependencyManagement>
@@ -50,7 +50,6 @@
                 <version>0.1-SNAPSHOT</version>
                 <type>apk</type>
             </dependency>
-
             <dependency>
                 <groupId>com.codexperiments.quickdao</groupId>
                 <artifactId>quickdao-annotation</artifactId>
@@ -62,11 +61,36 @@
                 <version>0.1-SNAPSHOT</version>
                 <optional>true</optional>
             </dependency>
+
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
                 <version>${android.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.android.support</groupId>
+                <artifactId>appcompat-v7</artifactId>
+                <version>21.0.0</version>
+                <type>aar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.android.support</groupId>
+                        <artifactId>support-v4</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.android.support</groupId>
+                <artifactId>recyclerview-v7</artifactId>
+                <version>21.0.0</version>
+                <type>aar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.android.support</groupId>
+                <artifactId>cardview-v7</artifactId>
+                <version>21.0.0</version>
+                <type>aar</type>
             </dependency>
             <dependency>
                 <groupId>com.jakewharton</groupId>
@@ -125,14 +149,19 @@
                 <version>1.6.1</version>
             </dependency>
             <dependency>
-                <groupId>com.netflix.rxjava</groupId>
-                <artifactId>rxjava-core</artifactId>
-                <version>0.20.4</version>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxandroid</artifactId>
+                <version>0.22.0</version>
             </dependency>
             <dependency>
-                <groupId>com.netflix.rxjava</groupId>
-                <artifactId>rxjava-android</artifactId>
-                <version>0.20.4</version>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxjava</artifactId>
+                <version>1.0.0-rc.7</version>
+            </dependency>
+            <dependency>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxjava-async-util</artifactId>
+                <version>0.21.0</version>
             </dependency>
             <dependency>
                 <groupId>oauth.signpost</groupId>
@@ -140,9 +169,10 @@
                 <version>1.2.1.2</version>
             </dependency>
             <dependency>
-                <groupId>com.google.android</groupId>
+                <groupId>com.android.support</groupId>
                 <artifactId>support-v4</artifactId>
-                <version>r7</version>
+                <version>21.0.0</version>
+                <type>aar</type>
             </dependency>
 
             <dependency>

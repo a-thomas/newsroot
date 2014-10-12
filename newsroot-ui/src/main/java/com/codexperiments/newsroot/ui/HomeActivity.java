@@ -9,6 +9,7 @@ import butterknife.Views;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.api.AuthorizationDeniedException;
 import com.codexperiments.newsroot.api.TwitterAuthorizer;
+import com.codexperiments.newsroot.ui.timeline.TimecardFragment;
 import com.codexperiments.newsroot.ui.timeline.TimelineFragment;
 import com.codexperiments.newsroot.ui.authentication.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.authentication.AuthorizedEvent;
@@ -39,7 +40,7 @@ public class HomeActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             if (!authorize()) {
-                showHomeTimeline();
+                showHomeTimecard();
             }
         }
     }
@@ -67,6 +68,11 @@ public class HomeActivity extends BaseActivity {
     @OnClick(R.id.button2)
     public void onButton2Action() {
         showHomeTimeline();
+    }
+
+    @OnClick(R.id.button3)
+    public void onButton3Action() {
+        showHomeTimecard();
     }
 
     @Subscribe
@@ -101,6 +107,13 @@ public class HomeActivity extends BaseActivity {
         TimelineFragment timelineFragment = TimelineFragment.forUser();
         getSupportFragmentManager().beginTransaction()
                                    .replace(R.id.activity_content, timelineFragment)
+                                   .commit();
+    }
+
+    protected void showHomeTimecard() {
+        TimecardFragment timecardFragment = TimecardFragment.forUser();
+        getSupportFragmentManager().beginTransaction()
+                                   .replace(R.id.activity_content, timecardFragment)
                                    .commit();
     }
     //endregion

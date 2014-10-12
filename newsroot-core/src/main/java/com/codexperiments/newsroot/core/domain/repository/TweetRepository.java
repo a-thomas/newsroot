@@ -1,22 +1,14 @@
 package com.codexperiments.newsroot.core.domain.repository;
 
 import com.codexperiments.newsroot.core.domain.entities.Tweet;
-import rx.Observable;
-
-import java.util.List;
+import com.codexperiments.quickdao.Query;
 
 public interface TweetRepository {
     public FindAllTweet findAll();
 
-    public interface FindAllTweet {
-        public FindAllTweet withUser();
+    public interface FindAllTweet extends Query<Tweet> {
+        FindAllTweet withUser();
 
-        public FindAllTweet pagedBy(int pPageSize);
-
-        public Tweet[] asArray();
-
-        public List<Tweet> asList();
-
-        public Observable<Tweet> asObservable();
+        FindAllTweet pagedBy(int pPageSize);
     }
 }

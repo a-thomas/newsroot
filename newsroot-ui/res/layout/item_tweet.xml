@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.codexperiments.newsroot.ui.timeline.TweetItemView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".BlankFragment">
+    <TextView android:id="@+id/item_tweet_name"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:gravity="center"
+              android:text="\@ZDNet"/>
+    <TextView android:id="@+id/item_tweet_screenname"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_below="@id/item_tweet_name"
+              android:gravity="center"
+              android:text="ZDNet"/>
+    <TextView android:id="@+id/item_tweet_text"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_below="@id/item_tweet_screenname"
+              android:gravity="center"
+              android:text="RT @SmartPlanet: The top 10 U.S. cities with the happiest workers http://t.co/seh0UKVUrR"/>
+    <TextView android:id="@+id/item_tweet_createdAt"
+              android:layout_width="match_parent" android:layout_height="wrap_content"
+              android:layout_below="@id/item_tweet_text"
+              android:gravity="center"
+              tools:text="22/11/1983"/>
+</com.codexperiments.newsroot.ui.timeline.TweetItemView>

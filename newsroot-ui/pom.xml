@@ -32,6 +32,21 @@
             <artifactId>android</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>appcompat-v7</artifactId>
+            <type>aar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>recyclerview-v7</artifactId>
+            <type>aar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>cardview-v7</artifactId>
+            <type>aar</type>
+        </dependency>
+        <dependency>
             <groupId>com.jakewharton</groupId>
             <artifactId>butterknife</artifactId>
         </dependency>
@@ -60,16 +75,21 @@
             <artifactId>otto</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-core</artifactId>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxandroid</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.netflix.rxjava</groupId>
-            <artifactId>rxjava-android</artifactId>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.android</groupId>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava-async-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.android.support</groupId>
             <artifactId>support-v4</artifactId>
+            <type>aar</type>
         </dependency>
     </dependencies>
 
@@ -82,6 +102,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessors>
+                        <annotationProcessor>butterknife.internal.InjectViewProcessor</annotationProcessor>
+                        <annotationProcessor>dagger.internal.codegen.ValidationProcessor</annotationProcessor>
+                        <annotationProcessor>dagger.internal.codegen.InjectAdapterProcessor</annotationProcessor>
+                        <annotationProcessor>dagger.internal.codegen.ModuleAdapterProcessor</annotationProcessor>
+                        <annotationProcessor>dagger.internal.codegen.GraphAnalysisProcessor</annotationProcessor>
+                    </annotationProcessors>
+                </configuration>
             </plugin>
         </plugins>
     </build>

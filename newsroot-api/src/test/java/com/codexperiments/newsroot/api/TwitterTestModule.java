@@ -9,13 +9,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-@Module(complete = false, includes = {TwitterModule.class}, library = true, overrides = true)
+@Module(complete = false, includes = {TwitterAPIModule.class}, library = true, overrides = true)
 public class TwitterTestModule {
     private Properties properties = new Properties();
 
     public TwitterTestModule() {
         try {
-            properties.load(new FileInputStream("../twitter.properties"));
+            properties.load(new FileInputStream("./twitter.properties"));
         } catch (IOException ioException) {
             throw new RuntimeException(ioException);
         }

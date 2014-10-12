@@ -6,8 +6,7 @@ import com.codexperiments.quickdao.annotation.Table;
 
 @Table("TWT_TWEET")
 public class Tweet {
-    @Id
-    @Column("TWT_ID")
+    @Id @Column("TWT_ID")
     public long id;
     @Column("TWT_TEXT")
     public String text;

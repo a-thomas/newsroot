@@ -25,7 +25,7 @@ import java.net.HttpURLConnection;
  * </ul>
  */
 @Module(complete = false, library =  true)
-public class TwitterModule {
+public class TwitterAPIModule {
     @Provides @Singleton
     public Endpoint provideEndpoint() {
         return Endpoints.newFixedEndpoint("https://api.twitter.com");

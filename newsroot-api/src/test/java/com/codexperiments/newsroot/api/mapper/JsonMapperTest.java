@@ -1,8 +1,8 @@
 package com.codexperiments.newsroot.api.mapper;
 
 import com.codexperiments.newsroot.api.TwitterTestModule;
-import com.codexperiments.newsroot.api.entity.Tweet;
-import com.codexperiments.newsroot.api.entity.User;
+import com.codexperiments.newsroot.api.entity.TweetDTO;
+import com.codexperiments.newsroot.api.entity.UserDTO;
 import dagger.Module;
 import dagger.ObjectGraph;
 import org.junit.Before;
@@ -30,16 +30,16 @@ public class JsonMapperTest {
 
     @Test
     public void testParseTweetList() throws IOException {
-        List<Tweet> tweetList = parser.mapListFrom(Tweet.class, new ByteArrayInputStream(JSON_FILE.getBytes()));
+        List<TweetDTO> tweetList = parser.mapListFrom(TweetDTO.class, new ByteArrayInputStream(JSON_FILE.getBytes()));
 
         assertThat(tweetList).isNotEmpty();
 
-        Tweet tweet = tweetList.get(0);
+        TweetDTO tweet = tweetList.get(0);
         assertThat(tweet.getId()).isEqualTo(349443871694012400L);
         assertThat(tweet.getText()).contains("caméras de surveillance");
         assertThat(tweet.getCreatedAt()).isEqualTo(1372148886000L);
 
-        User user = tweet.getUser();
+        UserDTO user = tweet.getUser();
         assertThat(user.getId()).isEqualTo(24744541L);
         assertThat(user.getName()).isEqualTo("Le Monde");
         assertThat(user.getScreenName()).isEqualTo("lemondefr");
@@ -47,14 +47,14 @@ public class JsonMapperTest {
 
     @Test
     public void testParseTweet() throws IOException {
-        Tweet tweet = parser.mapFrom(Tweet.class, new ByteArrayInputStream(JSON_FILE_2.getBytes()));
+        TweetDTO tweet = parser.mapFrom(TweetDTO.class, new ByteArrayInputStream(JSON_FILE_2.getBytes()));
 
         assertThat(tweet).isNotNull();
         assertThat(tweet.getId()).isEqualTo(349443871694012400L);
         assertThat(tweet.getText()).contains("caméras de surveillance");
         assertThat(tweet.getCreatedAt()).isEqualTo(1372148886000L);
 
-        User user = tweet.getUser();
+        UserDTO user = tweet.getUser();
         assertThat(user.getId()).isEqualTo(24744541L);
         assertThat(user.getName()).isEqualTo("Le Monde");
         assertThat(user.getScreenName()).isEqualTo("lemondefr");

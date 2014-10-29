@@ -1,6 +1,6 @@
 package com.codexperiments.newsroot.api;
 
-import com.codexperiments.newsroot.api.entity.Tweet;
+import com.codexperiments.newsroot.api.entity.TweetDTO;
 import dagger.Module;
 import dagger.ObjectGraph;
 import org.junit.Before;
@@ -30,14 +30,14 @@ public class TwitterAPITest {
 
     @Test
     public void testFindTweet() {
-        Observable<Tweet> homeTweets = api.findHomeTweets().flatMap(new Func1<List<Tweet>, Observable<Tweet>>() {
-            public Observable<Tweet> call(List<Tweet> tweets) {
+        Observable<TweetDTO> homeTweets = api.findHomeTweets().flatMap(new Func1<List<TweetDTO>, Observable<TweetDTO>>() {
+            public Observable<TweetDTO> call(List<TweetDTO> tweets) {
                 return Observable.from(tweets);
             }
         });
 
-        BlockingObservable.from(homeTweets).forEach(new Action1<Tweet>() {
-            public void call(Tweet tweet) {
+        BlockingObservable.from(homeTweets).forEach(new Action1<TweetDTO>() {
+            public void call(TweetDTO tweet) {
                 System.out.println(tweet);
             }
         });

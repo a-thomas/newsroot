@@ -50,17 +50,17 @@
                 <version>0.1-SNAPSHOT</version>
                 <type>apk</type>
             </dependency>
-            <dependency>
-                <groupId>com.codexperiments.quickdao</groupId>
-                <artifactId>quickdao-annotation</artifactId>
-                <version>0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codexperiments.quickdao</groupId>
-                <artifactId>quickdao-compiler</artifactId>
-                <version>0.1-SNAPSHOT</version>
-                <optional>true</optional>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.codexperiments.quickdao</groupId>-->
+                <!--<artifactId>quickdao-annotation</artifactId>-->
+                <!--<version>0.1-SNAPSHOT</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>com.codexperiments.quickdao</groupId>-->
+                <!--<artifactId>quickdao-compiler</artifactId>-->
+                <!--<version>0.1-SNAPSHOT</version>-->
+                <!--<optional>true</optional>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>com.google.android</groupId>
@@ -85,6 +85,12 @@
                 <artifactId>recyclerview-v7</artifactId>
                 <version>21.0.0</version>
                 <type>aar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.android.support</groupId>
+                        <artifactId>support-v4</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.android.support</groupId>
@@ -119,14 +125,25 @@
                 <version>2.5.0</version>
             </dependency>
             <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+            </dependency>
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>2.3</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>1.0.0.Beta2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>1.0.0.Beta2</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp</groupId>
@@ -182,16 +199,16 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>1.6.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.android.support</groupId>
                 <artifactId>support-annotations</artifactId>
                 <version>20.0.0</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>1.7.0</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.squareup.assertj</groupId>
@@ -266,6 +283,11 @@
                         <source>1.7</source>
                         <target>1.7</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.assertj</groupId>
+                    <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+                    <version>1.4.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -1,18 +1,10 @@
 package com.codexperiments.newsroot.core.domain.entities;
 
-import com.codexperiments.quickdao.annotation.Column;
-import com.codexperiments.quickdao.annotation.Id;
-import com.codexperiments.quickdao.annotation.Table;
-
-@Table("USR_USER")
 public class User {
-    @Id
-    @Column("USR_ID")
-    public long id;
-    @Column("USR_NAME")
-    public String name;
-    @Column("USR_SCREEN_NAME")
-    public String screenName;
+    long id;
+    long version;
+    String name;
+    String screenNames;
 
     public User() {
         super();
@@ -27,6 +19,14 @@ public class User {
         this.id = id;
     }
 
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
     public String getName() {
         return name;
     }
@@ -36,15 +36,30 @@ public class User {
     }
 
     public String getScreenName() {
-        return screenName;
+        return screenNames;
     }
 
     public void setScreenName(String screenName) {
-        this.screenName = screenName;
+        this.screenNames = screenName;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+
+        User otherUser = (User) other;
+        if (id != otherUser.id) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", name='" + name + '\'' + ", screenName='" + screenName + '\'' + '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", screenName='" + screenNames + '\'' + '}';
     }
 }

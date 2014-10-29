@@ -1,19 +1,11 @@
 package com.codexperiments.newsroot.core.domain.entities;
 
-import com.codexperiments.quickdao.annotation.Column;
-import com.codexperiments.quickdao.annotation.Id;
-import com.codexperiments.quickdao.annotation.Table;
-
-@Table("TWT_TWEET")
 public class Tweet {
-    @Id @Column("TWT_ID")
-    public long id;
-    @Column("TWT_TEXT")
-    public String text;
-    @Column("TWT_CREATED_AT")
-    public long createdAt;
-    @Column("TWT_USR_ID")
-    public User user;
+    long id;
+    long version;
+    String text;
+    long createdAt;
+    User user;
 
     public Tweet() {
         super();
@@ -26,6 +18,14 @@ public class Tweet {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     public String getText() {
@@ -50,6 +50,21 @@ public class Tweet {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+
+        Tweet otherTweet = (Tweet) other;
+        if (id != otherTweet.id) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 
     @Override

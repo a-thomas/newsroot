@@ -133,17 +133,17 @@ public class TimecardFragment extends BaseFragment {
 
     //region Actions
     protected void loadTimeline() {
-        final TweetRepository.FindAllTweet query = tweetRepository.findAll().withUser().pagedBy(20);
-        sub(query.retrieve(SQLiteRetriever.asObservableList(Tweet.class))
-                 .subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new Action1<SQLiteCursorList<Tweet>>() {
-                     @Override
-                     public void call(SQLiteCursorList<Tweet> sqliteCursorList) {
-                         cursorList = sqliteCursorList;
-                         adapter.notifyDataSetChanged();
-                     }
-                 }));
+//        final TweetRepository.FindAllTweet query = tweetRepository.findAll().withUser().pagedBy(20);
+//        sub(query.retrieve(SQLiteRetriever.asObservableList(Tweet.class))
+//                 .subscribeOn(Schedulers.io())
+//                 .observeOn(AndroidSchedulers.mainThread())
+//                 .subscribe(new Action1<SQLiteCursorList<Tweet>>() {
+//                     @Override
+//                     public void call(SQLiteCursorList<Tweet> sqliteCursorList) {
+//                         cursorList = sqliteCursorList;
+//                         adapter.notifyDataSetChanged();
+//                     }
+//                 }));
     }
     //endregion
 

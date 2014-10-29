@@ -14,10 +14,10 @@
     </parent>
 
     <dependencies>
-        <dependency>
-            <groupId>com.codexperiments.quickdao</groupId>
-            <artifactId>quickdao-annotation</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.codexperiments.quickdao</groupId>-->
+            <!--<artifactId>quickdao-annotation</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>io.reactivex</groupId>

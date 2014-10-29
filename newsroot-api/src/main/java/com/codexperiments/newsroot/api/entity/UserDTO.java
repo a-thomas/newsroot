@@ -6,7 +6,7 @@ import com.instagram.common.json.annotation.JsonType;
 import java.io.IOException;
 
 @JsonType
-public class User {
+public class UserDTO {
     @JsonField(fieldName = "id")
     long id;
     @JsonField(fieldName = "name")
@@ -14,7 +14,7 @@ public class User {
     @JsonField(fieldName = "screen_name")
     String screenName;
 
-    public User() {
+    public UserDTO() {
         super();
         id = -1;
     }
@@ -46,7 +46,7 @@ public class User {
     @Override
     public String toString() {
         try {
-            return User__JsonHelper.serializeToJson(this);
+            return UserDTO__JsonHelper.serializeToJson(this);
         } catch (IOException ioException) {
             return ioException.getMessage();
         }

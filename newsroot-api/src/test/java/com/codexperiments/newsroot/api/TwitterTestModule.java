@@ -16,6 +16,13 @@ public class TwitterTestModule {
     public TwitterTestModule() {
         try {
             properties.load(new FileInputStream("./twitter.properties"));
+            return;
+        } catch (IOException ioException) {
+            // thrown from next try/catch.
+        }
+
+        try {
+            properties.load(new FileInputStream("../twitter.properties"));
         } catch (IOException ioException) {
             throw new RuntimeException(ioException);
         }

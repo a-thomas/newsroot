@@ -22,15 +22,15 @@
             <groupId>com.codexperiments.newsroot</groupId>
             <artifactId>newsroot-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.codexperiments.quickdao</groupId>
-            <artifactId>quickdao-annotation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codexperiments.quickdao</groupId>
-            <artifactId>quickdao-compiler</artifactId>
-            <optional>true</optional>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.codexperiments.quickdao</groupId>-->
+            <!--<artifactId>quickdao-annotation</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.codexperiments.quickdao</groupId>-->
+            <!--<artifactId>quickdao-compiler</artifactId>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.google.android</groupId>
@@ -54,6 +54,15 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>
@@ -81,11 +90,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <annotationProcessors>
-                        <annotationProcessor>com.codexperiments.quickdao.compiler.DAOGenerator</annotationProcessor>
+                        <!--<annotationProcessor>com.codexperiments.quickdao.compiler.DAOGenerator</annotationProcessor>-->
                         <annotationProcessor>dagger.internal.codegen.ValidationProcessor</annotationProcessor>
                         <annotationProcessor>dagger.internal.codegen.InjectAdapterProcessor</annotationProcessor>
                         <annotationProcessor>dagger.internal.codegen.ModuleAdapterProcessor</annotationProcessor>
                         <annotationProcessor>dagger.internal.codegen.GraphAnalysisProcessor</annotationProcessor>
+                        <annotationProcessor>org.mapstruct.ap.MappingProcessor</annotationProcessor>
                     </annotationProcessors>
                     <compilerArgs>
                         <compilerArgument>-AinputPackage=com.codexperiments.newsroot.core.domain.entities</compilerArgument>
@@ -96,6 +106,22 @@
                     <generatedTestSourcesDirectory>${project.build.directory}/generated-sources/annotations</generatedTestSourcesDirectory>
                     <testCompilerArgument>-AdisableGeneration=true</testCompilerArgument>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+                <configuration>
+                    <packages>
+                        <param>com.codexperiments.newsroot.core.domain.entities</param>
+                    </packages>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-assertions</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

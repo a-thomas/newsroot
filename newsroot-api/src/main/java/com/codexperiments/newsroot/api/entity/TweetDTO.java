@@ -8,7 +8,7 @@ import java.io.IOException;
 import static com.codexperiments.newsroot.api.mapper.JsonFormatter.FORMAT_DATE_TO_LONG;
 
 @JsonType
-public class Tweet {
+public class TweetDTO {
     @JsonField(fieldName = "id")
     long id;
     @JsonField(fieldName = "text")
@@ -16,9 +16,9 @@ public class Tweet {
     @JsonField(fieldName = "created_at", valueExtractFormatter = FORMAT_DATE_TO_LONG)
     long createdAt;
     @JsonField(fieldName = "user")
-    User user;
+    UserDTO user;
 
-    public Tweet() {
+    public TweetDTO() {
         super();
         id = -1;
     }
@@ -47,18 +47,18 @@ public class Tweet {
         this.createdAt = createdAt;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 
     @Override
     public String toString() {
         try {
-            return Tweet__JsonHelper.serializeToJson(this);
+            return TweetDTO__JsonHelper.serializeToJson(this);
         } catch (IOException ioException) {
             return ioException.getMessage();
         }

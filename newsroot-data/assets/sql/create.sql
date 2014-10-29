@@ -3,6 +3,7 @@ drop table if exists USR_USER;
 
 create table USR_USER (
   USR_ID bigint not null,
+  USR_VERSION bigint not null,
   USR_NAME varchar,
   USR_SCREEN_NAME varchar,
 
@@ -11,6 +12,7 @@ create table USR_USER (
 
 create table TWT_TWEET (
   TWT_ID bigint not null,
+  TWT_VERSION bigint not null,
   TWT_CREATED_AT bigint not null,
   TWT_TEXT varchar,
   TWT_USR_ID bigint not null,

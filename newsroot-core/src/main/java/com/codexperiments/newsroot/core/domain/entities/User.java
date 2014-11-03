@@ -4,7 +4,7 @@ public class User {
     long id;
     long version;
     String name;
-    String screenNames;
+    String screenName;
 
     public User() {
         super();
@@ -36,11 +36,11 @@ public class User {
     }
 
     public String getScreenName() {
-        return screenNames;
+        return screenName;
     }
 
     public void setScreenName(String screenName) {
-        this.screenNames = screenName;
+        this.screenName = screenName;
     }
 
     @Override
@@ -60,6 +60,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", name='" + name + '\'' + ", screenName='" + screenNames + '\'' + '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", screenName='" + screenName + '\'' + '}';
     }
 }

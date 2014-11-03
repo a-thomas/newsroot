@@ -2,7 +2,6 @@ package com.codexperiments.newsroot.ui.timeline;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,11 @@ import android.widget.TextView;
 import butterknife.InjectView;
 import butterknife.Views;
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.core.domain.entities.Tweet;
-import com.codexperiments.newsroot.core.domain.entities.User;
-import com.codexperiments.newsroot.data.sqlite.SqliteTweetRepository;
+import com.codexperiments.newsroot.core.provider.TweetItemViewModel;
 
 public class TweetItemView extends RelativeLayout {
     // State
-    private Tweet tweet;
+    private TweetItemViewModel tweetItemViewModel;
     // UI
     @InjectView(R.id.item_tweet_name) TextView nameView;
     @InjectView(R.id.item_tweet_screenname) TextView screenNameView;
@@ -53,26 +50,19 @@ public class TweetItemView extends RelativeLayout {
         Views.inject(this);
     }
 
-    public Tweet getTweet() {
-        return tweet;
+    public TweetItemViewModel getViewModel() {
+        return tweetItemViewModel;
     }
 
-    protected void setContent(Tweet tweet) {
-        this.tweet = tweet;
-        User user = tweet.getUser();
+    protected void setContent(TweetItemViewModel tweetItemViewModel) {
+        this.tweetItemViewModel = tweetItemViewModel;
 
-        nameView.setText(user.getName());
-        screenNameView.setText(user.getScreenName());
-        textView.setText(tweet.getText());
-        createdAtView.setText(String.valueOf(tweet.getCreatedAt()));
+        nameView.setText(tweetItemViewModel.userName);
+        screenNameView.setText(tweetItemViewModel.userScreenName);
+        textView.setText(tweetItemViewModel.tweetText);
+        createdAtView.setText(String.valueOf(tweetItemViewModel.tweetCreatedAt));
     }
 
-    public void setContent(SqliteTweetRepository.Mapper tweetMapper, Cursor cursor) {
-        nameView.setText(tweetMapper.userMapper.getName(cursor));
-        screenNameView.setText(tweetMapper.userMapper.getScreenName(cursor));
-        textView.setText(tweetMapper.getText(cursor));
-        createdAtView.setText(String.valueOf(tweetMapper.getCreatedAt(cursor)));
-    }
 //        setActivated(tweet.isSelected());
 //
 //    public void toggleSelection() {

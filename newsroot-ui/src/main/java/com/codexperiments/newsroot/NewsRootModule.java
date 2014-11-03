@@ -2,7 +2,10 @@ package com.codexperiments.newsroot;
 
 import android.app.Application;
 import com.codexperiments.newsroot.api.TwitterAPIModule;
+import com.codexperiments.newsroot.core.service.TimelineSync;
+import com.codexperiments.newsroot.data.sqlite.SqliteTwitterDatabase;
 import com.codexperiments.newsroot.data.sqlite.SqliteTwitterModule;
+import com.codexperiments.newsroot.presenter.timeline.TimelineProvider;
 import com.codexperiments.newsroot.ui.HomeActivity;
 import com.codexperiments.newsroot.ui.NewsRootUIModule;
 import dagger.Module;
@@ -34,4 +37,9 @@ public class NewsRootModule {
     public String provideApplicationSecret() {
         return application.getString(R.string.twitter_applicationSecret);
     }
+//
+//    @Provides
+//    public TimelineProvider provideTimelineProvider(SqliteTwitterDatabase datasource, TimelineSync timelineSync) {
+//        return new TimelineProvider(datasource, timelineSync);
+//    }
 }

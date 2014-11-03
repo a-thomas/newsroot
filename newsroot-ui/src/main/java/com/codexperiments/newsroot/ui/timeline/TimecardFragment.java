@@ -9,12 +9,11 @@ import android.view.ViewGroup;
 import butterknife.InjectView;
 import butterknife.Views;
 import com.codexperiments.newsroot.R;
-import com.codexperiments.newsroot.core.domain.entities.Tweet;
 import com.codexperiments.newsroot.core.domain.repository.TweetRepository;
+import com.codexperiments.newsroot.core.provider.TweetItemViewModel;
 import com.codexperiments.newsroot.data.sqlite.SqliteTwitterDatabase;
 import com.codexperiments.newsroot.ui.BaseFragment;
 import com.codexperiments.quickdao.sqlite.SQLiteCursorList;
-import com.codexperiments.quickdao.sqlite.SQLiteRetriever;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -29,10 +28,11 @@ import static com.codexperiments.newsroot.NewsRootApplication.from;
 
 public class TimecardFragment extends BaseFragment {
     // Dependencies
-    @Inject SqliteTwitterDatabase twitterDatabase;
+    @Inject SqliteTwitterDatabase twitterDatasource;
     @Inject TweetRepository tweetRepository;
+//    @Inject TimelineProvider timelineProvider;
     // State
-    protected SQLiteCursorList<Tweet> cursorList = SQLiteCursorList.empty();
+    protected SQLiteCursorList<TweetItemViewModel> cursorList = SQLiteCursorList.empty();
     protected CompositeSubscription subscriptions = new CompositeSubscription();
     // UI
     @InjectView(R.id.recycler_view) RecyclerView recyclerView;
@@ -42,6 +42,7 @@ public class TimecardFragment extends BaseFragment {
 
     public static class TimecardViewHolder extends RecyclerView.ViewHolder {
         public TweetItemView tweetItemView;
+
         public TimecardViewHolder(TweetItemView tweetItemView) {
             super(tweetItemView);
             this.tweetItemView = tweetItemView;
@@ -78,8 +79,8 @@ public class TimecardFragment extends BaseFragment {
 
             @Override
             public void onBindViewHolder(TimecardViewHolder holder, int position) {
-                Tweet tweet = cursorList.get(position);
-                holder.tweetItemView.setContent(tweet);
+                TweetItemViewModel tweetItemViewModel = cursorList.get(position);
+                holder.tweetItemView.setContent(tweetItemViewModel);
             }
 
             @Override
@@ -92,30 +93,6 @@ public class TimecardFragment extends BaseFragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-//        recyclerView.setAdapter(new BaseAdapter() {
-//            @Override
-//            public int getCount() {
-//                return cursorList.size();
-//            }
-//
-//            @Override
-//            public Object getItem(int position) {
-//                return null;
-//            }
-//
-//            @Override
-//            public long getItemId(int position) {
-//                return cursorList.get(position).getId();
-//            }
-//
-//            @Override
-//            public View getView(int position, View convertView, ViewGroup parent) {
-//                TweetItemView tweetItemView = TweetItemView.createOrRecycle(getActivity(), parent, convertView);
-//                Tweet tweet = cursorList.get(position);
-//                tweetItemView.setContent(tweet);
-//                return tweetItemView;
-//            }
-//        });
         loadTimeline();
     }
 
@@ -133,17 +110,16 @@ public class TimecardFragment extends BaseFragment {
 
     //region Actions
     protected void loadTimeline() {
-//        final TweetRepository.FindAllTweet query = tweetRepository.findAll().withUser().pagedBy(20);
-//        sub(query.retrieve(SQLiteRetriever.asObservableList(Tweet.class))
-//                 .subscribeOn(Schedulers.io())
-//                 .observeOn(AndroidSchedulers.mainThread())
-//                 .subscribe(new Action1<SQLiteCursorList<Tweet>>() {
-//                     @Override
-//                     public void call(SQLiteCursorList<Tweet> sqliteCursorList) {
-//                         cursorList = sqliteCursorList;
-//                         adapter.notifyDataSetChanged();
-//                     }
-//                 }));
+//        timelineProvider.findTweets()
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribe(new Action1<SQLiteCursorList<TweetItemViewModel>>() {
+//                            @Override
+//                            public void call(SQLiteCursorList<TweetItemViewModel> sqliteCursorList) {
+//                                cursorList = sqliteCursorList;
+//                                adapter.notifyDataSetChanged();
+//                            }
+//                        });
     }
     //endregion
 

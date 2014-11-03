@@ -167,6 +167,7 @@ public class SQLiteCursorList<TElement> implements List<TElement>, AutoCloseable
 
         public IteratorImpl(int index) {
             location = index;
+            cursor.moveToPosition(index);
         }
 
         @Override
@@ -176,7 +177,7 @@ public class SQLiteCursorList<TElement> implements List<TElement>, AutoCloseable
 
         @Override
         public boolean hasNext() {
-            return cursor.isAfterLast();
+            return (location < size);
         }
 
         @Override
@@ -186,7 +187,7 @@ public class SQLiteCursorList<TElement> implements List<TElement>, AutoCloseable
 
         @Override
         public TElement next() {
-            if (location < size) return get(location++);
+            if (hasNext()) return get(location++);
             else throw new NoSuchElementException();
         }
 

@@ -3,11 +3,13 @@ package com.codexperiments.newsroot.core.domain.repository;
 import com.codexperiments.newsroot.core.domain.entities.Tweet;
 
 public interface TweetRepository {
-    void save(Tweet tweet);
+    void feed(Tweet tweet);
 
-    void delete(Tweet tweet);
+    void save(Tweet tweet) throws AlreadyExistsException, ChangedMeanwhileException;
 
-    Tweet byId(long tweetId);
+    void delete(Tweet tweet) throws ChangedMeanwhileException;
+
+    Tweet byId(long tweetId) throws DoesNotExistException;
 
 //    public FindAllTweet findAll();
 //

@@ -62,4 +62,16 @@ public class SqliteTwitterDatabase extends SQLiteDatasource {
             throw new RuntimeException(ioException);
         }
     }
+
+    @Override
+    public void onOpen(SQLiteDatabase database) {
+        super.onOpen(database);
+        try {
+            executeScriptFromAssets("sql/drop.sql");
+            executeScriptFromAssets("sql/create.sql");
+        } catch (IOException ioException) {
+            // TODO Handle exception
+            throw new RuntimeException(ioException);
+        }
+    }
 }

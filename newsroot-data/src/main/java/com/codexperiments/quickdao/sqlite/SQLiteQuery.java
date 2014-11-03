@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SQLiteQuery<TEntity, TEntityMapper extends EntityMapper<TEntity>> implements Query<TEntity> {
+public class SQLiteQuery<TEntity, TEntityMapper extends EntityMapper<TEntity>> implements Query<TEntity> {
     protected SQLiteDatabase connection;
     public TEntityMapper entityMapper;
     protected SQLiteQueryBuilder queryBuilder;

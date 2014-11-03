@@ -9,11 +9,10 @@ import butterknife.Views;
 import com.codexperiments.newsroot.R;
 import com.codexperiments.newsroot.api.AuthorizationDeniedException;
 import com.codexperiments.newsroot.api.TwitterAuthorizer;
-import com.codexperiments.newsroot.ui.timeline.TimecardFragment;
-import com.codexperiments.newsroot.ui.timeline.TimelineFragment;
 import com.codexperiments.newsroot.ui.authentication.AuthorizationFragment;
 import com.codexperiments.newsroot.ui.authentication.AuthorizedEvent;
 import com.codexperiments.newsroot.ui.authentication.NotAuthorizedEvent;
+import com.codexperiments.newsroot.ui.timeline.TimecardFragment;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -67,18 +66,17 @@ public class HomeActivity extends BaseActivity {
 
     @OnClick(R.id.button2)
     public void onButton2Action() {
-        showHomeTimeline();
+        showHomeTimecard();
     }
 
     @OnClick(R.id.button3)
     public void onButton3Action() {
-        showHomeTimecard();
     }
 
     @Subscribe
     public void onAuthorized(AuthorizedEvent authorizedEvent) {
         Toast.makeText(this, "Authorized!!!", Toast.LENGTH_LONG).show();
-        showHomeTimeline();
+        showHomeTimecard();
     }
 
     @Subscribe
@@ -101,13 +99,6 @@ public class HomeActivity extends BaseActivity {
                                    .replace(R.id.activity_content, authorizationFragment)
                                    .commit();
         return true;
-    }
-
-    protected void showHomeTimeline() {
-        TimelineFragment timelineFragment = TimelineFragment.forUser();
-        getSupportFragmentManager().beginTransaction()
-                                   .replace(R.id.activity_content, timelineFragment)
-                                   .commit();
     }
 
     protected void showHomeTimecard() {

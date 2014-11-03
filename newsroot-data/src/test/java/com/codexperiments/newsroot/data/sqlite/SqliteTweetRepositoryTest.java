@@ -2,8 +2,7 @@ package com.codexperiments.newsroot.data.sqlite;
 
 import com.codexperiments.newsroot.core.domain.entities.Tweet;
 import com.codexperiments.newsroot.core.domain.entities.User;
-import com.codexperiments.newsroot.core.domain.repository.TweetRepository;
-import com.codexperiments.newsroot.core.domain.repository.UserRepository;
+import com.codexperiments.newsroot.core.domain.repository.*;
 import com.codexperiments.newsroot.test.TweetData;
 import com.codexperiments.newsroot.test.UserData;
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class SqliteTweetRepositoryTest {
     }
 
     @Test
-    public void testTweetById() {
+    public void testTweetById() throws DoesNotExistException {
         Tweet tweet = tweetRepository.byId(TweetData.TWEET_1_CLEMENT);
         assertThat(tweet).hasId(TweetData.TWEET_1_CLEMENT)
                          .hasVersion(1)
@@ -44,8 +43,13 @@ public class SqliteTweetRepositoryTest {
                                    .hasScreenName("lemondefr");
     }
 
+    @Test(expected = DoesNotExistException.class)
+    public void testTweetById_doesNotExist() throws DoesNotExistException {
+        tweetRepository.byId(-1);
+    }
+
     @Test
-    public void testSaveTweet_create() throws Exception {
+    public void testSaveTweet_create_success() throws Exception {
         // GIVEN I have a new Tweet.
         User user = userRepository.byId(UserData.USER_1_LEMONDE);
         Tweet tweetToSave = TweetData.createTweet(user);
@@ -62,6 +66,13 @@ public class SqliteTweetRepositoryTest {
                               .hasCreatedAt(tweetToSave.getCreatedAt())
                               .hasText(tweetToSave.getText())
                               .hasUser(user);
+    }
+
+    @Test(expected = AlreadyExistsException.class)
+    public void testSaveTweet_create_alreadyExists() throws AlreadyExistsException, ChangedMeanwhileException, DoesNotExistException {
+        User user = UserData.createUser(UserData.USER_1_LEMONDE, 1);
+        Tweet tweet = TweetData.createTweet(TweetData.TWEET_1_CLEMENT, 0, user);
+        tweetRepository.save(tweet);
     }
 
     @Test
@@ -84,5 +95,19 @@ public class SqliteTweetRepositoryTest {
                               .hasCreatedAt(tweetToSave.getCreatedAt())
                               .hasText(newText)
                               .hasUser(tweetToSave.getUser());
+    }
+
+    @Test(expected = ChangedMeanwhileException.class)
+    public void testSaveTweet_update_changedMeanwhile() throws AlreadyExistsException, ChangedMeanwhileException, DoesNotExistException {
+        User user = UserData.createUser(UserData.USER_1_LEMONDE, 1);
+        Tweet tweet = TweetData.createTweet(TweetData.TWEET_1_CLEMENT, 2, user);
+        tweetRepository.save(tweet);
+    }
+
+    @Test
+    public void testFeedTweet_alreadyExists() throws AlreadyExistsException, ChangedMeanwhileException, DoesNotExistException {
+        User user = UserData.createUser(UserData.USER_1_LEMONDE, 1);
+        Tweet tweet = TweetData.createTweet(TweetData.TWEET_1_CLEMENT, 0, user);
+        tweetRepository.feed(tweet);
     }
 }
